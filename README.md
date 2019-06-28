@@ -5,8 +5,8 @@ This program produces a random address translation problem and either
 
 * `--congratulates the user for providing the correct solution
 * `--explains to the user how to solve the problem showing steps
-* `--median`: Median
-* `--l2`: Euclidean Norm
+* `--median`: func name  (ignore for now)
+* `--l2`: funcname  (ignore for now)
 
 [text]
 

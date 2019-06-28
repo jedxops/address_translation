@@ -10,3 +10,5 @@ authors = ["Jeff Austin <jja6@pdx.edu>, Kamakshi Nagar <kamakshi@pdx.edu>"]
 edition = "2018"
 
 [dependencies]
+
+rand = "0.7.0"
