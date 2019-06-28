@@ -1,0 +1,12 @@
+# Copyright © 2019 Jeff Austin, Kamakshi Nagar
+# [This program is licensed under the "MIT License"]
+# Please see the file LICENSE in the source
+# distribution of this software for license terms.
+
+[package]
+name = "stats"
+version = "0.1.0"
+authors = ["Jeff Austin <jja6@pdx.edu>, Kamakshi Nagar <kamakshi@pdx.edu>"]
+edition = "2018"
+
+[dependencies]
