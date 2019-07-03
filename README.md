@@ -1,5 +1,6 @@
 #address translation
 Copyright (c) 2019 Jeff Austin <jja6@pdx.edu> (github user jedexops), Kamakshi Nagar <kamakshi@pdx.edu> ()
+Some changes suggested by Bart Massey.
 
 This program produces a random address translation problem and either
 
