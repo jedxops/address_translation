@@ -74,6 +74,7 @@ struct Segment {
 }
 
 // used for segment name identification
+#[derive(Copy, Clone)]
 enum SegName {
     Code,
     Heap,
@@ -121,64 +122,83 @@ fn problem_setup() -> () {
     let mut sum_segment_size: f32 = 0.0;
     //let mut index: u32 = 0;
 
-    while sum_segment_size != (vas as f32/4.0) {
-
-        for index in 0..segments.len() {  // use this for iterating over these segments
-            segments[index].size = rng.gen_range(1.0, (vas as f32));
-            sum_segment_size += segments[index].size;
-            // println!("{}", seg);
-            println!("name: {}", segment_names[((segments[index].name)) as usize]);
-            //heap_size = (((rng.gen_range(1.0, (vas as f32/4.0) as f32) * 10.0) as u32 - 1) as f32) / 10.0;
-            //stack_size = (((rng.gen_range(1.0, (vas as f32/4.0) as f32) * 10.0) as u32 - 1) as f32) / 10.0; 
+    while sum_segment_size != (vas as f32 / 4.0) {  // for the sake of the example/question, we want
+                                                    // the size of the segments (in K) to add up to vas/4
+        sum_segment_size = 0.0;
+        for index in 0..segments.len() {
+            // Seed the rng with a lower bound of 1 and an upper of 10*vas / 4.0.
+            // Cast this value as u32 to remove the trailing decimal places
+            // Finally, cast back to a f32 and divide by 10 to remove the effects of multiplying by 10.
+            segments[index].size = (((rng.gen_range(1.0, (vas as f32 / 4.0) as f32) * 10.0) as u32) as f32) / 10.0;
+            sum_segment_size += segments[index].size;  // track the sum of the _different_ sizes.
         }
-               // println!("size search");
     }
-    println!("Sum: {}", sum_segment_size);
-    // println!("code: {} heap {} stack {}", code_size, heap_size, stack_size);
-/*
-    let mut code_base: u32 = 0;
-    let mut heap_base: u32 = 0;
-    let mut bottom_of_stack: u32 = 0;
+
+    // testing purposes.
+    /*println!("Sum: {}", sum_segment_size);
+    println!("vas / 4.0: {}", vas as f32 / 4.0);
+    for seg in segments {
+        println!("{} size: {}", segment_names[seg.name as usize], seg.size);
+    }*/
+
     let mut conflicting = true;
     let mut out_of_bounds = true;
     while conflicting || out_of_bounds {
-        conflicting = true;
-        out_of_bounds = true;
+        conflicting = false;
+        out_of_bounds = false;  // assume we are OK unless one of the conditions fails.
 
-        code_base = rand_even(1, vas/2);
-        heap_base = rand_even(1, vas/2);
-        bottom_of_stack = rand_even(1, vas/2);
-        // int vs int
-        if ( (code_base as f32) < (heap_base as f32) || (code_base as f32) > ((heap_base as f32) + heap_size) ) && 
-
-           ( ((code_base as f32) + code_size < (heap_base as f32) || ((code_base as f32) + code_size > (heap_base as f32) + heap_size)) ||
-
-               (((code_base as f32) > ((heap_base as f32) + heap_size)) || ((heap_base as f32) + heap_size > (code_base as f32) + code_size)) ) &&
-
-            ( ((code_base as f32) + code_size) < ((bottom_of_stack as f32) - stack_size) || (code_base as f32) > (bottom_of_stack as f32) ) &&
-
-            ( (heap_base as f32) < (code_base as f32) || (heap_base as f32) > ((code_base as f32) + code_size) ) && 
-
-            ( ((heap_base as f32) + heap_size) < ((bottom_of_stack as f32) - stack_size) || (heap_base as f32) > (bottom_of_stack as f32) ) {
-
-            conflicting = false;  // non-conflicting base and sizes in the physical address space
+        for seg in 0..segments.len() {
+            segments[seg].base = rng.gen_range(1, vas / 2);
         }
-        if (bottom_of_stack as f32) - stack_size >= 0.0 {
-            out_of_bounds = false;
+
+        // idea to use _two_ for loops and a reference type inspired by Bart Massey:
+        for i in 0..segments.len() {
+            for j in 0..segments.len() { // rustic-safe!
+
+                if i == j {
+                    continue;
+                }
+
+                let seg1 = &segments[i];
+                let seg2 = &segments[j];
+
+                if segment_names[seg1.name as usize] == "Stack" {  // if this if statement is not true then we have a useable stack base.
+                    if seg1.base as f32 - seg1.size < 0.0 {
+                        out_of_bounds = true;
+                    }
+                    // what this basically says:
+                    // if the base of a non-stack segment lies between the stack base (bottom of the stack)
+                    // and the stack base - the stack size OR if
+                    // the stretch of the non-stack segment lies between this range, then these two segments are 
+                    // conflicting with one another and therefore we must `roll` again. We have a non-valid set of segments.
+                    else if (seg2.base <= seg1.base && seg2.base as f32 >= seg1.base as f32 - seg1.size) ||
+                            (seg2.base as f32 + seg2.size >= seg1.base as f32 - seg1.size && seg2.base <= seg1.base) || 
+                            (seg2.base as f32 + seg2.size <= seg1.base as f32 && seg2.base as f32 + seg2.size >= seg1.base as f32 - seg1.size)
+                    {
+                        conflicting = true;
+                    }
+                }
+                if (segment_names[seg1.name as usize] != "Stack" && segment_names[seg2.name as usize] != "Stack") {
+                    if (seg1.base >= seg2.base && seg1.base as f32 <= seg2.base as f32 + seg2.size) || (seg1.base <= seg2.base &&
+                        seg2.base as f32 <= seg1.base as f32 + seg1.size) {
+                        conflicting = true;
+                    }
+                }
+            }
         }
-        // println!("searching");
     }
 
     // print the basic information
     println!();
-    println!("Assume a {}KB virtual address space and a {}KB physical memory. Virtual addresses are {} bits and segmentation is being used. The segment information is:\n", vas, pm, power_of2);
+    println!("Assume a {}KB virtual address space and a {}KB physical memory. Virtual addresses are {} bits and segmentation is being used. The segment information is:", vas, pm, power_of2);
 
+    // continue printing the necessary info.
     println!("\t\tSegment Number\tBase\tSize\tGrowsNegative");
-    println!("\t\tCode\t00\t{}K\t{}K\t0", code_base, code_size);
-    println!("\t\tHeap\t01\t{}K\t{}K\t0", heap_base, heap_size);
-    println!("\t\tStack\t11\t{}K\t{}K\t1", bottom_of_stack, stack_size);
+    println!("\t\tCode\t00\t{}K\t{}K\t0", segments[0].base, segments[0].size);
+    println!("\t\tHeap\t01\t{}K\t{}K\t0", segments[1].base, segments[1].size);
+    println!("\t\tStack\t11\t{}K\t{}K\t1", segments[2].base, segments[2].size);
 
-    va_to_pa(power_of2);*/
+    va_to_pa(power_of2);
 }
 
 // main function
