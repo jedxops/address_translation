@@ -4,7 +4,7 @@
 # distribution of this software for license terms.
 
 [package]
-name = "stats"
+name = "address_translation"
 version = "0.1.0"
 authors = ["Jeff Austin <jja6@pdx.edu>, Kamakshi Nagar <kamakshi@pdx.edu>"]
 edition = "2018"
