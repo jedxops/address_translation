@@ -9,5 +9,6 @@ pub mod lib_fns;
 
 // main function
 fn main() {
+    // test
     setup::generate_segmented_memory_layout();
 }
