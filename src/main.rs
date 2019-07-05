@@ -8,6 +8,8 @@ pub mod setup;
 pub mod lib_fns;
 
 // main function
+
 fn main() {
+    println!("my change");
     setup::generate_segmented_memory_layout();
 }
