@@ -1,0 +1,294 @@
+// Copyright © 2019 Jeff Austin, Kamakshi Nagar
+// [This program is licensed under the "MIT License"]
+// Please see the file LICENSE in the source
+// distribution of this software for license terms.
+
+// extern crate rand;
+use std::process::exit;
+use rand::Rng;
+use std::io;
+use std::io::prelude::*;
+pub use crate::lib_fns;
+
+//#[derive(Debug)]
+#[derive(Copy, Clone)]
+pub struct Segment {
+    name: SegName,
+    base: u32,
+    size: f32,
+    grows_negative: u32,  // default is false the stack is the only one
+                          // that grows negative so this way of structuring things is practical.
+}
+
+// used for segment name identification
+#[derive(Copy, Clone)]
+pub enum SegName {
+    Code,
+    Heap,
+    Stack,   // as of right now, we are only concerned with these three segments.
+                    // but this code is structured so that more segments should be able to
+                    // be added without much more difficulty
+}
+
+pub static SEG_NAMES: [&'static str;3] = ["Code", "Heap", "Stack"];
+
+// this function prints the main menu for the problem at hand and services the menu
+pub fn generate_segmented_memory_layout() {
+    // ** vas = size of virtual address space * 1024 bytes (i.e. K)
+    // ** va = virtual address
+    // ** pm = size of physical memory * 1024 bytes (i.e. K)
+    // ** size of the vas = 2^power_of_2
+
+    // calculate vas
+    let vas: u32 = lib_fns::rand_power_of_2(lib_fns::rand_even(14, 65), lib_fns::rand_even(65, 256));
+    // calculate the number of bits in the vas
+    let mut power_of2: u32 = 1;
+    let mut dummy: u32 = 1;  // assume at least 1 bits
+    for i in 1..20 {  // i will start at 1 and go through 19 --we would need 18 bits to represent a 256K vas
+        if dummy == (vas*1024) {  // not going to be true for first iteration
+            power_of2 = i - 1;
+            break;
+        }
+        dummy *= 2;
+    }
+    let pm: u32 = vas * 2;  // the pm needs to be at least double the vas
+
+    let mut rng = rand::thread_rng();
+
+    let code_segment = Segment { name: SegName::Code, base: 0, size: 0.0, grows_negative: 0 };
+
+    let heap_segment = Segment { name: SegName::Heap, base:  0, size: 0.0, grows_negative: 0 };
+    let stack_segment = Segment { name: SegName::Stack, base: 0, size: 0.0, grows_negative: 1 };
+    // store these newly created segment types in a vector (so we can add more of them later _if_ we want)
+
+    let mut segments: Vec<Segment> = Vec::new();
+
+    segments.push(code_segment);
+    segments.push(heap_segment);
+    segments.push(stack_segment);
+
+    let mut conflicting = true;
+    let mut out_of_bounds = true;
+    while conflicting || out_of_bounds {
+        conflicting = false;
+        out_of_bounds = false;  // assume we are OK unless one of the conditions fails.
+
+        for seg in 0..segments.len() {
+            if SEG_NAMES[segments[seg].name as usize] == "Code" {
+                segments[seg].base = rng.gen_range(0, (2u32.pow(power_of2 - 3)) / 1024); // gen_range is exclusive with the upper bound.
+                segments[seg].size = ((rng.gen_range(1.0,
+                    ((2u32.pow(power_of2 - 2) / 1024) - ((2u32.pow(power_of2 - 3)) / 1024)) as f32)*10.0) as u32) as f32 /10.0;
+            }
+            else if SEG_NAMES[segments[seg].name as usize] == "Heap" {
+                segments[seg].base = rng.gen_range(2u32.pow(power_of2 - 2) / 1024, 2u32.pow(power_of2 -1)/1024);
+                segments[seg].size = ((rng.gen_range(1.0, ((2u32.pow(power_of2 - 1) + 2u32.pow(power_of2 - 2))/1024 - 2u32.pow(power_of2 -1)/1024) as f32)*10.0) as u32) as f32 / 10.0;
+                // gen_range is exclusive with the upper bound.
+            }
+            else if SEG_NAMES[segments[seg].name as usize] == "Stack" {
+                segments[seg].base = rng.gen_range((2u32.pow(power_of2 - 1) + 2u32.pow(power_of2 - 2))/1024, 2u32.pow(power_of2)/1024); //exclusive on the end so this works.
+                segments[seg].size = ((rng.gen_range(1.0, (((2u32.pow(power_of2 - 1) + 2u32.pow(power_of2 - 2))/1024) - (2u32.pow(power_of2 -1)/1024)) as f32)*10.0) as u32) as f32 / 10.0;
+                // gen_range is exclusive with the upper bound.
+            }
+        }
+
+        // let mut sum_segment_size: f32 = 0.0;
+        //let mut index: u32 = 0;
+
+        //while sum_segment_size != (vas as f32 / 4.0) {  // for the sake of the example/question, we want
+                                                        // the size of the segments (in K) to add up to vas/4
+        /*sum_segment_size = 0.0;
+        for index in 0..segments.len() {
+            // Seed the rng with a lower bound of 1 and an upper of 10*vas / 4.0.
+            // Cast this value as u32 to remove the trailing decimal places
+            // Finally, cast back to a f32 and divide by 10 to remove the effects of multiplying by 10.
+            segments[index].size = (((rng.gen_range(1.0, (vas as f32 / 4.0) as f32) * 10.0) as u32) as f32) / 10.0;
+            sum_segment_size += segments[index].size;  // track the sum of the _different_ sizes.
+        }*/
+        //}
+
+        // testing purposes.
+        /*println!("Sum: {}", sum_segment_size);
+        println!("vas / 4.0: {}", vas as f32 / 4.0);
+        for seg in segments {
+            println!("{} size: {}", SEG_NAMES[seg.name as usize], seg.size);
+        }*/
+
+        //println!("checking, {}", ((2u32.pow(power_of2) - (segments[2].size as u32 * 1024)) / 1024));
+        //println!("max, {}", ((2u32.pow(power_of2) - 1) / 1024));
+        // idea to use _two_ for loops here and a reference type inspired by Bart Massey:
+        for i in 0..segments.len() {
+            for j in 0..segments.len() { // rustic-safe!
+
+                if i == j {
+                    continue;
+                }
+
+                let seg1 = &segments[i];
+                let seg2 = &segments[j];
+
+                //let mut sum_seg: u32 = 0;
+                //println!("sum segments: {}", sum_seg);
+                if seg1.grows_negative == 1 {  // if this if statement is not true then we have a useable stack base.
+                    if seg1.base as f32 - seg1.size < 0.0 {
+                        out_of_bounds = true;
+                    }
+                    // what this basically says:
+                    // if the base of a non-stack segment lies between the stack base (bottom of the stack)
+                    // and the stack base - the stack size OR if
+                    // the stretch of the non-stack segment lies between this range, then these two segments are 
+                    // conflicting with one another and therefore we must `roll` again. We have a non-valid set of segments.
+                    else if (seg2.base <= seg1.base && seg2.base as f32 >= seg1.base as f32 - seg1.size) ||
+                            (seg2.base as f32 + seg2.size >= seg1.base as f32 - seg1.size && seg2.base <= seg1.base) ||
+                            (seg2.base as f32 + seg2.size <= seg1.base as f32 && seg2.base as f32 + seg2.size >= seg1.base as f32 - seg1.size)
+                    {
+                        conflicting = true;
+                        println!("conflicting 1");
+                    }
+                }
+                else if seg1.grows_negative == 0 && seg2.grows_negative == 0 {
+                    if (seg1.base >= seg2.base && seg1.base as f32 <= seg2.base as f32 + seg2.size) || (seg1.base <= seg2.base &&
+                        seg2.base as f32 <= seg1.base as f32 + seg1.size) {
+                        conflicting = true;
+                        println!("conflicting");
+                    }
+                }
+            }
+        }
+    }
+ 
+    // take these values and pass them to the menu function
+    menu(vas, pm, power_of2, segments);
+}
+
+// generates a user interface --performs majority of the input and output of the system.
+pub fn menu(vas: u32, pm: u32, power_of2: u32, segments: Vec<Segment>) {
+    // print the basic information
+    println!();
+    println!("Assume a {}KB virtual address space and a {}KB physical memory. Virtual addresses are {} bits and segmentation is being used. The segment information is:", vas, pm, power_of2);
+
+    // continue printing the necessary info.
+    println!("\t\tSegment Number\tBase\tSize\tGrowsNegative");
+    println!("\t\t{}\t00\t{}K\t{}K\t{}", SEG_NAMES[segments[0].name as usize], segments[0].base, segments[0].size, segments[0].grows_negative);
+    println!("\t\t{}\t01\t{}K\t{}K\t{}", SEG_NAMES[segments[1].name as usize], segments[1].base, segments[1].size, segments[1].grows_negative);
+    println!("\t\t{}\t11\t{}K\t{}K\t{}", SEG_NAMES[segments[2].name as usize], segments[2].base, segments[2].size, segments[2].grows_negative);
+
+    // fetch random u32 in between 100 and the VAS (as a power of 2) as the virtual address to be calculated.
+    let va: u32 = get_rand_va(power_of2, segments.clone());
+    println!("Virtual Address 0x{:X} refers to what physical address (in base 10)?", va);
+
+    // ** ss = segment selector (or segment number)
+    // ** mss = maximum segment size
+    let ss: u32 = va >> (power_of2 - 2);
+    let mss: u32 = 2u32.pow(power_of2 - 2);  // MSS = 2^(number of bits in the offset)
+    let mut pa: u32 = 0;
+    let mut bit_mask: u32 = 0;
+    for i in 0..power_of2 - 2 {
+        bit_mask += 2u32.pow(i);
+    }
+    let offset: u32 = va & bit_mask;
+
+    if ss == 0 { // code ss
+        pa = calculate_answer(segments[0], mss, offset);
+        show_solution_va_to_pa_hex(segments[0], ss, mss, bit_mask, offset, va, pa, power_of2);  // ss = correct segment index
+    }
+    else if ss == 1 { // heap ss
+        pa = calculate_answer(segments[1], mss, offset);
+        show_solution_va_to_pa_hex(segments[1], ss, mss, bit_mask, offset, va, pa, power_of2);  // ss = correct segment index
+    }
+    else if ss == 3 { // stack ss
+        pa = calculate_answer(segments[2], mss, offset);
+        show_solution_va_to_pa_hex(segments[2], ss, mss, bit_mask, offset, va, pa, power_of2);  // ss = correct segment index
+    }
+    else if ss != 0 && ss != 1 && ss != 3 {
+        println!("Error. Segment selector doesnt represent any of the implemented segments. It equals {}", ss);
+        println!("Exiting program.");
+        exit(-1);
+    }
+   
+    println!("Type your answer in hexadecimal and press ctrl + d OR command + d. `0x` will be automatically parsed out of your answer string.");
+
+    /*let user_input = io::stdin();
+    let mut answer: u32 = 0;
+    for a_line in user_input.lock().lines() {
+        answer = a_line.unwrap().parse::<u32>().unwrap();
+    }
+    if answer == pa {
+        println!("congratulations!");
+    }*/
+}
+
+// shows the `student` the steps to solving the 
+pub fn show_solution_va_to_pa_hex(seg: Segment, ss: u32, mss: u32, mask: u32, offset: u32, va: u32, pa: u32, power_of2: u32) {
+    println!("Step 1: Convert 0x{:x} to binary", va);
+    println!("0x{:x} = {:b}", va, va);
+    println!("There are great youtube guides on shortcuts for converting to binary by hand.");
+    println!("Step 2: Note the Virtual Address Space size (in bits) and separate the Segment Selector from the Offset portion of the binary.");
+    if ss != 3 {
+        println!("0{} {:b}", ss, offset);
+    }
+    else {
+        println!("{} {:b}", ss, va);
+    }
+    println!("-- -----------------");
+    println!("SS      OFFSET\n");
+    println!("Discard the segment selector bits from your calculation of offset.");
+}
+
+// this function calculates the answer to the given problema and returns the result
+// based on the following equation: PA = (-1)*(GN)(MSS) + base + offset
+// GN = grows negative. offset = the value of the virtual address shifted left 2 bits.
+// (the value of the va neglecting the final two bits)
+pub fn calculate_answer(seg: Segment, mss: u32, offset: u32) -> u32 {
+    ((-1) * (seg.grows_negative as i32) * (mss as i32) + (seg.base as i32 * 1024) + offset as i32) as u32
+}
+
+// generates a problem prompting for a VA to PA translation
+// returns the generated result
+pub fn get_rand_va(va_pow_2: u32, segments: Vec<Segment>) -> u32 {
+    let mut rng = rand::thread_rng();
+    let mut r: u32 = rng.gen_range(100, 2u32.pow(va_pow_2) + 1);
+    let mut fresh_ss = r >> (va_pow_2 - 2);
+
+    // ensure that the SS mimics the the code, stack or heap segment numbers.
+    while !valid_va(r, fresh_ss, segments.clone()) || !(r >> (va_pow_2 - 2) == 0 || r >> (va_pow_2 - 2) == 1 || r >> (va_pow_2 - 2) == 3){
+
+        r = rng.gen_range(100, 2u32.pow(va_pow_2)); // exclusive on the end so this works.
+
+        fresh_ss = r >> (va_pow_2 - 2);
+
+        // println!("{} <- r", r);
+        //println!("r: {} fresh_ss {} pow: {} code base: {} code size {} heap base {} heap size {} stack base: {} stack size: {}", r, fresh_ss, va_pow_2, segments[0].base, segments[0].size, segments[1].base, segments[1].size, segments[2].base, segments[2].size);
+    }
+    r
+}
+
+// returns true if the address selected is within the scope/range of some segment.
+pub fn valid_va(num: u32, fresh_ss: u32, segments: Vec<Segment>) -> bool {
+    let mut enum_ss: SegName = SegName::Code;
+    if fresh_ss == 0 {
+        enum_ss = SegName::Code;
+    }
+    else if fresh_ss == 1 {
+        enum_ss = SegName::Heap;
+    }
+    else if fresh_ss == 3 {
+        enum_ss = SegName::Stack;
+    }
+    /*println!("{}", enum_ss as u32);
+    println!("{}", SegName::Stack as u32);*/
+
+    for sg in segments {
+        if sg.grows_negative == 1 {
+            // if num is in the stack segment's range.
+            if num <= sg.base * 1024 && num as f32 >= (sg.base as f32 - sg.size) * 1024.0 && sg.name as u32 == enum_ss as u32 {
+                return true;
+            }
+        }
+        else {
+            if (num as f32 <= (sg.base as f32 + sg.size) * 1024.0) && num >= sg.base * 1024 && sg.name as u32 == enum_ss as u32 {
+                return true;
+            }
+        }
+    }
+    false
+}
