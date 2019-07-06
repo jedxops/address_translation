@@ -126,30 +126,29 @@ pub fn generate_segmented_memory_layout() {
     }
  
     // take these values and pass them to the menu function
-    menu(vas, pm, power_of2, segments);
+   menu(vas, pm, power_of2, segments);
 }
-
 // generates a user interface --performs majority of the input and output for the system.
 pub fn menu(vas: u32, pm: u32, power_of2: u32, segments: Vec<Segment>) {
     // print the basic information
     println!();
-    println!("Assume a {}KB virtual address space and a {}KB physical memory. Virtual addresses are {} bits and segmentation is being used. The segment information is:", vas, pm, power_of2);
+    println!("assume a {}kb virtual address space and a {}kb physical memory. virtual addresses are {} bits and segmentation is being used. the segment information is:", vas, pm, power_of2);
 
     // continue printing the necessary info.
-    println!("\t\tSegment Number\tBase\tSize\tGrowsNegative");
-    println!("\t\t{}\t00\t{}K\t{}K\t{}", SEG_NAMES[segments[0].name as usize], segments[0].base, segments[0].size, segments[0].grows_negative);
-    println!("\t\t{}\t01\t{}K\t{}K\t{}", SEG_NAMES[segments[1].name as usize], segments[1].base, segments[1].size, segments[1].grows_negative);
-    println!("\t\t{}\t11\t{}K\t{}K\t{}", SEG_NAMES[segments[2].name as usize], segments[2].base, segments[2].size, segments[2].grows_negative);
+    println!("\t\tsegment number\tbase\tsize\tgrowsnegative");
+    println!("\t\t{}\t00\t{}k\t{}k\t{}", SEG_NAMES[segments[0].name as usize], segments[0].base, segments[0].size, segments[0].grows_negative);
+    println!("\t\t{}\t01\t{}k\t{}k\t{}", SEG_NAMES[segments[1].name as usize], segments[1].base, segments[1].size, segments[1].grows_negative);
+    println!("\t\t{}\t11\t{}k\t{}k\t{}", SEG_NAMES[segments[2].name as usize], segments[2].base, segments[2].size, segments[2].grows_negative);
 
-    // fetch random u32 in between 100 and the VAS (as a power of 2) as the virtual address to be calculated.
+    // fetch random u32 in between 100 and the vas (as a power of 2) as the virtual address to be calculated.
     let va: u32 = get_rand_va(power_of2, segments.clone());
-    println!("Virtual Address {:#X} refers to what physical address (in base 10)?", va);
+    println!("virtual address {:#x} refers to what physical address (in base 10)?", va);
 
-    // More Definitions:
+    // more definitions:
     // ** ss = segment selector (or segment number)
     // ** mss = maximum segment size
     let ss: u32 = va >> (power_of2 - 2);
-    let mss: u32 = 2u32.pow(power_of2 - 2);  // MSS = 2^(number of bits in the offset)
+    let mss: u32 = 2u32.pow(power_of2 - 2);  // mss = 2^(number of bits in the offset)
     let mut pa: u32 = 0;
     let mut bit_mask: u32 = 0;
     for i in 0..power_of2 - 2 {  // we only want to mask the bits up to the ss
@@ -170,14 +169,16 @@ pub fn menu(vas: u32, pm: u32, power_of2: u32, segments: Vec<Segment>) {
         show_solution_va_to_pa_hex(segments[2], ss, mss, bit_mask, offset, va, pa, power_of2);
     }
     else if ss != 0 && ss != 1 && ss != 3 {
-        // if so then print error message and exit. --BUG
-        println!("Error. Segment selector doesnt represent any of the implemented segments. It equals {}", ss);
-        println!("Exiting program.");
+        // if so then print error message and exit. --bug
+        println!("error. segment selector doesnt represent any of the implemented segments. it equals {}", ss);
+        println!("exiting program.");
         exit(-1);
     }
    
-    println!("Type your answer in hexadecimal and press ctrl + d OR command + d. `0x` will be automatically parsed out of your answer string.");
+    
+    println!("type your answer in hexadecimal and press ctrl + d or command + d. `0x` will be automatically parsed out of your answer string.");
 
+    println!("{:?}",pa);
     /*let user_input = io::stdin();
     let mut answer: u32 = 0;
     for a_line in user_input.lock().lines() {
@@ -190,15 +191,15 @@ pub fn menu(vas: u32, pm: u32, power_of2: u32, segments: Vec<Segment>) {
 
 // shows the `student` the steps to solving the 
 pub fn show_solution_va_to_pa_hex(seg: Segment, ss: u32, mss: u32, mask: u32, offset: u32, va: u32, pa: u32, power_of2: u32) {
-    println!("Step 1: Convert 0x{:x} to binary", va);
+    println!("step 1: convert 0x{:x} to binary", va);
 
-    print!("{:#X} = ", va);
+    print!("{:#x} = ", va);
     lib_fns::print_leading_zeros(offset, power_of2);
     println!("{:b}", va);
     io::stdout().flush().unwrap();  // ensure our output is flushed entirely, as we are not using the _println_ macro.
 
-    println!("There are great youtube guides on shortcuts for converting to binary by hand.");
-    println!("Step 2: Note the Virtual Address Space size (in bits) and separate the Segment Selector from the Offset portion of the binary.");
+    println!("there are great youtube guides on shortcuts for converting to binary by hand.");
+    println!("step 2: note the virtual address space size (in bits) and separate the segment selector from the offset portion of the binary.");
     if ss != 3 {
         println!("0{} {:b}", ss, offset);
     }
@@ -206,26 +207,26 @@ pub fn show_solution_va_to_pa_hex(seg: Segment, ss: u32, mss: u32, mask: u32, of
         println!("{} {:b}", ss, va);
     }
     println!("-- -----------------");
-    println!("SS      OFFSET\n");
-    println!("Discard the segment selector bits from your calculation of offset.");
+    println!("ss      offset\n");
+    println!("discard the segment selector bits from your calculation of offset.");
 }
 
 // this function calculates the answer to the given problema and returns the result
-// based on the following equation: PA = (-1)*(GN)(MSS) + base + offset
-// GN = grows negative. offset = the value of the virtual address shifted left 2 bits.
+// based on the following equation: pa = (-1)*(gn)(mss) + base + offset
+// gn = grows negative. offset = the value of the virtual address shifted left 2 bits.
 // (the value of the va neglecting the final two bits)
 pub fn calculate_answer(seg: Segment, mss: u32, offset: u32) -> u32 {
     ((-1) * (seg.grows_negative as i32) * (mss as i32) + (seg.base as i32 * 1024) + offset as i32) as u32
 }
 
-// generates a problem prompting for a VA to PA translation
+// generates a problem prompting for a va to pa translation
 // returns the generated result
 pub fn get_rand_va(va_pow_2: u32, segments: Vec<Segment>) -> u32 {
     let mut rng = rand::thread_rng();
     let mut r: u32 = rng.gen_range(100, 2u32.pow(va_pow_2) + 1);
     let mut fresh_ss = r >> (va_pow_2 - 2);
 
-    // ensure that the SS mimics the the code, stack or heap segment numbers.
+    // ensure that the ss mimics the the code, stack or heap segment numbers.
     while !valid_va(r, fresh_ss, segments.clone()) || !(r >> (va_pow_2 - 2) == 0 || r >> (va_pow_2 - 2) == 1 || r >> (va_pow_2 - 2) == 3){
 
         r = rng.gen_range(100, 2u32.pow(va_pow_2)); // exclusive on the end so this works.
@@ -237,7 +238,6 @@ pub fn get_rand_va(va_pow_2: u32, segments: Vec<Segment>) -> u32 {
     }
     r
 }
-
 // returns true if the address selected is within the scope/range of some segment.
 pub fn valid_va(num: u32, fresh_ss: u32, segments: Vec<Segment>) -> bool {
     let mut enum_ss: SegName = SegName::Code;
