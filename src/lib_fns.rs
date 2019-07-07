@@ -7,15 +7,59 @@
 use std::process::exit;
 extern crate rand;
 use rand::Rng;
+use std::io;
+use std::io::Write;     // need flush() method.
 
-// series of mathematical functions used in this software system
+// series of mathematical functions and tools used in this software system
+
+// base `n` to base 10
+pub fn bn_to_b10(num: &String, n: u32) -> Option<u32> {
+    let mut i: u32 = (num.len()) as u32;
+    let mut sum: u32 = 0;
+    for itr in num.chars() {  // this iterator starts at the left hand side of the string.
+        // if we have this i = i -1 at the bottom of the for loop we have overflow (with i - 1 eventually equaling -1).
+        i -= 1;  // so we gotta perform this base n to base 10 math from left to right --unconventional but doable with len().
+        match itr.to_digit(n) {
+            Some(x) => {sum = sum + (n.pow(i) * x)},
+            None => {return None;},
+        }
+    }
+    Some(sum)
+}
+
+// returns true if all the characters in the given string turn out to be numeric.
+pub fn are_all_numeric(str: &String, radix: u32) -> bool {
+    for itr in str.chars() {
+        if itr == 'x' || itr == 'X' || itr == '\n'{
+            continue;
+        }
+        if itr.is_digit(radix) == false {
+            println!("FALSE!: {}", itr);
+            return false;
+        }
+    }
+    true
+}
+
+// prints a number of hyphens to cover a the number of bits required by the `num` argument
+pub fn print_hyphens(num: u32) {
+    let h = num_bits_reqd(num);
+    for i in 0..h {
+        print!("-");
+    }
+    print!("\n");
+    io::stdout().flush().unwrap();  // ensure our output is flushed entirely, as we are not using the _println_ macro here
+}
 
 pub fn print_leading_zeros(num: u32, max_bits: u32) {
     let zeros_to_print = max_bits - num_bits_reqd(num);
-
-    // the leading_zeros function for usizes is not helpful here
-    for i in 0..zeros_to_print {
-        print!("0");
+    if zeros_to_print > 0 {
+        // the leading_zeros function for usizes is not helpful here
+        let mut i: u32 = 0;
+        while i < zeros_to_print {
+            print!("0");
+            i += 1;
+        }
     }
 }
 
@@ -26,7 +70,7 @@ pub fn num_bits_reqd(num: u32) -> u32 {
     }
     let mut dummy: u32 = 1;  // assume at least 1 bits required
     for i in 1..num {  // need to loop long enough to reach `num` through multiplying by 2 repeatedly.
-        if dummy >= (num) {
+        if dummy >= num {
             return i - 1;
         }
         dummy *= 2;
