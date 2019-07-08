@@ -59,13 +59,15 @@ pub fn print_hyphens(num: u32) {
 // work in progress, works only for the first upper four binary digits as of right now.
 // print a binary number such that every four characters are separated by a single space
 pub fn print_readable_binary(address: u32, size_of_space: u32) {
-    let multiple_of_4: u32 = size_of_space / 4;  // we want to group the binary into 4 groups
-    if size_of_space % 4 != 0 {                  // print the binary digits at the end of the string which dont fit in a group of 4
+    let multiple_of_4: u32 = size_of_space / 4; // we want to group the binary into 4 groups
+    if size_of_space % 4 != 0 {
+        // print the binary digits at the end of the string which dont fit in a group of 4
         print_leading_zeros(address >> (4 * multiple_of_4), size_of_space % 4);
         print!("{:b} ", address >> (4 * multiple_of_4));
     }
-    let mut array_of_binaries: Vec<u32> = Vec::new();  // array of binaries to print
-    for i in 1..=multiple_of_4 {  // these bounds are tricky to determine/prove the correctness of.
+    let mut array_of_binaries: Vec<u32> = Vec::new(); // array of binaries to print
+    for i in 1..=multiple_of_4 {
+        // these bounds are tricky to determine/prove the correctness of.
 
         // mask the ith and (i -1)th group of bits
         /*
@@ -109,8 +111,9 @@ pub fn num_bits_reqd(num: u32) -> u32 {
         return 1;
     }
     let mut dummy: u32 = 1; // assume at least 1 bits required
-    for i in 0..=num {  // again, value difficult to determine. user must know what argument to pass, exactly.
-                        // else he/she will experience incorrect results.
+    for i in 0..=num {
+        // again, value difficult to determine. user must know what argument to pass, exactly.
+        // else he/she will experience incorrect results.
         // need to loop long enough to reach `num` through multiplying by 2 repeatedly.
         if dummy > num {
             return i;

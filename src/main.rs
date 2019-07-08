@@ -21,8 +21,8 @@ use rand::Rng;
 use std::io;
 //use std::io::prelude::*;
 use std::process::exit;
-pub mod lib_fns;
 pub mod calculations;
+pub mod lib_fns;
 
 /*  Definitions:
 vas = size of virtual address space * 1024 bytes (i.e. K)
@@ -57,8 +57,7 @@ fn main() {
     */
 
     // array of functions for address translation questions = atqs
-    let mut atqs: Vec<fn(u32, u32, Vec<calculations::Segment>) -> (u32, u32, Vec<calculations::Segment>)> =
-        Vec::new();
+    let mut atqs: Vec<fn(u32, u32, Vec<calculations::Segment>) -> (u32, u32, Vec<calculations::Segment>),> = Vec::new();
 
     atqs.push(va_to_pa);
     atqs.push(va_to_pa_malloc);
@@ -71,15 +70,19 @@ fn main() {
             // clear_screen();
             let mut input_string = String::new();
             println!("OPTION\t\tPROBLEM TYPE\n");
-            println!("0\u{29}\t\tTranslate Random Virtual Address to a corresponding Physical Address");
+            println!(
+                "0\u{29}\t\tTranslate Random Virtual Address to a corresponding Physical Address"
+            );
             println!("1\u{29}\t\tTranslate Random Virtual Address Returned by Malloc() to a corresponding Physical Address");
-            println!("2\u{29}\t\tCalculate Specified Portion through the Stack as a Virtual Address");
+            println!(
+                "2\u{29}\t\tCalculate Specified Portion through the Stack as a Virtual Address"
+            );
             println!("8\u{29}\t\tGenerate fresh segmented memory model");
             println!("9\u{29}\t\tGenerate Random Problem");
             println!("10\u{29}\t\tExit");
 
             match io::stdin().read_line(&mut input_string) {
-                Ok(_) => {}  // this function returns a result type
+                Ok(_) => {} // this function returns a result type
                 Err(_) => {
                     continue;
                 }
@@ -211,13 +214,16 @@ pub fn print_question_stack_percentage(percent: u32, question_format: i8) -> i8 
     match aformat {
         16 => println!(
             "What virtual address, in hexadecimal, is {}% into the stack??",
-            percent),
+            percent
+        ),
         2 => println!(
             "What virtual address, in binary, is {}% into the stack??",
-            percent),
+            percent
+        ),
         10 => println!(
             "What virtual address, in decimal, is {}% into the stack??",
-            percent),
+            percent
+        ),
         _ => {
             println!("Unexpected error. Exiting");
             calculations::error();
@@ -310,7 +316,8 @@ fn va_to_pa(
             pa = calculations::calculate_answer(segments[2], mss, offset);
             calculations::compare_answer(format_specifiers.1, pa);
         }
-        0 | 1 => { // code, heap
+        0 | 1 => {
+            // code, heap
             pa = calculations::calculate_answer(segments[ss as usize], mss, offset);
             calculations::compare_answer(format_specifiers.1, pa);
         }
@@ -403,7 +410,6 @@ fn va_to_pa_malloc(
     power_of2: u32,
     segments: Vec<calculations::Segment>,
 ) -> (u32, u32, Vec<calculations::Segment>) {
-
     let choice: i8 = choose_format(0);
     clear_screen();
     print_layout(vas, vas * 2, power_of2, segments.clone());
@@ -505,7 +511,6 @@ fn stack_va(
     power_of2: u32,
     segments: Vec<calculations::Segment>,
 ) -> (u32, u32, Vec<calculations::Segment>) {
-
     // choose format of the question required answer (hex, dec, binary).
     let choice: i8 = choose_format(1);
     clear_screen();
@@ -520,7 +525,8 @@ fn stack_va(
 
     // MSS = 2^number of bits in the offset = number of total bits - 2 (because SS = 2 bits)
     let mss: u32 = 2u32.pow(power_of2 - 2); // MSS = 2^(number of bits in the offset)
-    let tuple = calculations::calculate_answer_stack_percentage(segments[2], percent, mss, power_of2);
+    let tuple =
+        calculations::calculate_answer_stack_percentage(segments[2], percent, mss, power_of2);
     let va_ans = tuple.0;
     let offset = tuple.1;
     calculations::compare_answer(format_specifier, va_ans);
@@ -551,7 +557,14 @@ fn stack_va(
         } else {
             match y {
                 0 => {
-                    calculations::show_solution_stack_va(segments[2], offset, va_ans, power_of2, percent, format_specifier);
+                    calculations::show_solution_stack_va(
+                        segments[2],
+                        offset,
+                        va_ans,
+                        power_of2,
+                        percent,
+                        format_specifier,
+                    );
                 }
                 1 => {
                     break;
@@ -568,8 +581,6 @@ fn stack_va(
     }
     (vas, power_of2, segments)
 }
-
-
 
 /*
 We need a way of telling each of the functions
@@ -600,27 +611,31 @@ fn choose_format(question_flag: u8) -> i8 {
         let mut input_string = String::new();
         match question_flag {
             0 => {
-                    println!("Choose format of desired question\n");
-                    println!("OPTION\t\tPROBLEM TYPE\n");
-                    println!("0\u{29}\t\t--va in hex to pa in hex");
-                    println!("1\u{29}\t\t--va in hex to pa in binary");
-                    println!("2\u{29}\t\t--va in hex to pa in decimal");
-                    println!("3\u{29}\t\t--va in binary to pa in hex");
-                    println!("4\u{29}\t\t--va in binary to pa in binary");
-                    println!("5\u{29}\t\t--va in binary to pa in decimal");
-                    println!("6\u{29}\t\t--va in decimal to pa in hex");
-                    println!("7\u{29}\t\t--va in decimal to pa in binary");
-                    println!("8\u{29}\t\t--va in decimal to pa in decimal");
-                    println!("9\u{29}\t\tRandom option");},
+                println!("Choose format of desired question\n");
+                println!("OPTION\t\tPROBLEM TYPE\n");
+                println!("0\u{29}\t\t--va in hex to pa in hex");
+                println!("1\u{29}\t\t--va in hex to pa in binary");
+                println!("2\u{29}\t\t--va in hex to pa in decimal");
+                println!("3\u{29}\t\t--va in binary to pa in hex");
+                println!("4\u{29}\t\t--va in binary to pa in binary");
+                println!("5\u{29}\t\t--va in binary to pa in decimal");
+                println!("6\u{29}\t\t--va in decimal to pa in hex");
+                println!("7\u{29}\t\t--va in decimal to pa in binary");
+                println!("8\u{29}\t\t--va in decimal to pa in decimal");
+                println!("9\u{29}\t\tRandom option");
+            }
             1 => {
-                    println!("Choose format of desired question\n");
-                    println!("OPTION\t\tPROBLEM TYPE");
-                    println!("0\u{29}\t\t--answer in hex");
-                    println!("1\u{29}\t\t--answer in binary");
-                    println!("2\u{29}\t\t--answer in decimal");
-                    println!("9\u{29}\t\t--random question");},
-            _ => {println!("Unexpected Fatal error in question format function. Exiting.");
-                  exit(-1);}
+                println!("Choose format of desired question\n");
+                println!("OPTION\t\tPROBLEM TYPE");
+                println!("0\u{29}\t\t--answer in hex");
+                println!("1\u{29}\t\t--answer in binary");
+                println!("2\u{29}\t\t--answer in decimal");
+                println!("9\u{29}\t\t--random question");
+            }
+            _ => {
+                println!("Unexpected Fatal error in question format function. Exiting.");
+                exit(-1);
+            }
         }
         match io::stdin().read_line(&mut input_string) {
             Ok(_) => {}
@@ -646,8 +661,7 @@ fn choose_format(question_flag: u8) -> i8 {
                     if question_flag == 0 {
                         let mut rng = rand::thread_rng(); // seed the rng
                         choice = rng.gen_range(0, 9);
-                    }
-                    else if question_flag == 1 {
+                    } else if question_flag == 1 {
                         let mut rng = rand::thread_rng(); // seed the rng
                         choice = rng.gen_range(0, 3);
                     }

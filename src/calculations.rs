@@ -5,20 +5,21 @@
 
 // import necessary crates!
 // extern crate rand;
+pub use crate::lib_fns;
 use rand::Rng;
 use std::io;
 use std::io::prelude::*;
-use std::process::exit;
-pub use crate::lib_fns;
-use std::io::Write; // need flush() method.
+use std::io::Write;
+use std::process::exit; // need flush() method.
 
 #[derive(Copy, Clone)]
-pub struct Segment {    // segment information packaged.
-    pub name: SegName,  // segment name
+pub struct Segment {
+    // segment information packaged.
+    pub name: SegName, // segment name
     pub base: u32,
     pub size: f32,
     pub grows_negative: u32, // default is false the stack is the only one
-                         // that grows negative so this way of structuring things is practical.
+                             // that grows negative so this way of structuring things is practical.
 }
 
 // used for segment name identification
@@ -39,25 +40,47 @@ pub fn show_solution_stack_va(
     va: u32,
     power_of2: u32,
     percent: f32,
-    aformate: i8) {
-
+    aformate: i8,
+) {
     println!("--Note that the stack base and size are parameters in Physical Memory --not Virtual Memory.");
     println!("The problem prompts a translation from PA to VA --the address corresponding to the specified portion through the stack as a virtual address");
     println!("Therefore, calculating the percent of the stack size and subtracting it from the stack base yields an incorrect translation.\n");
     println!("Drawing a picture helps to understand this non-intuitive math.");
 
-    println!("\nStep 1: Calculate {}% into the stack _size_ in K (as a multiple of 1024)", percent);
-    println!("{}% * {}K = ({} * {})K = {}K\n", percent, seg.size, percent / 100.0, seg.size, seg.size * (percent/100.0));
+    println!(
+        "\nStep 1: Calculate {}% into the stack _size_ in K (as a multiple of 1024)",
+        percent
+    );
+    println!(
+        "{}% * {}K = ({} * {})K = {}K\n",
+        percent,
+        seg.size,
+        percent / 100.0,
+        seg.size,
+        seg.size * (percent / 100.0)
+    );
 
     println!("Step 2: Calculate the maximum segment size in relation to the stack's base");
     println!("Remember --the stack grows downwards from its base.\n");
-    println!("MSS = 2^(number of bits in the offset) = 2^{} = {} bytes", power_of2 - 2, 2u32.pow(power_of2 -2));
+    println!(
+        "MSS = 2^(number of bits in the offset) = 2^{} = {} bytes",
+        power_of2 - 2,
+        2u32.pow(power_of2 - 2)
+    );
     println!("=> If the stack segment were to use up its MSS, it would grow downwards to {}K - {}K = {}K\n", 
             seg.base, 2u32.pow(power_of2 -2) / 1024, seg.base - 2u32.pow(power_of2 -2) / 1024);
 
     println!("Step 3: Calculate the offset");
     println!("Subtract the address of the maximum segment size from the stack base minus the calculated portion of the stack size in K:");
-    println!("({}K - {}K) - {}K = {}K - {}K = {}K", seg.base, seg.size * (percent/100.0), seg.base - 2u32.pow(power_of2 -2) / 1024, seg.base as f32 - seg.size * (percent/100.0), seg.base - 2u32.pow(power_of2 -2) / 1024, offset);
+    println!(
+        "({}K - {}K) - {}K = {}K - {}K = {}K",
+        seg.base,
+        seg.size * (percent / 100.0),
+        seg.base - 2u32.pow(power_of2 - 2) / 1024,
+        seg.base as f32 - seg.size * (percent / 100.0),
+        seg.base - 2u32.pow(power_of2 - 2) / 1024,
+        offset
+    );
     println!("This is the _offset_ portion of the binary number to be constructed for the virtual address.\n");
 
     println!("Step 4: Append the appropriate segment selector bits to the offset");
@@ -67,15 +90,15 @@ pub fn show_solution_stack_va(
     println!("=> SS = Stack = 11");
     println!("Append these two SS bits on to the highest portion of the offset binary:");
 
-    println!("  {:b}", 3 << (power_of2 - 2));
+    println!("  {:b}\t--SS bits", 3 << (power_of2 - 2));
     print!("+ ");
-    lib_fns::print_leading_zeros(offset, power_of2);
-    println!("{:b}", offset);
+    lib_fns::print_leading_zeros(offset * 1024, power_of2);
+    println!("{:b}\t--OFFSET", offset * 1024);
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely. print! doesnt print a line.
     print!("--");
     lib_fns::print_hyphens(3 << (power_of2 - 2));
     io::stdout().flush().unwrap();
-    println!("  {:b}",offset + (3 << (power_of2 - 2)));
+    println!("  {:b}", offset * 1024 + (3 << (power_of2 - 2)));
 
     println!(
         "{:horiz$}VA in bytes",
@@ -106,8 +129,8 @@ pub fn show_solution_va_to_pa_hex(
     va: u32,
     pa: u32,
     power_of2: u32,
-    qaformate: (i8, i8)) {
-
+    qaformate: (i8, i8),
+) {
     match qaformate.0 {
         16 => {
             println!("\nStep 1: Convert virtual address {:#X} to binary", va);
@@ -127,7 +150,7 @@ pub fn show_solution_va_to_pa_hex(
     }
     // lib_fns::print_leading_zeros(va, power_of2);
     // print!("{:b} = ", va);
-    lib_fns::print_readable_binary(va, power_of2);  // I think this function is cool, visit the file to check it out.
+    lib_fns::print_readable_binary(va, power_of2); // I think this function is cool, visit the file to check it out.
     println!();
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely, as we are not using the _println_ macro here
 
@@ -270,20 +293,30 @@ pub fn show_solution_va_to_pa_hex(
 }
 
 // this function calculates the answer to the stack percentage problem.
-pub fn calculate_answer_stack_percentage(seg: Segment, percent: f32, mss: u32, power_of2: u32) -> (u32, u32) {
-    let midpoint = ((percent / 100.0) * seg.size) as f32;  // in K
+pub fn calculate_answer_stack_percentage(
+    seg: Segment,
+    percent: f32,
+    mss: u32,
+    power_of2: u32,
+) -> (u32, u32) {
+    let midpoint = ((percent / 100.0) * seg.size) as f32; // in K
     let stack_max_seg_addr = seg.base as f32 - mss as f32 / 1024.0; // in K
-    let offset = (seg.base as f32 - midpoint) - stack_max_seg_addr;  // in K
-    println!("mid: {} smax: {} offset: {}", midpoint, stack_max_seg_addr, offset); // in K
-    (((offset*1024.0 + (3 << (power_of2 - 2)) as f32)) as u32, offset as u32) // in bytes
+    let offset = (seg.base as f32 - midpoint) - stack_max_seg_addr; // in K
+    
+    (
+        (offset * 1024.0 + (3 << (power_of2 - 2)) as f32) as u32,
+        offset as u32,
+    ) // in bytes
 }
 
 // this function calculates the answer to the given problem and returns the result
 // based on the following equation: PA = (-1)*(GN)(MSS) + base + offset
 // GN = grows negative. offset = the value of the virtual address shifted left 2 bits.
 // (the value of the va neglecting the final two bits)
+#[allow(clippy::neg_multiply)] // --Massey suggestion to get rid of clippy warning.
+// using (1 * (!1)) does not fix the issue, it results in -2 instead of -1
 pub fn calculate_answer(seg: Segment, mss: u32, offset: u32) -> u32 {
-    ((-1) * (seg.grows_negative as i32) * (mss as i32) + (seg.base as i32 * 1024) + offset as i32) as u32  // in bytes
+    ((-1) * (seg.grows_negative as i32) * (mss as i32) + (seg.base as i32 * 1024) + offset as i32) as u32 // in bytes
 }
 
 // compares actual answer to user answer after printing the question
@@ -301,7 +334,8 @@ pub fn compare_answer(aformat: i8, pa: u32) {
             input = input.replace("x", ""); // replace all the characters that could possibly be taken as hex prefixes (like 0, x) with empty string
             input = input.replace("X", "");
             if lib_fns::are_all_numeric(&input, 16) {
-                match lib_fns::bn_to_b10(&input.replace("0x", "").to_string(), 16) {  // use my library function to convert input to base 10 (so we can measure it!)
+                match lib_fns::bn_to_b10(&input.replace("0x", "").to_string(), 16) {
+                    // use my library function to convert input to base 10 (so we can measure it!)
                     Some(k) => {
                         if k as u32 == pa {
                             println!("Good.");
@@ -397,10 +431,11 @@ pub fn compare_answer(aformat: i8, pa: u32) {
 // returns the generated result
 pub fn get_rand_va(va_pow_2: u32, segments: Vec<Segment>, malloc: bool) -> u32 {
     let mut rng = rand::thread_rng();
-    let mut r: u32 = rng.gen_range(100, 2u32.pow(va_pow_2) + 1);  // exclusive with 2nd arg.
+    let mut r: u32 = rng.gen_range(100, 2u32.pow(va_pow_2) + 1); // exclusive with 2nd arg.
     let mut fresh_ss: u32 = 19; // the ss cant be 19 in this implementation
                                 // ensure that the SS mimics the the code, stack or heap segment numbers.
-    if !malloc {  // if not the malloc problem
+    if !malloc {
+        // if not the malloc problem
         while (fresh_ss != 0 && fresh_ss != 1 && fresh_ss != 3)
             || !valid_va(r, fresh_ss, segments.clone())
         {
@@ -408,12 +443,13 @@ pub fn get_rand_va(va_pow_2: u32, segments: Vec<Segment>, malloc: bool) -> u32 {
             fresh_ss = r >> (va_pow_2 - 2);
         }
         r
-    }
-    else {  // otherwise, we know we HAVE to return a value with a SS of 01
-        while fresh_ss != 1
-            || !valid_va(r, fresh_ss, segments.clone())
-        {
-            r = rng.gen_range(segments[1].base * 1024, (segments[1].base as f32 * 1024.0 + segments[1].size * 1024.0) as u32); // exclusive on the end so this works.
+    } else {
+        // otherwise, we know we HAVE to return a value with a SS of 01
+        while fresh_ss != 1 || !valid_va(r, fresh_ss, segments.clone()) {
+            r = rng.gen_range(
+                segments[1].base * 1024,
+                (segments[1].base as f32 * 1024.0 + segments[1].size * 1024.0) as u32,
+            ); // exclusive on the end so this works.
             fresh_ss = r >> (va_pow_2 - 2);
         }
         r
