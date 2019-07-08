@@ -26,14 +26,12 @@ Post-class: Maintain and update software periodically.
 ## Build and Run
 
 Build this program/library using the command: `cargo build` and run it with
-`cargo run`. You will need to pass a
-`--`
+`cargo run`.
 
-    cargo run -- --mean
+    cargo build --release
+    cargo run
 
 If you want to run an optimized version then run cargo with: `cargo --release`.
-
-`cargo test` performs some simple tests.
 
 ## License
 
