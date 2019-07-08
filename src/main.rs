@@ -107,6 +107,7 @@ fn main() {
                     8 => {
                         reset = true;
                         clear_screen();
+                        println!("Generated.");
                         break;
                     }
                     9 => {
@@ -648,7 +649,7 @@ fn choose_format(question_flag: u8) -> i8 {
                     }
                     else if question_flag == 1 {
                         let mut rng = rand::thread_rng(); // seed the rng
-                        choice = rng.gen_range(0, 9);
+                        choice = rng.gen_range(0, 3);
                     }
                     break;
                 }
