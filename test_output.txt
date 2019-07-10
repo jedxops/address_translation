@@ -1,0 +1,34 @@
+TEST REPORT:
+Results of running `cargo test`
+
+running 27 tests
+test lib_fns::test_16_to_10_v10 ... ok
+test lib_fns::test_16_to_10_v1 ... ok
+test lib_fns::test_16_to_10_v12 ... ok
+test lib_fns::test_16_to_10_v11 ... ok
+test lib_fns::test_16_to_10_v14 ... ok
+test lib_fns::test_16_to_10_v13 ... ok
+test lib_fns::test_16_to_10_v15 ... ok
+test lib_fns::test_16_to_10_v2 ... ok
+test lib_fns::test_16_to_10_v3 ... ok
+test lib_fns::test_16_to_10_v4 ... ok
+test lib_fns::test_16_to_10_v5 ... ok
+test lib_fns::test_16_to_10_v6 ... ok
+test lib_fns::test_16_to_10_v7 ... ok
+test lib_fns::test_16_to_10_v8 ... ok
+test lib_fns::test_16_to_10_v9 ... ok
+test lib_fns::test_allnum_v1 ... ok
+test lib_fns::test_allnum_v2 ... ok
+test lib_fns::test_allnum_v3 ... ok
+test lib_fns::test_allnum_v4 ... ok
+test lib_fns::test_allnum_v5 ... ok
+test lib_fns::test_allnum_v6 ... ok
+test lib_fns::test_bits_reqd_v1 ... ok
+test lib_fns::test_bits_reqd_v2 ... ok
+test lib_fns::test_bits_reqd_v3 ... ok
+test lib_fns::test_bits_reqd_v4 ... ok
+test lib_fns::test_bits_reqd_v5 ... ok
+test lib_fns::test_bits_reqd_v6 ... ok
+
+test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+

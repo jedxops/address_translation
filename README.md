@@ -17,16 +17,27 @@ leisure.
 ## Roadmap (tenative):
 
 Week 1)     Develop repository along with README.md, LICENSE files. 
+
             Introduce project to stakeholders (project members and professor).
+
 Week 2)     Begin development. Finish prototype.
+
 Week 3)     Demonstrate prototype. Continue development.
+
 Week 4)     Continue development.
+
 Week 5)     Finish source development.
+
 Week 6)     Demonstrate the difference between the prototype and the current version of the product. (MVP --minimum viable product).
+
             Begin turning project into a web app.
+
 Week 7)     Continue working towards turning the project into a web app.
+
 Week 8)     Finish web app development.
+
 Post-class)     Maintain and update software periodically. 
+
                 Share project with prospective CS333 students so they can test it and use it to help them with taking their OS course (CS333).
 
 ## Build and Run
@@ -191,3 +202,9 @@ http://web.cecs.pdx.edu/~bart/
 
 Rust textbook:
 Blandy, J., & Orendorff, J. (2018). Programming Rust: Fast, safe systems development. Sebastopol: OReilly Media.
+
+Link to guide referenced for making _this_ README.md (markdown file extension) file:
+https://gist.github.com/PurpleBooth/109311bb0361f32d87a2
+
+Link to guide referenced for learning to create _this_ open source project:
+https://opensource.guide/starting-a-project/
