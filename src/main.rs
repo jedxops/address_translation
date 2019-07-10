@@ -613,7 +613,7 @@ fn choose_format(question_flag: u8) -> i8 {
         let mut input_string = String::new();
         match question_flag {
             0 => {
-                println!("Choose format of desired question\n");
+                println!("\nChoose format of desired question\n");
                 println!("OPTION\t\tPROBLEM TYPE\n");
                 println!("0\u{29}\t\t--va in hex to pa in hex");
                 println!("1\u{29}\t\t--va in hex to pa in binary");
