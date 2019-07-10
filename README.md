@@ -1,8 +1,5 @@
 ## Address translation
 
-Copyright (c) 2019 Jeff Austin <jja6@pdx.edu> (github user jedexops), Kamakshi Nagar <kamakshi@pdx.edu> ()
-Some changes suggested by Bart Massey. PROJECT NAME: Address Translation gui.
-
 This program produces a random address translation problem and either
 
 * `--congratulates the user for providing the correct solution
@@ -19,7 +16,8 @@ The user can select from a variety of question formats. The question format vari
 version of this software supports questions prompting for answers in binary, hex, or decimal. The user can exit or continue practicing questions at their own 
 leisure.
 
-Roadmap (tenative):
+## Roadmap (tenative):
+
 Week 1: Develop repository along with README.md, LICENSE files. 
         Introduce project to stakeholders (project members and professor).
 Week 2: Begin development. Finish prototype.
@@ -144,6 +142,7 @@ OPTION      PROBLEM TYPE
 1)          Return to the previous menu
 2)          Exit
 1
+
 OPTION      PROBLEM TYPE
 
 0)          Translate Random Virtual Address to a corresponding Physical Address
@@ -154,8 +153,43 @@ OPTION      PROBLEM TYPE
 10)         Exit
 10
 
+## Authors
+
+Copyright (c) 2019
+Jeff Austin <jja6@pdx.edu> (github user jedexops),
+Kamakshi Nagar <kamakshi@pdx.edu> (nagarkamakshi),
+and Bart Massey <bart@cs.pdx.edu> (BartMassey).
+
 ## License
 
 This program is licensed under the "MIT License". Please
 see the file `LICENSE` in the source distribution of this
 software for license terms.
+
+## Awknowledgements
+
+Variety of changes suggested by Bart Massey. He also participated in the project by providing
+support to its developers when they had questions. Thanks and shout out to Prof. Massey!
+
+Mark Morrissey's CS333 class was the inspiration of this entire project. With his permission,
+similar practice questions and problem layouts have been designed and used throughout the
+course of this software's development. Thanks to Mark for being a great teacher and creating 
+and teaching a course which inspired this project!
+
+One or more of the developers were completely new to the rust programming language during
+this project, but still actively participated and heavily assisted in building a decently
+sized project! Shout out to this developer and to Jim Blandy and his textbook:
+Blandy, J., & Orendorff, J. (2018). Programming Rust: Fast, safe systems development. Sebastopol: OReilly Media.
+This text was used to assist with learning many of the programming techniques in rust.
+Shout out and thanks to Jim as well.
+
+## Citations
+
+Mark Morrissey --CS333 Operating Systems--Portland State University practice exams:
+https://web.cecs.pdx.edu/~markem/CS333/exams/Final%202019-01.pdf
+
+Bart Massey
+http://web.cecs.pdx.edu/~bart/
+
+Rust textbook:
+Blandy, J., & Orendorff, J. (2018). Programming Rust: Fast, safe systems development. Sebastopol: OReilly Media.

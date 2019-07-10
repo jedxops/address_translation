@@ -299,6 +299,9 @@ pub fn calculate_answer_stack_percentage(
     mss: u32,
     power_of2: u32,
 ) -> (u32, u32) {
+    if seg.size == 0.0 {
+        return (3 << (power_of2 - 2), 0);
+    }
     let midpoint = ((percent / 100.0) * seg.size) as f32; // in K
     let stack_max_seg_addr = seg.base as f32 - mss as f32 / 1024.0; // in K
     let offset = (seg.base as f32 - midpoint) - stack_max_seg_addr; // in K
@@ -309,6 +312,28 @@ pub fn calculate_answer_stack_percentage(
     ) // in bytes
 }
 
+#[test]
+pub fn test_stack_percentage_calculation_v1() {
+    let stak_seg = Segment {
+        name: SegName::Stack,
+        base: 64,
+        size: 2.0,
+        grows_negative: 1,
+    };
+    assert_eq!(114688, calculate_answer_stack_percentage(stak_seg, 0.0, 16384, 17).0);
+}
+
+#[test]
+pub fn test_stack_percentage_calculation_v2() {
+    let stak_seg = Segment {
+        name: SegName::Stack,
+        base: 64,
+        size: 0.0,
+        grows_negative: 1,
+    };
+    assert_eq!(196608, calculate_answer_stack_percentage(stak_seg, 0.0, 16384, 18).0);
+}
+
 // this function calculates the answer to the given problem and returns the result
 // based on the following equation: PA = (-1)*(GN)(MSS) + base + offset
 // GN = grows negative. offset = the value of the virtual address shifted left 2 bits.
@@ -317,6 +342,17 @@ pub fn calculate_answer_stack_percentage(
 // using (1 * (!1)) does not fix the issue, it results in -2 instead of -1
 pub fn calculate_answer(seg: Segment, mss: u32, offset: u32) -> u32 {
     ((-1) * (seg.grows_negative as i32) * (mss as i32) + (seg.base as i32 * 1024) + offset as i32) as u32 // in bytes
+}
+
+#[test]
+pub fn test_va_pa_calculation_v1() {
+    let heap_seg = Segment {
+        name: SegName::Stack,
+        base: 128,
+        size: 12.0,
+        grows_negative: 0,
+    };
+    assert_eq!(132096, calculate_answer(heap_seg, 32768, 1024));
 }
 
 // compares actual answer to user answer after printing the question

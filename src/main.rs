@@ -56,6 +56,8 @@ fn main() {
        If d --exit program
     */
 
+    #[allow(clippy::type_complexity)]   // I want to preserve the trippy C-like syntax seen here in the
+    // array of functions definition
     // array of functions for address translation questions = atqs
     let mut atqs: Vec<fn(u32, u32, Vec<calculations::Segment>) -> (u32, u32, Vec<calculations::Segment>),> = Vec::new();
 
@@ -650,6 +652,7 @@ fn choose_format(question_flag: u8) -> i8 {
                 -1
             }
         };
+        println!();
         if choice == -1 {
             continue;
         } else {
