@@ -204,7 +204,7 @@ pub fn show_solution_va_to_pa_hex(seg: Segment, ss: u32, mss: u32, mask: u32, of
         println!("0{} {:b}", ss, offset);
     }
     else {
-        println!("{} {:b}", ss, va);
+        println!("{:b} {:b}", ss, va);
     }
     println!("-- -----------------");
     println!("ss      offset\n");
