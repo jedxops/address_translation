@@ -173,7 +173,8 @@ and Bart Massey <bart@cs.pdx.edu> (BartMassey).
 
 This program is licensed under the "MIT License". Please
 see the file `LICENSE` in the source distribution of this
-software for license terms.
+software for license terms (top level directory of this
+repository).
 
 ## Awknowledgements
 
