@@ -1,0 +1,7 @@
+Development completed. Actively performing testing operations to find and cure bugs.
+We are aiming to determine the correctness of this program so we feel safe turning
+our _complete_ attention towards the web app, which is the next step.
+
+PLEASE SEE THE README.md file for more information on the road map and for details
+that could assist a future potential developer (like how-tos on building, running,
+and testing the code).
