@@ -19,6 +19,13 @@ The question format varies on the question in question as well as the number sys
 supports questions prompting for answers in binary, hex, or decimal [base 2, base 16, or base 10]. 
 The user can exit or continue practicing questions at their own leisure.
 
+## Project Inspiration
+
+This project was inspired by Mark Morrissey and his CS333 class at Portland State Univeristy. The hope is that this software will
+assist end users performing address translation with a calculation tool which verifies their address translation computation
+_process_ (math/steps). This software is intended to assist all users performing address translation regardless of their 
+purposes --educational, industrial, personal --manual or automated.
+
 ## Roadmap (tenative):
 
 Week 1)     Develop repository along with README.md, LICENSE files. 
