@@ -24,10 +24,8 @@ use std::process::exit;
 pub mod calculations;
 pub mod lib_fns;
 
-<<<<<<< HEAD
-// main function
-fn main() 
-{
+/*// main function
+fn main() {
     println!("Welcome ");
     println!("Do you want your random problem or a specific one?");
      use std::io::{stdin,stdout,Write};
@@ -39,8 +37,8 @@ fn main()
 
     //let v :vec =vec![foo(),bar()];
 
-    setup::generate_segmented_memory_layout();
-=======
+    generate_segmented_memory_layout();*/
+
 /*  Definitions:
 vas = size of virtual address space * 1024 bytes (i.e. K)
 va = virtual address
@@ -702,5 +700,4 @@ fn clear_screen() {
     for _i in 0..50 {
         println!();
     }
->>>>>>> origin/master
 }
