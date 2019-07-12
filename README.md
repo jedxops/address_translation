@@ -2,22 +2,26 @@
 
 This program produces a random address translation problem and either
 
-* `--congratulates the user for providing the correct solution
-* `--explains to the user how to solve the problem showing steps
+* --congratulates the user for providing the correct solution
+* --explains to the user how to solve the problem showing steps
 
-First, the code generates a segmented memory layout. It randomly generates values for the size of the physical memory, virtual address space, and segment sizes. It 
-also generates non-conflicting segment bases. Next, the code prompts the user with a problem requesting an address translation from a virtual address to a 
-physical address _or_ requests the user to calculate the virtual address of X percentage through the stack. The generated questions for the user are based on 
-the segmented memory layout generated --mentioned above. The numeric value component of each question is generated randomly within the range of values that the 
-memory layout provides. Regardless of if the user's solution is correct or incorrect, the program provides an option to display the steps to solving the problem. 
-The user can select from a variety of question formats. The question format varies on the question in question as well as the number system used --the current 
-version of this software supports questions prompting for answers in binary, hex, or decimal. The user can exit or continue practicing questions at their own 
-leisure.
+First, the code generates a segmented memory layout. It randomly generates values for the size of the physical memory, virtual
+address space, and segment sizes. It also generates non-conflicting segment bases. 
+
+Next, the code prompts the user with a problem requesting an address translation from a virtual address to a physical address 
+_or_ requests the user to calculate the virtual address of X percentage through the stack. The generated questions for the 
+user are based on the segmented memory layout generated --mentioned above. In addition, the arbitrary numeric component of 
+each question is generated randomly within the range of values that the memory layout provides.
+
+Regardless of if the user's solution is correct or incorrect, the program provides an option to display the steps to solving the 
+problem. The user can select from a variety of question formats after choosing a learning path upon boot of the software.
+The question format varies on the question in question as well as the number system used --the current version of this software
+supports questions prompting for answers in binary, hex, or decimal [base 2, base 16, or base 10]. 
+The user can exit or continue practicing questions at their own leisure.
 
 ## Roadmap (tenative):
 
 Week 1)     Develop repository along with README.md, LICENSE files. 
-
             Introduce project to stakeholders (project members and professor).
 
 Week 2)     Begin development. Finish prototype.
@@ -28,23 +32,22 @@ Week 4)     Continue development.
 
 Week 5)     Finish source development.
 
-Week 6)     Demonstrate the difference between the prototype and the current version of the product. (MVP --minimum viable product).
-
-            Begin turning project into a web app.
+Week 6)     Demonstrate the difference between the prototype and the current version of the product.
+            (MVP --minimum viable product); begin turning project into a web app.
 
 Week 7)     Continue working towards turning the project into a web app.
 
 Week 8)     Finish web app development.
 
 Post-class)     Maintain and update software periodically. 
-
-                Share project with prospective CS333 students so they can test it and use it to help them with taking their OS course (CS333).
+                Share project with prospective CS333 students so they can test it and use it to help
+                them with taking their OS course (CS333 at PSU).
 
 ## Build and Run
 
 First, clone this repository and use `git clone repository_link` on your local machine to clone the repository and work with it.
 
-In order to build this repository, you must install rust. `rustup` is a great way to do this https://rustup.rs/
+In order to build this repository, you must install rust. `rustup` is a great way to do this: https://rustup.rs/
 
 Once rust has been installed, you can build this program/library using the command: `cargo build` and run it with
 `cargo run`.
@@ -173,7 +176,7 @@ and Bart Massey <bart@cs.pdx.edu> (BartMassey).
 
 This program is licensed under the "MIT License". Please
 see the file `LICENSE` in the source distribution of this
-software for license terms (top level directory of this
+software for license terms (highest level directory of this
 repository).
 
 ## Awknowledgements
@@ -182,13 +185,13 @@ Variety of changes suggested by Bart Massey. He also participated in the project
 support to its developers when they had questions. Thanks and shout out to Prof. Massey!
 
 Mark Morrissey's CS333 class was the inspiration of this entire project. With his permission,
-similar practice questions and problem layouts have been designed and used throughout the
+similar practice questions and problem layouts from his course have been designed and used throughout the
 course of this software's development. Thanks to Mark for being a great teacher and creating 
-and teaching a course which inspired this project!
+and teaching the course which inspired this project!
 
 One or more of the developers were completely new to the rust programming language during
 this project, but still actively participated and heavily assisted in building a decently
-sized project! Shout out to this developer and to Jim Blandy and his textbook:
+sized project. A big thank you to this developer and to Jim Blandy and his textbook:
 Blandy, J., & Orendorff, J. (2018). Programming Rust: Fast, safe systems development. Sebastopol: OReilly Media.
 This text was used to assist with learning many of the programming techniques in rust.
 Shout out and thanks to Jim as well.
