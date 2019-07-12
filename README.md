@@ -165,7 +165,7 @@ OPTION      PROBLEM TYPE
 ## Authors
 
 Copyright (c) 2019
-Jeff Austin <jja6@pdx.edu> (github user jedexops),
+Jeff Austin <jja6@pdx.edu> (github user jedxops),
 Kamakshi Nagar <kamakshi@pdx.edu> (nagarkamakshi),
 and Bart Massey <bart@cs.pdx.edu> (BartMassey).
 
