@@ -1,0 +1,14 @@
+{{#*inline "page"}}
+
+<section id="result">
+  <textarea readonly rows= "20">
+    Your query was {{query}}.
+    Responses:
+    {{#each items}}
+      {{ this }}
+    {{/each}}
+  </textarea>
+</section>
+
+{{/inline}}
+{{~> (parent)~}}
