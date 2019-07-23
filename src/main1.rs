@@ -19,10 +19,10 @@
 extern crate rand;
 use rand::Rng;
 use std::io;
-//use std::io::prelude::*;
 use std::process::exit;
-pub mod calculations;
-pub mod lib_fns;
+use crate::lib_fns;
+use crate::calculations;
+
 
 /*  Definitions:
 vas = size of virtual address space * 1024 bytes (i.e. K)
@@ -34,7 +34,7 @@ ss = segment selector (or segment number)
 mss = maximum segment size  */
 
 // main function --the menu is managed here
-fn main() {
+/*fn main() {
     /*
     General flow:
     1) Generate memory layout
@@ -130,7 +130,7 @@ fn main() {
             }
         }
     }
-}
+} */
 
 // this function calculates the bounds of the address space and generates a segmented memory
 // model for the code heap and stack sections.
@@ -175,7 +175,8 @@ pub fn generate_segmented_memory_layout() -> (u32, u32, Vec<calculations::Segmen
 // text taken with permission from Mark Morissey's slides
 pub fn print_layout(vas: u32, pm: u32, power_of2: u32, segments: Vec<calculations::Segment>) {
     println!();
-    println!("Assume a {}KB virtual address space and a {}KB physical memory. Virtual addresses are {} bits and segmentation is being used. The segment information is:", vas, pm, power_of2);
+    println!("Assume a {}KB virtual address space and a {}KB physical memory. Virtual addresses are {} bits and segmentation is being used.
+    The segment information is:", vas, pm, power_of2);
     // print ecessary info.
     println!("\t\tSegment Number\tBase\tSize\tGrowsNegative");
     println!(
@@ -199,6 +200,15 @@ pub fn print_layout(vas: u32, pm: u32, power_of2: u32, segments: Vec<calculation
         segments[2].size,
         segments[2].grows_negative
     );
+}
+
+pub fn str(segments: Vec<calculations::Segment>)->(u32,f32)
+{
+    //let mut v:Vec<String> = vec![];
+    //v.push(segments[0].base.to_string());
+    //v.push(segments[0].size.to_string());
+    //v
+    (segments[0].base,segments[0].size)
 }
 
 // takes a format flag passed from the client and prints the question returning a format specifier (u32 flag).

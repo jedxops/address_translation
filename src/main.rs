@@ -7,6 +7,10 @@ use rocket_contrib::templates::Template;
 
 mod files;
 mod post;
+mod lib_fns;
+mod main1;
+mod calculations;
+
 fn rocket() -> rocket::Rocket {
     rocket::ignite()
         .attach(Template::fairing())

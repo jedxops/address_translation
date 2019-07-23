@@ -2,8 +2,18 @@
 
 <section id="result">
   <textarea readonly rows= "20">
-    Your query was {{query}}.
-    Responses:
+    Your choice was {{query}}.
+    Question is :
+    Assume a {{v1}}KB virtual address space and a {{v2}}KB physical memory.
+    Virtual addresses are {{v3}} bits and segmentation is being used.
+
+    Segment   Number    Base    Size    GrowsNegative
+    Code      00                        0
+    Heap      01                        0
+    Stack     11                        1
+
+
+{{items}}
     {{#each items}}
       {{ this }}
     {{/each}}
