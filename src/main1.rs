@@ -18,6 +18,7 @@
 // import necessary libraries!
 extern crate rand;
 use rand::Rng;
+use std::fmt::Write;
 use std::io;
 use std::process::exit;
 use crate::lib_fns;
@@ -173,33 +174,35 @@ pub fn generate_segmented_memory_layout() -> (u32, u32, Vec<calculations::Segmen
 
 // prints the generated segmented memory model
 // text taken with permission from Mark Morissey's slides
-pub fn print_layout(vas: u32, pm: u32, power_of2: u32, segments: Vec<calculations::Segment>) {
-    println!();
-    println!("Assume a {}KB virtual address space and a {}KB physical memory. Virtual addresses are {} bits and segmentation is being used.
+pub fn print_layout(vas: u32, pm: u32, power_of2: u32, segments: Vec<calculations::Segment>) ->String{
+    let mut to_print = String::new();
+    writeln!(&mut to_print,"");
+    writeln!(&mut to_print,"Assume a {}KB virtual address space and a {}KB physical memory. Virtual addresses are {} bits and segmentation is being used.
     The segment information is:", vas, pm, power_of2);
     // print ecessary info.
-    println!("\t\tSegment Number\tBase\tSize\tGrowsNegative");
-    println!(
-        "\t\t{}\t00\t{}K\t{}K\t{}",
+    writeln!(&mut to_print,"\t\tSegment Number\tBase\tSize\tGrowsNegative");
+    writeln!(
+        &mut to_print,"\t\t{}\t00\t{}K\t{}K\t{}",
         calculations::SEG_NAMES[segments[0].name as usize],
         segments[0].base,
         segments[0].size,
         segments[0].grows_negative
     );
-    println!(
-        "\t\t{}\t01\t{}K\t{}K\t{}",
+    writeln!(
+        &mut to_print,"\t\t{}\t01\t{}K\t{}K\t{}",
         calculations::SEG_NAMES[segments[1].name as usize],
         segments[1].base,
         segments[1].size,
         segments[1].grows_negative
     );
-    println!(
-        "\t\t{}\t11\t{}K\t{}K\t{}",
+    writeln!(
+        &mut to_print,"\t\t{}\t11\t{}K\t{}K\t{}",
         calculations::SEG_NAMES[segments[2].name as usize],
         segments[2].base,
         segments[2].size,
         segments[2].grows_negative
     );
+    to_print
 }
 
 pub fn str(segments: Vec<calculations::Segment>)->(u32,f32)
@@ -246,7 +249,8 @@ pub fn print_question_stack_percentage(percent: u32, question_format: i8) -> i8 
 
 // takes a format flag passed from the client and prints the question returning a tuple of format specifiers
 // question text taken with permission from Mark Morissey's slides
-pub fn print_question_va_to_pa(va: u32, format_flag: i8, malloc: bool) -> (i8, i8) {
+pub fn print_question_va_to_pa(va: u32, format_flag: i8, malloc: bool) -> (i8, i8,String) {
+let mut to_print = String:new();
     let qformat = match format_flag {
         0 | 1 | 2 => 16,
         3 | 4 | 5 => 2,
@@ -264,38 +268,38 @@ pub fn print_question_va_to_pa(va: u32, format_flag: i8, malloc: bool) -> (i8, i
     }
     if !malloc {
         match qformat {
-            16 => println!(
+            16 => writeln!(&mut to_print,
                 "Virtual Address {:#X} refers to what physical address (in base {})?",
                 va, aformat
             ),
-            2 => println!(
+            2 => writeln!(&mut to_print,
                 "Virtual Address {:b} refers to what physical address (in base {})?",
                 va, aformat
             ),
-            10 => println!(
+            10 => writeln!(&mut to_print,
                 "Virtual Address {} (base 10) refers to what physical address (in base {})?",
                 va, aformat
             ),
             _ => {
-                println!("Unexpected error. Exiting");
+                writeln!(&mut to_print,"Unexpected error. Exiting");
                 calculations::error();
             }
         }
     } else {
         match qformat {
-            16 => println!("A call to malloc returns a virtual address of {:#X}. What is the physical address (in base {}) of this virtual address?"
+            16 => writeln!(&mut to_print,"A call to malloc returns a virtual address of {:#X}. What is the physical address (in base {}) of this virtual address?"
                    , va, aformat),
-             2 => println!("A call to malloc returns a virtual address of {:b}. What is the physical address (in base {}) of this virtual address?"
+             2 => writeln!(&mut to_print,"A call to malloc returns a virtual address of {:b}. What is the physical address (in base {}) of this virtual address?"
                    , va, aformat),
-            10 => println!("A call to malloc returns a virtual address of {} (base 10). What is the physical address (in base {}) of this virtual address?"
+            10 => writeln!(&mut to_print,"A call to malloc returns a virtual address of {} (base 10). What is the physical address (in base {}) of this virtual address?"
                    , va, aformat),
             _ => {
-                  println!("Unexpected error. Exiting");
+                  writeln!(&mut to_print,"Unexpected error. Exiting");
                   calculations::error();
             }
         }
     }
-    (qformat, aformat)
+    (qformat, aformat,to_print)
 }
 
 fn va_to_pa(

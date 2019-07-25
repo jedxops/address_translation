@@ -5,9 +5,10 @@
 
 // import necessary crates!
 // extern crate rand;
-pub use crate::lib_fns;
+use crate::lib_fns;
 use rand::Rng;
 use std::io;
+use std::fmt::Write as OtherWrite;
 use std::io::prelude::*;
 use std::io::Write;
 use std::process::exit; // need flush() method.
@@ -41,17 +42,18 @@ pub fn show_solution_stack_va(
     power_of2: u32,
     percent: f32,
     aformate: i8,
-) {
-    println!("--Note that the stack base and size are parameters in Physical Memory --not Virtual Memory.");
-    println!("The problem prompts a translation from PA to VA --the address corresponding to the specified portion through the stack as a virtual address");
-    println!("Therefore, calculating the percent of the stack size and subtracting it from the stack base yields an incorrect translation.\n");
-    println!("Drawing a picture helps to understand this non-intuitive math.");
+) ->String{
+    let mut to_print = String::new();
+    writeln(&mut to_print,"--Note that the stack base and size are parameters in Physical Memory --not Virtual Memory.");
+    writeln!(&mut to_print,"The problem prompts a translation from PA to VA --the address corresponding to the specified portion through the stack as a virtual address");
+    writeln!(&mut to_print,"Therefore, calculating the percent of the stack size and subtracting it from the stack base yields an incorrect translation.\n");
+    writeln!(&mut to_print,"Drawing a picture helps to understand this non-intuitive math.");
 
-    println!(
+    writeln!(&mut to_print,
         "\nStep 1: Calculate {}% into the stack _size_ in K (as a multiple of 1024)",
         percent
     );
-    println!(
+    writeln!(&mut to_print,
         "{}% * {}K = ({} * {})K = {}K\n",
         percent,
         seg.size,
@@ -60,19 +62,19 @@ pub fn show_solution_stack_va(
         seg.size * (percent / 100.0)
     );
 
-    println!("Step 2: Calculate the maximum segment size in relation to the stack's base");
-    println!("Remember --the stack grows downwards from its base.\n");
-    println!(
+    writeln!(&mut to_print,"Step 2: Calculate the maximum segment size in relation to the stack's base");
+    writeln!(&mut to_print,"Remember --the stack grows downwards from its base.\n");
+    writeln!(&mut to_print,
         "MSS = 2^(number of bits in the offset) = 2^{} = {} bytes",
         power_of2 - 2,
         2u32.pow(power_of2 - 2)
     );
-    println!("=> If the stack segment were to use up its MSS, it would grow downwards to {}K - {}K = {}K\n", 
+    writeln!(&mut to_print,"=> If the stack segment were to use up its MSS, it would grow downwards to {}K - {}K = {}K\n",
             seg.base, 2u32.pow(power_of2 -2) / 1024, seg.base - 2u32.pow(power_of2 -2) / 1024);
 
-    println!("Step 3: Calculate the offset");
-    println!("Subtract the address of the maximum segment size from the stack base minus the calculated portion of the stack size in K:");
-    println!(
+    writeln!(&mut to_print,"Step 3: Calculate the offset");
+    writeln!(&mut to_print,"Subtract the address of the maximum segment size from the stack base minus the calculated portion of the stack size in K:");
+    writeln!(&mut to_print,
         "({}K - {}K) - {}K = {}K - {}K = {}K",
         seg.base,
         seg.size * (percent / 100.0),
@@ -81,26 +83,26 @@ pub fn show_solution_stack_va(
         seg.base - 2u32.pow(power_of2 - 2) / 1024,
         offset
     );
-    println!("This is the _offset_ portion of the binary number to be constructed for the virtual address.\n");
+    writeln!(&mut to_print,"This is the _offset_ portion of the binary number to be constructed for the virtual address.\n");
 
-    println!("Step 4: Append the appropriate segment selector bits to the offset");
-    println!("The SS = the top two bits of the virtual address. If virtual addresses use up 17 bits, then the SS goes in the place");
-    println!("of the 15th and 16th bits, counting from zero.\n");
-    println!("Since this translation is to a stack VA, this means the segment selector bits for that address must be 11 already.");
-    println!("=> SS = Stack = 11");
-    println!("Append these two SS bits on to the highest portion of the offset binary:");
+    writeln!(&mut to_print,"Step 4: Append the appropriate segment selector bits to the offset");
+    writeln!(&mut to_print,"The SS = the top two bits of the virtual address. If virtual addresses use up 17 bits, then the SS goes in the place");
+    writeln!(&mut to_print,"of the 15th and 16th bits, counting from zero.\n");
+    writeln!(&mut to_print,"Since this translation is to a stack VA, this means the segment selector bits for that address must be 11 already.");
+    writeln!(&mut to_print,"=> SS = Stack = 11");
+    writeln!(&mut to_print,"Append these two SS bits on to the highest portion of the offset binary:");
 
-    println!("  {:b}\t--SS bits", 3 << (power_of2 - 2));
-    print!("+ ");
+    writeln!(&mut to_print,"  {:b}\t--SS bits", 3 << (power_of2 - 2));
+    write!(&mut to_print,"+ ");
     lib_fns::print_leading_zeros(offset * 1024, power_of2);
-    println!("{:b}\t--OFFSET", offset * 1024);
+    writeln!(&mut to_print,"{:b}\t--OFFSET", offset * 1024);
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely. print! doesnt print a line.
     print!("--");
     lib_fns::print_hyphens(3 << (power_of2 - 2));
     io::stdout().flush().unwrap();
-    println!("  {:b}", offset * 1024 + (3 << (power_of2 - 2)));
+    writeln!(&mut to_print,"  {:b}", offset * 1024 + (3 << (power_of2 - 2)));
 
-    println!(
+    writeln!(&mut to_print,
         "{:horiz$}VA in bytes",
         " ",
         horiz = (lib_fns::num_bits_reqd(3 << (power_of2 - 2)) / 3) as usize
@@ -108,17 +110,18 @@ pub fn show_solution_stack_va(
 
     match aformate {
         16 => {
-            println!("=> VA = {:#X} bytes", va);
+            writeln!(&mut to_print,"=> VA = {:#X} bytes", va);
         }
         2 => {}
         10 => {
-            println!("=> VA = {} bytes", va);
+            writeln!(&mut to_print,"=> VA = {} bytes", va);
         }
         _ => {
             error();
         }
     }
-    println!("Check out youtube for shortcuts on converting to and from binary, decimal, and hexadecimal by hand.\n");
+    writeln!(&mut to_print,"Check out youtube for shortcuts on converting to and from binary, decimal, and hexadecimal by hand.\n");
+to_print
 }
 
 // shows the `student` the steps to solving the VA to PA problem
@@ -130,147 +133,149 @@ pub fn show_solution_va_to_pa_hex(
     pa: u32,
     power_of2: u32,
     qaformate: (i8, i8),
-) {
+) ->String {
+    let mut to_print = String:new();
     match qaformate.0 {
         16 => {
-            println!("\nStep 1: Convert virtual address {:#X} to binary", va);
-            print!("{:#X} = ", va);
+            writeln!(&mut to_print,"\nStep 1: Convert virtual address {:#X} to binary", va);
+            write!(&mut to_print,"{:#X} = ", va);
         }
         2 => {
-            println!("\nStep 1: Convert virtual address {:b} to binary", va);
+            writeln!(&mut to_print,"\nStep 1: Convert virtual address {:b} to binary", va);
             print!("{:b} = ", va);
         }
         10 => {
-            println!("\nStep 1: Convert virtual address {} to binary", va);
-            print!("{} = ", va);
+            writeln!(&mut to_print,"\nStep 1: Convert virtual address {} to binary", va);
+            write!(&mut to_print,"{} = ", va);
         }
         _ => {
             error();
         }
+
     }
     // lib_fns::print_leading_zeros(va, power_of2);
     // print!("{:b} = ", va);
     lib_fns::print_readable_binary(va, power_of2); // I think this function is cool, visit the file to check it out.
-    println!();
+    writeln!(&mut to_print,"");
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely, as we are not using the _println_ macro here
 
-    println!("\nStep 2: Note the Virtual Address Space size (abbrv. VAS --measured in bits) and separate the Segment Selector (SS) from the Offset portion of the binary.");
-    println!("Remember --if the amount of bits in the Virtual Address Space differs from the amount of bits in the binary calculated, we must either");
-    println!("\n\ta\u{29} Pad the calculated binary number with zeros until the length of the binary equals the amount of bits in the VAS.");
-    println!("\n\tb\u{29} Trim the top bits of the calculated binary until the length of the binary equals the amount of bits in the VAS.\n");
-    println!(
+    writeln!(&mut to_print,"\nStep 2: Note the Virtual Address Space size (abbrv. VAS --measured in bits) and separate the Segment Selector (SS) from the Offset portion of the binary.");
+    writeln!(&mut to_print,"Remember --if the amount of bits in the Virtual Address Space differs from the amount of bits in the binary calculated, we must either");
+    writeln!(&mut to_print,"\n\ta\u{29} Pad the calculated binary number with zeros until the length of the binary equals the amount of bits in the VAS.");
+    writeln!(&mut to_print,"\n\tb\u{29} Trim the top bits of the calculated binary until the length of the binary equals the amount of bits in the VAS.\n");
+    writeln!(&mut to_print,
         "In this case, the Virtual Address Space size in bits is {}.",
         power_of2
     );
-    println!(
+    writeln!(&mut to_print,
         "So, only the first {} bits of the calculated binary are considered.\n",
         power_of2
     );
-    println!("The SS is always either 00, 01, or 11 => SS \u{3F5} \u{7B}{0, 1, 3\u{7D}}");
-    println!("\nDiscard the segment selector bits from the offset calculation.\n");
+    writeln!(&mut to_print,"The SS is always either 00, 01, or 11 => SS \u{3F5} \u{7B}{0, 1, 3\u{7D}}");
+    writeln!(&mut to_print,"\nDiscard the segment selector bits from the offset calculation.\n");
     if ss != 3 {
-        println!("0{} {:b}", ss, offset);
+        writeln!(&mut to_print,"0{} {:b}", ss, offset);
     } else {
-        println!("{:b} {:b}", ss, offset);
+        writeln!(&mut to_print,"{:b} {:b}", ss, offset);
     }
-    print!("-- ");
+    write!(&mut to_print,"-- ");
     lib_fns::print_hyphens(offset);
-    println!(
+    writeln!(&mut to_print,
         "SS {:x_axis$}OFFSET",
         " ",
         x_axis = ((lib_fns::num_bits_reqd(offset) / 2) / 2) as usize
     );
 
-    println!("\nStep 3: Note the value of the Segment Selector and Offset bits:");
-    println!("00 ===> Code");
-    println!("01 ===> Heap");
-    println!("11 ===> Stack\n");
-    println!("Offset = {:b} = {} bytes\n", offset, offset);
+    writeln!(&mut to_print,"\nStep 3: Note the value of the Segment Selector and Offset bits:");
+    writeln!(&mut to_print,"00 ===> Code");
+    writeln!(&mut to_print,"01 ===> Heap");
+    writeln!(&mut to_print,"11 ===> Stack\n");
+    writeln!(&mut to_print,"Offset = {:b} = {} bytes\n", offset, offset);
 
-    println!("Step 4: Note: PA = (-1)*(GN)*(MSS) + base + offset\n");
-    println!("GN = `grows negative`. If SS = 11 => SS = Stack => GN = 1. Otherwise, GN = 0.");
-    println!("MSS = `maximum segment size`. MSS = 2^(number of bits in the offset)");
-    println!("Base = the base of the segment, measured in bytes. Value provided in table.");
-    println!(
+    writeln!(&mut to_print,"Step 4: Note: PA = (-1)*(GN)*(MSS) + base + offset\n");
+    writeln!(&mut to_print,"GN = `grows negative`. If SS = 11 => SS = Stack => GN = 1. Otherwise, GN = 0.");
+    writeln!(&mut to_print,"MSS = `maximum segment size`. MSS = 2^(number of bits in the offset)");
+    writeln!(&mut to_print,"Base = the base of the segment, measured in bytes. Value provided in table.");
+    writeln!(&mut to_print,
         "The offset has already been calculated: offset = {} bytes (base 10)",
         offset
     );
 
-    println!(
+    writeln!(&mut to_print,
         "There are {} bits in the offset, so the MSS is 2^{} = {} bytes.",
         power_of2 - 2,
         power_of2 - 2,
         2u32.pow(power_of2 - 2)
     );
     if ss == 0 {
-        println!("The SS = 00 (base 2) = 0 (base 10) => SS = Code Segment => GN = 0");
-        println!("PA (in bytes) = (-1)*(GN)*(MSS) + base + offset\n");
-        println!(
+        writeln!(&mut to_print,"The SS = 00 (base 2) = 0 (base 10) => SS = Code Segment => GN = 0");
+        writeln!(&mut to_print,"PA (in bytes) = (-1)*(GN)*(MSS) + base + offset\n");
+        writeln!(&mut to_print,
             "=> PA = (-1)(0)(2^{}) + ({}K) + {} bytes",
             power_of2 - 2,
             seg.base,
             offset
         );
-        println!(
+        writeln!(&mut to_print,
             "=> PA = (-1)(0)({}) + ({} * 1024) + {} bytes",
             2u32.pow(power_of2 - 2),
             seg.base,
             offset
         );
-        println!("=> PA = 0 + ({}) + {} bytes", seg.base * 1024, offset);
-        println!("=> PA = {} bytes", (seg.base * 1024) + offset);
+        writeln!(&mut to_print,"=> PA = 0 + ({}) + {} bytes", seg.base * 1024, offset);
+        writeln!(&mut to_print,"=> PA = {} bytes", (seg.base * 1024) + offset);
         if pa != (seg.base * 1024) + offset {
-            println!("Error. Conflicting calculations of pa");
+            writeln!(&mut to_print,"Error. Conflicting calculations of pa");
             exit(-1);
         }
     } else if ss == 1 {
-        println!("The SS = 01 (base 2) = 1 (base 10) => SS = Heap Segment => GN = 0");
-        println!("PA (in bytes) = (-1)*(GN)*(MSS) + base + offset\n");
-        println!(
+        writeln!(&mut to_print,"The SS = 01 (base 2) = 1 (base 10) => SS = Heap Segment => GN = 0");
+        writeln!(&mut to_print,"PA (in bytes) = (-1)*(GN)*(MSS) + base + offset\n");
+        writeln!(&mut to_print,
             "=> PA = (-1)(0)(2^{}) + ({}K) + {} bytes",
             power_of2 - 2,
             seg.base,
             offset
         );
-        println!(
+        writeln!(&mut to_print,
             "=> PA = (-1)(0)({}) + ({} * 1024) + {} bytes",
             2u32.pow(power_of2 - 2),
             seg.base,
             offset
         );
-        println!("=> PA = 0 + ({}) + {} bytes", seg.base * 1024, offset);
-        println!("=> PA = {} bytes", (seg.base * 1024) + offset);
+        writeln!(&mut to_print,"=> PA = 0 + ({}) + {} bytes", seg.base * 1024, offset);
+        writeln!(&mut to_print,"=> PA = {} bytes", (seg.base * 1024) + offset);
         if pa != (seg.base * 1024) + offset {
-            println!("Error. Conflicting calculations of pa");
+            writeln!(&mut to_print,"Error. Conflicting calculations of pa");
             exit(-1);
         }
     } else if ss == 3 {
-        println!("The SS = 11 (base 2) = 3 (base 10) => SS = Stack Segment => GN = 1");
-        println!("PA (in bytes) = (-1)*(GN)*(MSS) + base + offset\n");
-        println!(
+        writeln!(&mut to_print,"The SS = 11 (base 2) = 3 (base 10) => SS = Stack Segment => GN = 1");
+        writeln!(&mut to_print,"PA (in bytes) = (-1)*(GN)*(MSS) + base + offset\n");
+        writeln!(&mut to_print,
             "=> PA = (-1)(1)(2^{}) + ({}K) + {} bytes",
             power_of2 - 2,
             seg.base,
             offset
         );
-        println!(
+        writeln!(&mut to_print,
             "=> PA = (-1)(1)({}) + ({} * 1024) + {} bytes",
             2u32.pow(power_of2 - 2),
             seg.base,
             offset
         );
-        println!(
+        writeln!(&mut to_print,
             "=> PA = (-{}) + ({}) + {} bytes",
             2u32.pow(power_of2 - 2),
             seg.base * 1024,
             offset
         );
-        println!(
+        writeln!(&mut to_print,
             "=> PA = {} bytes",
             ((seg.base * 1024) + offset) - 2u32.pow(power_of2 - 2)
         );
         if pa != (seg.base * 1024) + offset - 2u32.pow(power_of2 - 2) {
-            println!("Error. Conflicting calculations of pa");
+            writeln!(&mut to_print,"Error. Conflicting calculations of pa");
             exit(-1);
         }
     } else {
@@ -279,17 +284,18 @@ pub fn show_solution_va_to_pa_hex(
 
     match qaformate.1 {
         16 => {
-            println!("=> PA = {:#X} bytes", pa);
+            writeln!(&mut to_print,"=> PA = {:#X} bytes", pa);
         }
         2 => {
-            println!("=> PA = {:b} bytes", pa);
+            writeln!(&mut to_print,"=> PA = {:b} bytes", pa);
         }
         10 => {}
         _ => {
             error();
         }
     }
-    println!("Check out youtube for shortcuts on converting to and from binary, decimal, and hexadecimal by hand.\n");
+    writeln!(&mut to_print,"Check out youtube for shortcuts on converting to and from binary, decimal, and hexadecimal by hand.\n");
+to_print
 }
 
 // this function calculates the answer to the stack percentage problem.
@@ -305,7 +311,7 @@ pub fn calculate_answer_stack_percentage(
     let midpoint = ((percent / 100.0) * seg.size) as f32; // in K
     let stack_max_seg_addr = seg.base as f32 - mss as f32 / 1024.0; // in K
     let offset = (seg.base as f32 - midpoint) - stack_max_seg_addr; // in K
-    
+
     (
         (offset * 1024.0 + (3 << (power_of2 - 2)) as f32) as u32,
         offset as u32,
@@ -360,13 +366,13 @@ pub fn compare_answer(aformat: i8, pa: u32) {
     let mut input = String::new();
     match aformat {
         16 => {
-            println!("Type your answer in hexadecimal format with or without the `0x` then press enter and ctrl+d");
+            writeln!(&mut to_print,"Type your answer in hexadecimal format with or without the `0x` then press enter and ctrl+d");
             // the read_to_string writes the input data to its argument, not the return value.
             input = match io::stdin().read_to_string(&mut input) {
                 Ok(_usize_bytes) => input.to_string().trim().to_string(),
                 Err(_) => "".to_string(),
             };
-            println!();
+            writeln!(&mut to_print,"");
             input = input.replace("x", ""); // replace all the characters that could possibly be taken as hex prefixes (like 0, x) with empty string
             input = input.replace("X", "");
             if lib_fns::are_all_numeric(&input, 16) {
@@ -374,30 +380,30 @@ pub fn compare_answer(aformat: i8, pa: u32) {
                     // use my library function to convert input to base 10 (so we can measure it!)
                     Some(k) => {
                         if k as u32 == pa {
-                            println!("Good.");
+                            writeln!(&mut to_print,"Good.");
                         } else {
-                            println!("INCORRECT.\n");
-                            println!("your answer: {:#X} bytes\nactual: {:#X} bytes", k, pa);
+                            writeln!(&mut to_print,"INCORRECT.\n");
+                            writeln!(&mut to_print,"your answer: {:#X} bytes\nactual: {:#X} bytes", k, pa);
                         }
                     }
                     None => {
-                        println!("INCORRECT.\n");
-                        println!("your answer: {} bytes\nactual: {:#X} bytes", input, pa);
+                        writeln!(&mut to_print,"INCORRECT.\n");
+                        writeln!(&mut to_print,"your answer: {} bytes\nactual: {:#X} bytes", input, pa);
                     }
                 }
             } else {
-                println!("INCORRECT.\n");
-                println!("your answer: {} bytes\nactual: {:#X} bytes", input, pa);
+                writeln!(&mut to_print,"INCORRECT.\n");
+                writeln!(&mut to_print,"your answer: {} bytes\nactual: {:#X} bytes", input, pa);
             }
             return;
         }
         2 => {
-            println!("Type your answer in binary format with or without leading zeros then press enter and ctrl+d");
+            writeln!(&mut to_print,"Type your answer in binary format with or without leading zeros then press enter and ctrl+d");
             input = match io::stdin().read_to_string(&mut input) {
                 Ok(_usize_bytes) => input.to_string().trim().to_string(),
                 Err(_) => "".to_string(),
             };
-            println!();
+            writeln!(&mut to_print,"");
             input = input.replace("x", "");
             input = input.replace("X", ""); // replace all the characters that could possibly be taken as hex prefixes (like 0, x) with empty string
             if lib_fns::are_all_numeric(&input, 2) {
@@ -405,59 +411,59 @@ pub fn compare_answer(aformat: i8, pa: u32) {
                 match lib_fns::bn_to_b10(&input.trim().to_string(), 2) {
                     Some(k) => {
                         if k as u32 == pa {
-                            println!("Good.");
+                            writeln!(&mut to_print,"Good.");
                         } else {
-                            println!("INCORRECT.\n");
-                            println!(
+                            writeln!(&mut to_print,"INCORRECT.\n");
+                            writeln!(&mut to_print,
                                 "your answer: {:b} bytes bytes\nactual: {:b} bytes bytes",
                                 k, pa
                             );
                         }
                     }
                     None => {
-                        println!("INCORRECT.\n");
-                        println!("your answer: {} bytes\nactual: {:b} bytes", input, pa);
+                        writeln!(&mut to_print,"INCORRECT.\n");
+                        writeln!(&mut to_print,"your answer: {} bytes\nactual: {:b} bytes", input, pa);
                     }
                 }
             } else {
-                println!("INCORRECT.\n");
-                println!("your answer: {} bytes\nactual: {:b} bytes", input, pa);
+                writeln!(&mut to_print,"INCORRECT.\n");
+                writeln!(&mut to_print,"your answer: {} bytes\nactual: {:b} bytes", input, pa);
             }
             return;
         }
         10 => {
-            println!("Type your answer in decimal format (base 10, no decimal points) then press enter and ctrl+d");
+            writeln!(&mut to_print,"Type your answer in decimal format (base 10, no decimal points) then press enter and ctrl+d");
             // the read_to_string writes the input data to its argument, not the return value.
             input = match io::stdin().read_to_string(&mut input) {
                 Ok(_usize_bytes) => input.to_string().trim().to_string(),
                 Err(_) => "".to_string(),
             };
-            println!();
+            writeln!(&mut to_print,"");
             input = input.replace("x", "");
             input = input.replace("X", "");
             if lib_fns::are_all_numeric(&input, 10) {
                 match lib_fns::bn_to_b10(&input.trim().to_string(), 10) {
                     Some(k) => {
                         if k as u32 == pa {
-                            println!("Good.");
+                            writeln!(&mut to_print,"Good.");
                         } else {
-                            println!("INCORRECT.\n");
-                            println!("your answer: {} bytes\nactual: {} bytes", k, pa);
+                            writeln!(&mut to_print,"INCORRECT.\n");
+                            writeln!(&mut to_print,"your answer: {} bytes\nactual: {} bytes", k, pa);
                         }
                     }
                     None => {
-                        println!("INCORRECT.\n");
-                        println!("your answer: {} bytes\nactual: {} bytes", input, pa);
+                        writeln!(&mut to_print,"INCORRECT.\n");
+                        writeln!(&mut to_print,"your answer: {} bytes\nactual: {} bytes", input, pa);
                     }
                 }
             } else {
-                println!("INCORRECT.\n");
-                println!("your answer: {} bytes\nactual: {} bytes", input, pa);
+                writeln!(&mut to_print,"INCORRECT.\n");
+                writeln!(&mut to_print,"your answer: {} bytes\nactual: {} bytes", input, pa);
             }
             return;
         }
         _ => {
-            println!("Error. Unexpected format specifier. Fatal error. Terminating program");
+            writeln!(&mut to_print,"Error. Unexpected format specifier. Fatal error. Terminating program");
             exit(-1)
         }
     }
@@ -523,7 +529,7 @@ pub fn valid_va(num: u32, fresh_ss: u32, segments: Vec<Segment>) -> bool {
 }
 
 pub fn error() {
-    println!("Encountered fatal error. Exiting");
+    writeln!(&mut to_print,"Encountered fatal error. Exiting");
     exit(-1);
 }
 
