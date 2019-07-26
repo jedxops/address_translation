@@ -16,7 +16,6 @@ mod calculations;
 mod files;
 mod lib_fns;
 mod post;
-
 fn rocket() -> rocket::Rocket {
     rocket::ignite().attach(Template::fairing()).mount(
         "/",

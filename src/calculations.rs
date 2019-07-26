@@ -524,7 +524,8 @@ pub fn test_va_pa_calculation_v1() {
 }
 
 // compares actual answer to user answer after printing the question
-pub fn compare_answer(aformat: i8, pa: u32) {
+pub fn compare_answer(aformat: i8, pa: u32) ->String{
+    let mut to_print = String::new();
     let mut input = String::new();
     let mut to_print = String::new();
     match aformat {
@@ -673,6 +674,7 @@ pub fn compare_answer(aformat: i8, pa: u32) {
             exit(-1)
         }
     }
+    to_print
 }
 
 // generates a problem prompting for a VA to PA translation
