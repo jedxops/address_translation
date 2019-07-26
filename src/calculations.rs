@@ -132,7 +132,7 @@ pub fn show_solution_stack_va(
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely. print! doesnt print a line.
 
     write!(&mut to_print, "--").unwrap();
-    lib_fns::print_hyphens(3 << (power_of2 - 2));
+    write!(&mut to_print, "{}", lib_fns::print_hyphens(3 << (power_of2 - 2))).unwrap();
     io::stdout().flush().unwrap();
     writeln!(
         &mut to_print,
@@ -246,7 +246,8 @@ pub fn show_solution_va_to_pa_hex(
         writeln!(&mut to_print, "{:b} {:b}", ss, offset).unwrap();
     }
     write!(&mut to_print, "-- ").unwrap();
-    lib_fns::print_hyphens(offset);
+    //lib_fns::print_hyphens(offset);
+    write!(&mut to_print, "{}", lib_fns::print_hyphens(offset)).unwrap();
     writeln!(
         &mut to_print,
         "SS {:x_axis$}OFFSET",

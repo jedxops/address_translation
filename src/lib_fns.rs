@@ -9,6 +9,7 @@ extern crate rand;
 use rand::Rng;
 use std::io;
 use std::io::Write; // need flush() method.
+use std::fmt::Write as OtherWrite;
 
 // series of mathematical functions and tools used in this software system
 
@@ -58,13 +59,15 @@ pub fn are_all_numeric(str: &str, radix: u32) -> bool {
 }
 
 // prints a number of hyphens to cover a the number of bits required by the `num` argument
-pub fn print_hyphens(num: u32) {
+pub fn print_hyphens(num: u32) -> String {
     let h = num_bits_reqd(num);
+    let mut to_print = String::new();
     for _i in 0..h {
-        print!("-");
+        write!(&mut to_print, "-").unwrap();
     }
-    println!();
+    writeln!(&mut to_print).unwrap();
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely, as we are not using the _println_ macro here
+    to_print
 }
 
 // work in progress, works only for the first upper four binary digits as of right now.
