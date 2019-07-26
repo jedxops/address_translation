@@ -1,8 +1,8 @@
 use rocket::response::NamedFile;
-use rocket::response::Redirect;
-use std::path::{Path, PathBuf};
-use std::io;
+// use rocket::response::Redirect;
 use rocket::http::RawStr;
+use std::io;
+use std::path::{Path, PathBuf};
 
 #[get("/static/<file..>")]
 pub fn file(file: PathBuf) -> Option<NamedFile> {
