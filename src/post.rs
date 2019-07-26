@@ -84,7 +84,7 @@ pub fn compute(data: Form<Request>) -> Template {
     let qry = &data.term;
 /*<<<<<<< HEAD
     let res_tuple = generate_segmented_memory_layout();
-    //main1::va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
+    //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
     let func_result = print_layout(res_tuple.0, (res_tuple.0) * 2, res_tuple.1, res_tuple.2);
     let func_result2 = print_question_va_to_pa(res_tuple.0, 0, false);
     let func_result = func_result + &func_result2.2;
@@ -98,10 +98,10 @@ pub fn compute(data: Form<Request>) -> Template {
         },
     )
 }*/
-    let res_tuple = main1::generate_segmented_memory_layout();
-    //main1::va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
-    let func_result = main1::print_layout(res_tuple.0,(res_tuple.0)*2,res_tuple.1,res_tuple.2.clone());
-    let func_result2 = main1::print_question_va_to_pa(res_tuple.0,0,false);
+    let res_tuple = generate_segmented_memory_layout();
+    //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
+    let func_result = print_layout(res_tuple.0,(res_tuple.0)*2,res_tuple.1,res_tuple.2.clone());
+    let func_result2 = print_question_va_to_pa(res_tuple.0,0,false);
     let func_result = func_result + &func_result2.2;
     /*return Template::render("result", &TemplateContext {
             query: qry.to_string(),
