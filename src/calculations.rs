@@ -44,7 +44,7 @@ pub fn show_solution_stack_va(
     aformate: i8,
 ) ->String{
     let mut to_print = String::new();
-    writeln(&mut to_print,"--Note that the stack base and size are parameters in Physical Memory --not Virtual Memory.");
+    writeln!(&mut to_print,"--Note that the stack base and size are parameters in Physical Memory --not Virtual Memory.");
     writeln!(&mut to_print,"The problem prompts a translation from PA to VA --the address corresponding to the specified portion through the stack as a virtual address");
     writeln!(&mut to_print,"Therefore, calculating the percent of the stack size and subtracting it from the stack base yields an incorrect translation.\n");
     writeln!(&mut to_print,"Drawing a picture helps to understand this non-intuitive math.");
@@ -134,7 +134,7 @@ pub fn show_solution_va_to_pa_hex(
     power_of2: u32,
     qaformate: (i8, i8),
 ) ->String {
-    let mut to_print = String:new();
+    let mut to_print = String::new();
     match qaformate.0 {
         16 => {
             writeln!(&mut to_print,"\nStep 1: Convert virtual address {:#X} to binary", va);
@@ -362,7 +362,8 @@ pub fn test_va_pa_calculation_v1() {
 }
 
 // compares actual answer to user answer after printing the question
-pub fn compare_answer(aformat: i8, pa: u32) {
+pub fn compare_answer(aformat: i8, pa: u32) ->String{
+    let mut to_print = String::new();
     let mut input = String::new();
     match aformat {
         16 => {
@@ -395,7 +396,7 @@ pub fn compare_answer(aformat: i8, pa: u32) {
                 writeln!(&mut to_print,"INCORRECT.\n");
                 writeln!(&mut to_print,"your answer: {} bytes\nactual: {:#X} bytes", input, pa);
             }
-            return;
+            //return;
         }
         2 => {
             writeln!(&mut to_print,"Type your answer in binary format with or without leading zeros then press enter and ctrl+d");
@@ -429,7 +430,7 @@ pub fn compare_answer(aformat: i8, pa: u32) {
                 writeln!(&mut to_print,"INCORRECT.\n");
                 writeln!(&mut to_print,"your answer: {} bytes\nactual: {:b} bytes", input, pa);
             }
-            return;
+            //return;
         }
         10 => {
             writeln!(&mut to_print,"Type your answer in decimal format (base 10, no decimal points) then press enter and ctrl+d");
@@ -460,13 +461,14 @@ pub fn compare_answer(aformat: i8, pa: u32) {
                 writeln!(&mut to_print,"INCORRECT.\n");
                 writeln!(&mut to_print,"your answer: {} bytes\nactual: {} bytes", input, pa);
             }
-            return;
+            //return;
         }
         _ => {
             writeln!(&mut to_print,"Error. Unexpected format specifier. Fatal error. Terminating program");
             exit(-1)
         }
     }
+    to_print
 }
 
 // generates a problem prompting for a VA to PA translation
@@ -529,7 +531,7 @@ pub fn valid_va(num: u32, fresh_ss: u32, segments: Vec<Segment>) -> bool {
 }
 
 pub fn error() {
-    writeln!(&mut to_print,"Encountered fatal error. Exiting");
+    println!("Encountered fatal error. Exiting");
     exit(-1);
 }
 

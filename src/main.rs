@@ -9,6 +9,7 @@ mod files;
 mod post;
 mod lib_fns;
 mod main1;
+mod steps;
 mod calculations;
 
 fn rocket() -> rocket::Rocket {

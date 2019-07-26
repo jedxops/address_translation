@@ -250,7 +250,7 @@ pub fn print_question_stack_percentage(percent: u32, question_format: i8) -> i8 
 // takes a format flag passed from the client and prints the question returning a tuple of format specifiers
 // question text taken with permission from Mark Morissey's slides
 pub fn print_question_va_to_pa(va: u32, format_flag: i8, malloc: bool) -> (i8, i8,String) {
-let mut to_print = String:new();
+let mut to_print = String::new();
     let qformat = match format_flag {
         0 | 1 | 2 => 16,
         3 | 4 | 5 => 2,
@@ -280,24 +280,23 @@ let mut to_print = String:new();
                 "Virtual Address {} (base 10) refers to what physical address (in base {})?",
                 va, aformat
             ),
-            _ => {
-                writeln!(&mut to_print,"Unexpected error. Exiting");
-                calculations::error();
-            }
-        }
+            _ => writeln!(&mut to_print,"Unexpected error. Exiting"),
+                //calculations::error();
+
+        };
     } else {
         match qformat {
-            16 => writeln!(&mut to_print,"A call to malloc returns a virtual address of {:#X}. What is the physical address (in base {}) of this virtual address?"
+            16 => writeln!(&mut to_print,"A call to malloc returns a virtual address of {:#X}.
+             What is the physical address (in base {}) of this virtual address?"
                    , va, aformat),
              2 => writeln!(&mut to_print,"A call to malloc returns a virtual address of {:b}. What is the physical address (in base {}) of this virtual address?"
                    , va, aformat),
             10 => writeln!(&mut to_print,"A call to malloc returns a virtual address of {} (base 10). What is the physical address (in base {}) of this virtual address?"
                    , va, aformat),
-            _ => {
-                  writeln!(&mut to_print,"Unexpected error. Exiting");
-                  calculations::error();
-            }
-        }
+            _ =>  writeln!(&mut to_print,"Unexpected error. Exiting")
+                  //calculations::error();
+
+        };
     }
     (qformat, aformat,to_print)
 }
@@ -314,6 +313,7 @@ fn va_to_pa(
     // fetch random u32 in between 100 and the VAS (as a power of 2) as the virtual address to be calculated.
     let va: u32 = calculations::get_rand_va(power_of2, segments.clone(), false);
     let format_specifiers = print_question_va_to_pa(va, choice, false);
+    let format_specifiers = (format_specifiers.0,format_specifiers.1);
 
     // calculate offset:
     let ss: u32 = va >> (power_of2 - 2);
@@ -433,7 +433,7 @@ fn va_to_pa_malloc(
     // fetch random u32 in between 100 and the VAS (as a power of 2) as the virtual address to be calculated.
     let va: u32 = calculations::get_rand_va(power_of2, segments.clone(), true);
     let format_specifiers = print_question_va_to_pa(va, choice, true);
-
+    let format_specifiers = (format_specifiers.0,format_specifiers.1);
     // calculate offset:
     let ss: u32 = va >> (power_of2 - 2);
     let mss: u32 = 2u32.pow(power_of2 - 2); // MSS = 2^(number of bits in the offset)
