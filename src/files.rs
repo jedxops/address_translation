@@ -17,7 +17,3 @@ pub fn index() -> io::Result<NamedFile> {
 pub fn response(term: &RawStr) -> String {
     format!("You typed in {}.", term)
 }
-/*#[post("/search")]
-pub fn compute() -> io::Result<NamedFile>{
-    NamedFile::open("static/result.html")
-} */
