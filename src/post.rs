@@ -37,6 +37,7 @@ pub struct TemplateContext {
 #[derive(FromForm)]
 pub struct Request {
     term: String,
+    term2:String,
 }
 
 /*
@@ -82,6 +83,7 @@ General flow:
 #[post("/search", data = "<data>")]
 pub fn compute(data: Form<Request>) -> Template {
     let qry = &data.term;
+    let qry2 = &data.term2;
 /*<<<<<<< HEAD
     let res_tuple = generate_segmented_memory_layout();
     //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
@@ -98,6 +100,7 @@ pub fn compute(data: Form<Request>) -> Template {
         },
     )
 }*/
+if(qry.contains("1")){
     let res_tuple = generate_segmented_memory_layout();
     //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
     let func_result = print_layout(res_tuple.0,(res_tuple.0)*2,res_tuple.1,res_tuple.2.clone());
@@ -117,19 +120,23 @@ pub fn compute(data: Form<Request>) -> Template {
                 query: qry.to_string(),
                 items: func_result4,
                 parent: "index",
-            })
+            });
 }
 
-/*Template::render("result",&TemplateContext {
-    query: ""
-    parent: ""
-}) */
-
-/*Template::render("result", &TemplateContext {
-    query: "invalid".to_string(),
-    items: vec!["Please reference available commands.".to_string()],
+ if(qry2.contains("3")){
+     return Template::render("result",&TemplateContext {
+    query: "second option".to_string(),
+    items : "new query".to_string(),
     parent: "index",
-}) */
+}) ;
+}
+
+Template::render("result", &TemplateContext {
+    query: "invalid".to_string(),
+    items: "Please reference available commands.".to_string(),
+    parent: "index",
+})
+}
 
 /*    let mut reset = true;
     while reset {
@@ -531,7 +538,7 @@ fn va_to_pa_malloc(
     segments: Vec<calculations::Segment>,
 ) -> (u32, u32, Vec<calculations::Segment>) {
     let choice: i8 = choose_format(0);
-    clear_screen();
+    //clear_screen();
     print_layout(vas, vas * 2, power_of2, segments.clone());
 
     // fetch random u32 in between 100 and the VAS (as a power of 2) as the virtual address to be calculated.
@@ -732,6 +739,7 @@ FLAG DEFINITIONS for stack_va
 // function for determining the format of the question --helps program flow determine the q/a format
 fn choose_format(question_flag: u8) -> i8 {
     let mut choice: i8;
+    //let to_print:String ;
     loop {
         // clear_screen();
         let mut input_string = String::new();
