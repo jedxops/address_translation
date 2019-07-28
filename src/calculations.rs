@@ -126,7 +126,7 @@ pub fn show_solution_stack_va(
 
     writeln!(&mut to_print, "  {:b}\t--SS bits", 3 << (power_of2 - 2)).unwrap();
     write!(&mut to_print, "+ ").unwrap();
-    lib_fns::print_leading_zeros(offset * 1024, power_of2);
+    writeln!(&mut to_print, "{}", lib_fns::print_leading_zeros(offset * 1024, power_of2)).unwrap();
     writeln!(&mut to_print, "{:b}\t--OFFSET", offset * 1024).unwrap();
 
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely. print! doesnt print a line.
@@ -215,7 +215,7 @@ pub fn show_solution_va_to_pa_hex(
     }
     // lib_fns::print_leading_zeros(va, power_of2);
     // print!("{:b} = ", va);
-    lib_fns::print_readable_binary(va, power_of2); // I think this function is cool, visit the file to check it out.
+    writeln!(&mut to_print, "{}", lib_fns::print_readable_binary(va, power_of2)).unwrap(); // I think this function is cool, visit the file to check it out.
     writeln!(&mut to_print).unwrap();
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely, as we are not using the _println_ macro here
 
@@ -531,7 +531,7 @@ pub fn test_va_pa_calculation_v1() {
 
 // compares actual answer to user answer after printing the question
 pub fn compare_answer(aformat: i8, pa: u32) -> String {
-    let mut to_print = String::new();
+    // let mut to_print = String::new();
     let mut input = String::new();
     let mut to_print = String::new();
     match aformat {
