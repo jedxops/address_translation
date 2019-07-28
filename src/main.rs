@@ -19,7 +19,7 @@ mod post;
 fn rocket() -> rocket::Rocket {
     rocket::ignite().attach(Template::fairing()).mount(
         "/",
-        routes![files::file, files::index, files::response, post::compute],
+        routes![files::file, files::index, files::index1,files::response, post::compute],
     )
 }
 

@@ -13,6 +13,10 @@ pub fn file(file: PathBuf) -> Option<NamedFile> {
 pub fn index() -> io::Result<NamedFile> {
     NamedFile::open("static/index.html")
 }
+#[get("/first")]
+pub fn index1() -> io::Result<NamedFile> {
+    NamedFile::open("static/index1.html")
+}
 #[get("/search/<term>")]
 pub fn response(term: &RawStr) -> String {
     format!("You typed in {}.", term)

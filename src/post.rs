@@ -37,7 +37,7 @@ pub struct TemplateContext {
 #[derive(FromForm)]
 pub struct Request {
     term: String,
-    term2:String,
+    //term2:String,
 }
 
 /*
@@ -83,7 +83,7 @@ General flow:
 #[post("/search", data = "<data>")]
 pub fn compute(data: Form<Request>) -> Template {
     let qry = &data.term;
-    let qry2 = &data.term2;
+    //let qry2 = &data.term2;
 /*<<<<<<< HEAD
     let res_tuple = generate_segmented_memory_layout();
     //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
@@ -123,13 +123,13 @@ if(qry.contains("1")){
             });
 }
 
- if(qry2.contains("3")){
+ /*if(qry2.contains("3")){
      return Template::render("result",&TemplateContext {
-    query: "second option".to_string(),
+    query: qry2.to_string(),
     items : "new query".to_string(),
     parent: "index",
 }) ;
-}
+} */
 
 Template::render("result", &TemplateContext {
     query: "invalid".to_string(),

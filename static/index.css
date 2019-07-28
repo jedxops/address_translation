@@ -7,10 +7,14 @@ html {
 h1 {
   font-size: 50px;
 }
+ol {
+    width: 70%;
+    margin: auto;
+}
 
 #formBox {
-  height: 20px;
-  width: 30%;
+  height: 30px;
+  width: 40%;
 }
 
 a {
@@ -21,8 +25,8 @@ a {
 textarea {
   margin-top: 5%;
   margin-bottom: 2%;
-  width: 50%;
-  height: 80%;
+  width: 60%;
+  height: 100%;
   resize: none;
 }
 
