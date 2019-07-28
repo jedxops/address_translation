@@ -104,7 +104,7 @@ pub fn compute(data: Form<Request>) -> Template {
         }) */
 
         let func_result3 = calculations::show_solution_va_to_pa_hex(
-            res_tuple.2[0].clone(),
+            res_tuple.2[0],
             0,
             1000,
             res_tuple.0,
@@ -122,8 +122,9 @@ pub fn compute(data: Form<Request>) -> Template {
                 parent: "index",
             },
         );
-    }  
+    }
     else if question_choice == "1" {    // malloc problem
+        format!("Hii lets fix things");
         let res_tuple = generate_segmented_memory_layout();
         //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
         let mut func_result = print_layout(
@@ -141,7 +142,7 @@ pub fn compute(data: Form<Request>) -> Template {
         }) */
 
         let func_result3 = calculations::show_solution_va_to_pa_hex(
-            res_tuple.2[0].clone(),
+            res_tuple.2[0],
             0,
             1000,
             res_tuple.0,
@@ -178,7 +179,7 @@ pub fn compute(data: Form<Request>) -> Template {
         }) */
 
         let func_result3 = calculations::show_solution_va_to_pa_hex(
-            res_tuple.2[0].clone(),
+            res_tuple.2[0],
             0,
             1000,
             res_tuple.0,
