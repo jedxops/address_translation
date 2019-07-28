@@ -89,7 +89,7 @@ pub fn compute(data: Form<Request>) -> Template {
     let func_result2 = print_question_va_to_pa(res_tuple.0, 0, false);
     let func_result = func_result + &func_result2.2;
     let question_choice = &data.term;
-    let format_choice = &data.term2;
+    let format_choice = "0";
 
     // va to pa !malloc problem
     if question_choice == "0" {
