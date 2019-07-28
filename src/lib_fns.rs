@@ -7,6 +7,7 @@
 use std::process::exit;
 extern crate rand;
 use rand::Rng;
+use std::fmt::Write as OtherWrite;
 use std::io;
 use std::io::Write; // need flush() method.
 
@@ -58,23 +59,26 @@ pub fn are_all_numeric(str: &str, radix: u32) -> bool {
 }
 
 // prints a number of hyphens to cover a the number of bits required by the `num` argument
-pub fn print_hyphens(num: u32) {
+pub fn print_hyphens(num: u32) -> String {
     let h = num_bits_reqd(num);
+    let mut to_print = String::new();
     for _i in 0..h {
-        print!("-");
+        write!(&mut to_print, "-").unwrap();
     }
-    println!();
+    writeln!(&mut to_print).unwrap();
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely, as we are not using the _println_ macro here
+    to_print
 }
 
 // work in progress, works only for the first upper four binary digits as of right now.
 // print a binary number such that every four characters are separated by a single space
-pub fn print_readable_binary(address: u32, size_of_space: u32) {
+pub fn print_readable_binary(address: u32, size_of_space: u32) -> String {
+    let mut to_print = String::new();
     let multiple_of_4: u32 = size_of_space / 4; // we want to group the binary into 4 groups
     if size_of_space % 4 != 0 {
         // print the binary digits at the end of the string which dont fit in a group of 4
         print_leading_zeros(address >> (4 * multiple_of_4), size_of_space % 4);
-        print!("{:b} ", address >> (4 * multiple_of_4));
+        write!(&mut to_print, "{:b} ", address >> (4 * multiple_of_4)).unwrap();
     }
     let mut array_of_binaries: Vec<u32> = Vec::new(); // array of binaries to print
     for i in 1..=multiple_of_4 {
@@ -97,23 +101,26 @@ pub fn print_readable_binary(address: u32, size_of_space: u32) {
     let mut i: usize = array_of_binaries.len();
     while i > 0 {
         print_leading_zeros(array_of_binaries[i - 1], 4); // we dont want to print more than 4 leading zeros
-        print!("{:b} ", array_of_binaries[i - 1]); // --we are already printing at least one character immediately after this
+        write!(&mut to_print, "{:b} ", array_of_binaries[i - 1]).unwrap(); // --we are already printing at least one character immediately after this
         i -= 1;
     }
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely, as we are not using the _println_ macro above
+    to_print
 }
 
 // prints leading zeros of a binary number up to max_bits
-pub fn print_leading_zeros(num: u32, max_bits: u32) {
+pub fn print_leading_zeros(num: u32, max_bits: u32) -> String {
+    let mut to_print = String::new();
     let zeros_to_print = max_bits - num_bits_reqd(num);
     if zeros_to_print > 0 {
         // the leading_zeros function for usizes is not helpful here
         let mut i: u32 = 0;
         while i < zeros_to_print {
-            print!("0");
+            write!(&mut to_print, "0").unwrap();
             i += 1;
         }
     }
+    to_print
 }
 
 // Tricky function. Function takes a u32 and returns the number of bits required to represent that number

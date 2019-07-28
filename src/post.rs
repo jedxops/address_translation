@@ -37,7 +37,6 @@ pub struct TemplateContext {
 #[derive(FromForm)]
 pub struct Request {
     term: String,
-    //term2:String,
 }
 
 /*
@@ -84,44 +83,126 @@ General flow:
 pub fn compute(data: Form<Request>) -> Template {
     let qry = &data.term;
     //let qry2 = &data.term2;
-/*<<<<<<< HEAD
     let res_tuple = generate_segmented_memory_layout();
     //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
     let func_result = print_layout(res_tuple.0, (res_tuple.0) * 2, res_tuple.1, res_tuple.2);
     let func_result2 = print_question_va_to_pa(res_tuple.0, 0, false);
     let func_result = func_result + &func_result2.2;
+    let question_choice = &data.term;
+    let format_choice = &data.term2;
 
-    Template::render(
-        "result",
-        &TemplateContext {
+    // va to pa !malloc problem
+    if question_choice == "0" {
+        let res_tuple = generate_segmented_memory_layout();
+        //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
+        let mut func_result = print_layout(
+            res_tuple.0,
+            (res_tuple.0) * 2,
+            res_tuple.1,
+            res_tuple.2.clone(),
+        );
+        let func_result2 = print_question_va_to_pa(res_tuple.0, 0, false);
+        func_result = func_result + &func_result2.2;
+        /*return Template::render("result", &TemplateContext {
             query: qry.to_string(),
             items: func_result,
             parent: "index",
-        },
-    )
-}*/
-if(qry.contains("1")){
-    let res_tuple = generate_segmented_memory_layout();
-    //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
-    let func_result = print_layout(res_tuple.0,(res_tuple.0)*2,res_tuple.1,res_tuple.2.clone());
-    let func_result2 = print_question_va_to_pa(res_tuple.0,0,false);
-    let func_result = func_result + &func_result2.2;
-    /*return Template::render("result", &TemplateContext {
+        }) */
+        let func_result3 = calculations::show_solution_va_to_pa_hex(
+            res_tuple.2[0],
+            0,
+            1000,
+            res_tuple.0,
+            (res_tuple.2[0].base) * 1024 + 1000,
+            res_tuple.1,
+            (16, 16),
+        );
+
+        let func_result4 = func_result + &func_result3;
+        return Template::render(
+            "result",
+            &TemplateContext {
+                query: question_choice.to_string(),
+                items: func_result4,
+                parent: "index",
+            },
+        );
+    }
+    else if question_choice == "1" {    // malloc problem
+        format!("Hii lets fix things");
+        let res_tuple = generate_segmented_memory_layout();
+        //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
+        let mut func_result = print_layout(
+            res_tuple.0,
+            (res_tuple.0) * 2,
+            res_tuple.1,
+            res_tuple.2.clone(),
+        );
+        let func_result2 = print_question_va_to_pa(res_tuple.0, 0, false);
+        func_result = func_result + &func_result2.2;
+        /*return Template::render("result", &TemplateContext {
             query: qry.to_string(),
             items: func_result,
             parent: "index",
         }) */
 
-     let func_result3= calculations::show_solution_va_to_pa_hex
-        (res_tuple.2[0].clone(),0,1000,res_tuple.0,(res_tuple.2[0].base)*1024+1000,res_tuple.1,(16,16));
+        let func_result3 = calculations::show_solution_va_to_pa_hex(
+            res_tuple.2[0],
+            0,
+            1000,
+            res_tuple.0,
+            (res_tuple.2[0].base) * 1024 + 1000,
+            res_tuple.1,
+            (16, 16),
+        );
 
         let func_result4 = func_result + &func_result3;
-        return Template::render("result", &TemplateContext {
-                query: qry.to_string(),
+        return Template::render(
+            "result",
+            &TemplateContext {
+                query: question_choice.to_string(),
                 items: func_result4,
                 parent: "index",
-            });
-}
+            },
+        );
+    }
+    else if question_choice == "2" {     // stack problem
+        let res_tuple = generate_segmented_memory_layout();
+        //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
+        let mut func_result = print_layout(
+            res_tuple.0,
+            (res_tuple.0) * 2,
+            res_tuple.1,
+            res_tuple.2.clone(),
+        );
+        let func_result2 = print_question_va_to_pa(res_tuple.0, 0, false);
+        func_result = func_result + &func_result2.2;
+        /*return Template::render("result", &TemplateContext {
+            query: qry.to_string(),
+            items: func_result,
+            parent: "index",
+        }) */
+
+        let func_result3 = calculations::show_solution_va_to_pa_hex(
+            res_tuple.2[0],
+            0,
+            1000,
+            res_tuple.0,
+            (res_tuple.2[0].base) * 1024 + 1000,
+            res_tuple.1,
+            (16, 16),
+        );
+
+        let func_result4 = func_result + &func_result3;
+        return Template::render(
+            "result",
+            &TemplateContext {
+                query: question_choice.to_string(),
+                items: func_result4,
+                parent: "index",
+            },
+        );
+    }
 
  /*if(qry2.contains("3")){
      return Template::render("result",&TemplateContext {
@@ -130,12 +211,25 @@ if(qry.contains("1")){
     parent: "index",
 }) ;
 } */
+    if format_choice == "2" {
+        return Template::render(
+            "result",
+            &TemplateContext {
+                query: "second option".to_string(),
+                items: "new query".to_string(),
+                parent: "index",
+            },
+        );
+    }
 
-Template::render("result", &TemplateContext {
-    query: "invalid".to_string(),
-    items: "Please reference available commands.".to_string(),
-    parent: "index",
-})
+    Template::render(
+        "result",
+        &TemplateContext {
+            query: "invalid".to_string(),
+            items: "Please reference available commands.".to_string(),
+            parent: "index",
+        },
+    )
 }
 
 /*    let mut reset = true;
@@ -303,7 +397,8 @@ pub fn str(segments: Vec<calculations::Segment>) -> (u32, f32) {
 
 // takes a format flag passed from the client and prints the question returning a format specifier (u32 flag).
 // question text taken with permission from Mark Morissey's slides
-pub fn print_question_stack_percentage(percent: u32, question_format: i8) -> i8 {
+pub fn print_question_stack_percentage(percent: u32, question_format: i8) -> (i8, String) {
+    let mut to_print = String::new();
     let aformat = match question_format {
         0 => 16,
         1 => 2,
@@ -314,24 +409,24 @@ pub fn print_question_stack_percentage(percent: u32, question_format: i8) -> i8 
         calculations::error();
     }
     match aformat {
-        16 => println!(
+        16 => {writeln!(&mut to_print,
             "What virtual address, in hexadecimal, is {}% into the stack??",
             percent
-        ),
-        2 => println!(
+        ).unwrap();},
+        2 => {writeln!(&mut to_print,
             "What virtual address, in binary, is {}% into the stack??",
             percent
-        ),
-        10 => println!(
+        ).unwrap();},
+        10 => {writeln!(&mut to_print,
             "What virtual address, in decimal, is {}% into the stack??",
             percent
-        ),
+        ).unwrap();},
         _ => {
-            println!("Unexpected error. Exiting");
+            writeln!(&mut to_print, "Unexpected error. Exiting").unwrap();
             calculations::error();
         }
     }
-    aformat
+    (aformat, to_print)
 }
 
 // takes a format flag passed from the client and prints the question returning a tuple of format specifiers
@@ -413,7 +508,7 @@ fn va_to_pa(
     power_of2: u32,
     segments: Vec<calculations::Segment>,
 ) -> (u32, u32, Vec<calculations::Segment>) {
-    let choice: i8 = choose_format(0);
+    /*let retv = choose_format(0);
     clear_screen();
     print_layout(vas, vas * 2, power_of2, segments.clone());
 
@@ -526,7 +621,7 @@ fn va_to_pa(
                 }
             }
         }
-    }
+    }*/
     (vas, power_of2, segments)
 }
 
@@ -537,7 +632,7 @@ fn va_to_pa_malloc(
     power_of2: u32,
     segments: Vec<calculations::Segment>,
 ) -> (u32, u32, Vec<calculations::Segment>) {
-    let choice: i8 = choose_format(0);
+    /*let choice: i8 = choose_format(0);
     //clear_screen();
     print_layout(vas, vas * 2, power_of2, segments.clone());
 
@@ -634,7 +729,7 @@ fn va_to_pa_malloc(
                 }
             }
         }
-    }
+    }*/
     (vas, power_of2, segments)
 }
 
@@ -645,7 +740,7 @@ fn stack_va(
     segments: Vec<calculations::Segment>,
 ) -> (u32, u32, Vec<calculations::Segment>) {
     // choose format of the question required answer (hex, dec, binary).
-    let choice: i8 = choose_format(1);
+    /*let choice: i8 = choose_format(1);
     clear_screen();
     print_layout(vas, vas * 2, power_of2, segments.clone());
 
@@ -711,7 +806,7 @@ fn stack_va(
                 }
             }
         }
-    }
+    }*/
     (vas, power_of2, segments)
 }
 
@@ -737,7 +832,8 @@ FLAG DEFINITIONS for stack_va
 2 --answer in decimal    */
 
 // function for determining the format of the question --helps program flow determine the q/a format
-fn choose_format(question_flag: u8) -> i8 {
+fn choose_format(question_flag: u8) -> (i8, String) {
+    let mut to_print = String::new();
     let mut choice: i8;
     //let to_print:String ;
     loop {
@@ -745,29 +841,29 @@ fn choose_format(question_flag: u8) -> i8 {
         let mut input_string = String::new();
         match question_flag {
             0 => {
-                println!("\nChoose format of desired question\n");
-                println!("OPTION\t\tPROBLEM TYPE\n");
-                println!("0\u{29}\t\t--va in hex to pa in hex");
-                println!("1\u{29}\t\t--va in hex to pa in binary");
-                println!("2\u{29}\t\t--va in hex to pa in decimal");
-                println!("3\u{29}\t\t--va in binary to pa in hex");
-                println!("4\u{29}\t\t--va in binary to pa in binary");
-                println!("5\u{29}\t\t--va in binary to pa in decimal");
-                println!("6\u{29}\t\t--va in decimal to pa in hex");
-                println!("7\u{29}\t\t--va in decimal to pa in binary");
-                println!("8\u{29}\t\t--va in decimal to pa in decimal");
-                println!("9\u{29}\t\tRandom option");
+                writeln!(&mut to_print, "\nChoose format of desired question\n").unwrap();
+                writeln!(&mut to_print, "OPTION\t\tPROBLEM TYPE\n").unwrap();
+                writeln!(&mut to_print, "0\u{29}\t\t--va in hex to pa in hex").unwrap();
+                writeln!(&mut to_print, "1\u{29}\t\t--va in hex to pa in binary").unwrap();
+                writeln!(&mut to_print, "2\u{29}\t\t--va in hex to pa in decimal").unwrap();
+                writeln!(&mut to_print, "3\u{29}\t\t--va in binary to pa in hex").unwrap();
+                writeln!(&mut to_print, "4\u{29}\t\t--va in binary to pa in binary").unwrap();
+                writeln!(&mut to_print, "5\u{29}\t\t--va in binary to pa in decimal").unwrap();
+                writeln!(&mut to_print, "6\u{29}\t\t--va in decimal to pa in hex").unwrap();
+                writeln!(&mut to_print, "7\u{29}\t\t--va in decimal to pa in binary").unwrap();
+                writeln!(&mut to_print, "8\u{29}\t\t--va in decimal to pa in decimal").unwrap();
+                writeln!(&mut to_print, "9\u{29}\t\tRandom option").unwrap();
             }
             1 => {
-                println!("Choose format of desired question\n");
-                println!("OPTION\t\tPROBLEM TYPE");
-                println!("0\u{29}\t\t--answer in hex");
-                println!("1\u{29}\t\t--answer in binary");
-                println!("2\u{29}\t\t--answer in decimal");
-                println!("9\u{29}\t\t--random question");
+                writeln!(&mut to_print, "Choose format of desired question\n").unwrap();
+                writeln!(&mut to_print, "OPTION\t\tPROBLEM TYPE").unwrap();
+                writeln!(&mut to_print, "0\u{29}\t\t--answer in hex").unwrap();
+                writeln!(&mut to_print, "1\u{29}\t\t--answer in binary").unwrap();
+                writeln!(&mut to_print, "2\u{29}\t\t--answer in decimal").unwrap();
+                writeln!(&mut to_print, "9\u{29}\t\t--random question").unwrap();
             }
             _ => {
-                println!("Unexpected Fatal error in question format function. Exiting.");
+                writeln!(&mut to_print, "Unexpected Fatal error in question format function. Exiting.").unwrap();
                 exit(-1);
             }
         }
@@ -780,11 +876,11 @@ fn choose_format(question_flag: u8) -> i8 {
         choice = match input_string.trim().parse::<i8>() {
             Ok(k) => k,
             Err(_) => {
-                println!("Error. Invalid input --not an integer. Please try again.");
+                writeln!(&mut to_print, "Error. Invalid input --not an integer. Please try again.").unwrap();
                 -1
             }
         };
-        println!();
+        writeln!(&mut to_print).unwrap();
         if choice == -1 {
             continue;
         } else {
@@ -803,18 +899,20 @@ fn choose_format(question_flag: u8) -> i8 {
                     break;
                 }
                 _ => {
-                    println!("Please enter one of the digits corresponding to an option on screen");
+                    writeln!(&mut to_print, "Please enter one of the digits corresponding to an option on screen").unwrap();
                     continue;
                 }
             }
         }
     }
-    choice as i8
+    (choice as i8, to_print)
 }
 
 // function useful for clearing the output buffer
-fn clear_screen() {
+fn clear_screen() -> String {
+    let mut to_print = String::new();
     for _i in 0..50 {
-        println!();
+        writeln!(&mut to_print).unwrap();
     }
+    to_print
 }
