@@ -7,9 +7,9 @@
 use std::process::exit;
 extern crate rand;
 use rand::Rng;
+use std::fmt::Write as OtherWrite;
 use std::io;
 use std::io::Write; // need flush() method.
-use std::fmt::Write as OtherWrite;
 
 // series of mathematical functions and tools used in this software system
 

@@ -132,7 +132,12 @@ pub fn show_solution_stack_va(
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely. print! doesnt print a line.
 
     write!(&mut to_print, "--").unwrap();
-    write!(&mut to_print, "{}", lib_fns::print_hyphens(3 << (power_of2 - 2))).unwrap();
+    write!(
+        &mut to_print,
+        "{}",
+        lib_fns::print_hyphens(3 << (power_of2 - 2))
+    )
+    .unwrap();
     io::stdout().flush().unwrap();
     writeln!(
         &mut to_print,
@@ -525,7 +530,7 @@ pub fn test_va_pa_calculation_v1() {
 }
 
 // compares actual answer to user answer after printing the question
-pub fn compare_answer(aformat: i8, pa: u32) ->String{
+pub fn compare_answer(aformat: i8, pa: u32) -> String {
     let mut to_print = String::new();
     let mut input = String::new();
     let mut to_print = String::new();

@@ -37,7 +37,7 @@ pub struct TemplateContext {
 #[derive(FromForm)]
 pub struct Request {
     term: String,
-    term2:String,
+    term2: String,
 }
 
 /*
@@ -84,58 +84,63 @@ General flow:
 pub fn compute(data: Form<Request>) -> Template {
     let qry = &data.term;
     let qry2 = &data.term2;
-/*<<<<<<< HEAD
-    let res_tuple = generate_segmented_memory_layout();
-    //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
-    let func_result = print_layout(res_tuple.0, (res_tuple.0) * 2, res_tuple.1, res_tuple.2);
-    let func_result2 = print_question_va_to_pa(res_tuple.0, 0, false);
-    let func_result = func_result + &func_result2.2;
-
-    Template::render(
-        "result",
-        &TemplateContext {
-            query: qry.to_string(),
-            items: func_result,
-            parent: "index",
-        },
-    )
-}*/
-if(qry.contains("1")){
-    let res_tuple = generate_segmented_memory_layout();
-    //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
-    let func_result = print_layout(res_tuple.0,(res_tuple.0)*2,res_tuple.1,res_tuple.2.clone());
-    let func_result2 = print_question_va_to_pa(res_tuple.0,0,false);
-    let func_result = func_result + &func_result2.2;
-    /*return Template::render("result", &TemplateContext {
+    if (qry.contains("1")) {
+        let res_tuple = generate_segmented_memory_layout();
+        //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
+        let func_result = print_layout(
+            res_tuple.0,
+            (res_tuple.0) * 2,
+            res_tuple.1,
+            res_tuple.2.clone(),
+        );
+        let func_result2 = print_question_va_to_pa(res_tuple.0, 0, false);
+        let func_result = func_result + &func_result2.2;
+        /*return Template::render("result", &TemplateContext {
             query: qry.to_string(),
             items: func_result,
             parent: "index",
         }) */
 
-     let func_result3= calculations::show_solution_va_to_pa_hex
-        (res_tuple.2[0].clone(),0,1000,res_tuple.0,(res_tuple.2[0].base)*1024+1000,res_tuple.1,(16,16));
+        let func_result3 = calculations::show_solution_va_to_pa_hex(
+            res_tuple.2[0].clone(),
+            0,
+            1000,
+            res_tuple.0,
+            (res_tuple.2[0].base) * 1024 + 1000,
+            res_tuple.1,
+            (16, 16),
+        );
 
         let func_result4 = func_result + &func_result3;
-        return Template::render("result", &TemplateContext {
+        return Template::render(
+            "result",
+            &TemplateContext {
                 query: qry.to_string(),
                 items: func_result4,
                 parent: "index",
-            });
-}
+            },
+        );
+    }
 
- if(qry2.contains("3")){
-     return Template::render("result",&TemplateContext {
-    query: "second option".to_string(),
-    items : "new query".to_string(),
-    parent: "index",
-}) ;
-}
+    if (qry2.contains("3")) {
+        return Template::render(
+            "result",
+            &TemplateContext {
+                query: "second option".to_string(),
+                items: "new query".to_string(),
+                parent: "index",
+            },
+        );
+    }
 
-Template::render("result", &TemplateContext {
-    query: "invalid".to_string(),
-    items: "Please reference available commands.".to_string(),
-    parent: "index",
-})
+    Template::render(
+        "result",
+        &TemplateContext {
+            query: "invalid".to_string(),
+            items: "Please reference available commands.".to_string(),
+            parent: "index",
+        },
+    )
 }
 
 /*    let mut reset = true;
