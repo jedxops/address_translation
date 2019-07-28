@@ -536,7 +536,6 @@ pub fn compare_answer(aformat: i8, pa: u32) -> String {
     let mut to_print = String::new();
     match aformat {
         16 => {
-            writeln!(&mut to_print,"Type your answer in hexadecimal format with or without the `0x` then press enter and ctrl+d").unwrap();
             // the read_to_string writes the input data to its argument, not the return value.
             input = match io::stdin().read_to_string(&mut input) {
                 Ok(_usize_bytes) => input.to_string().trim().to_string(),
