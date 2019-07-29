@@ -38,21 +38,21 @@ mss = maximum segment size  */
 General flow:
 1) Generate memory layout
 2) Boot menu
-3) User communicates:
-   a) that he/she wants to exit --terminate program
-   b) what problem they want to solve (random, specific)
+3) Display question options to user
+   0) VA to PA problem (without a guaranteed call to malloc)
+   1) VA to PA problem with malloc call
+   2) Stack portion problem
+   9) Random problem
 4) if a) --exit program. Else we print the memory layout and the problem
 5) force user to attempt to solve the problem
     if correct --congratulate!
 6) User communicates:
-    a) if they want to see steps
-    b) if they want to try another problem
-    c) if they want to generate a new memory layout
-    d) if they want to exit
-7) If a --show steps and re-print the same menu.
-   If b --return to previous menu
-   If c --have control flow return back to beginning of main
-   If d --exit program
+    0) if they want to see steps
+    1) if they want to return to the main menu
+    2) if they want to exit
+7) If 0 --show steps and re-print the same menu.
+   If 1 --return to previous menu
+   If 2 --exit program
 */
 
 // import necessary libraries!
@@ -64,6 +64,7 @@ use std::fmt::Write;
 use std::io;
 use std::path::{Path, PathBuf};
 use std::process::exit;
+use std::sync::atomic::{AtomicUsize};
 
 // rocket imports
 use rocket::request::Form;
@@ -71,6 +72,9 @@ use rocket_contrib::templates::Template;
 use rocket::response::NamedFile;
 use rocket::http::RawStr;
 // use rocket::response::Redirect;
+
+// global constant representing the question choice from the first HTML form
+// static QUESTION_CHOICE: AtomicUsize = AtomicUsize::new(999);
 
 #[derive(Serialize)]
 pub struct TemplateContext {
@@ -97,18 +101,21 @@ pub fn index() -> io::Result<NamedFile> {
 // user's first entry = 0
 #[get("/first?question_format=0", rank=2)]
 pub fn q_format_0() -> io::Result<NamedFile> {
+    // QUESTION_CHOICE = AtomicUsize::new(0);
     NamedFile::open("static/va_to_pa_format.html")
 }
 
 // user's first entry = 1
 #[get("/first?question_format=1", rank=3)]
 pub fn q_format_1() -> io::Result<NamedFile> {
+    // QUESTION_CHOICE = AtomicUsize::new(1);
     NamedFile::open("static/va_to_pa_format.html")
 }
 
 // user's first entry = 2
 #[get("/first?question_format=2", rank=4)]
 pub fn q_format_2() -> io::Result<NamedFile> {
+    // QUESTION_CHOICE = AtomicUsize::new(2);
     NamedFile::open("static/stack_format.html")
 }
 
