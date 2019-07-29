@@ -71,7 +71,7 @@ use rocket_contrib::templates::Template;
 use rocket::response::NamedFile;
 use rocket::http::RawStr;
 // use rocket::response::Redirect;
-
+static mut globalqformat:u8=0;
 #[derive(Serialize)]
 pub struct TemplateContext {
     query: String,
@@ -97,18 +97,25 @@ pub fn index() -> io::Result<NamedFile> {
 // user's first entry = 0
 #[get("/first?question_format=0", rank=2)]
 pub fn q_format_0() -> io::Result<NamedFile> {
+
     NamedFile::open("static/va_to_pa_format.html")
 }
 
 // user's first entry = 1
 #[get("/first?question_format=1", rank=3)]
 pub fn q_format_1() -> io::Result<NamedFile> {
+    unsafe{
+        globalqformat=1;
+    }
     NamedFile::open("static/va_to_pa_format.html")
 }
 
 // user's first entry = 2
 #[get("/first?question_format=2", rank=4)]
 pub fn q_format_2() -> io::Result<NamedFile> {
+    unsafe{
+        globalqformat= 2;
+    }
     NamedFile::open("static/stack_format.html")
 }
 
@@ -126,8 +133,10 @@ pub fn compute(data: Form<Request>) -> Template {
     let func_result = func_result + &func_result2.2;
 
     let question_choice = &data.term;
-    let format_choice = "0";
-
+    unsafe{
+        let format_choice = globalqformat;
+            println!("format choice is  {:?}",format_choice );
+    }
     // va to pa !malloc problem
     if question_choice == "0" {
         let res_tuple = generate_segmented_memory_layout();
@@ -249,7 +258,7 @@ pub fn compute(data: Form<Request>) -> Template {
     parent: "index",
 }) ;
 } */
-    if format_choice == "2" {
+    /*if format_choice == 2 {
         return Template::render(
             "result",
             &TemplateContext {
@@ -258,7 +267,7 @@ pub fn compute(data: Form<Request>) -> Template {
                 parent: "index",
             },
         );
-    }
+    } */
 
     Template::render(
         "result",
