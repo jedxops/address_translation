@@ -135,8 +135,8 @@ pub fn response(term: &RawStr) -> String {
     format!("You typed in {}.", term)
 }
 
-#[post("/search", data = "<data>")]
-pub fn compute(data: Form<Request>) -> Template {
+#[post("/search", data = "<data>", rank=1)]
+pub fn setup(data: Form<Request>) -> Template {
 
     // generate the segmented memory model for the environment
     // we only need to do this once here.
@@ -211,6 +211,13 @@ pub fn compute(data: Form<Request>) -> Template {
         }
     }
 }
+
+#[get("/search/<term2>", rank=2)]
+pub fn compare_user_answer_to_actual(term2: &RawStr) -> io::Result<NamedFile> {
+    format!("You typed in {}", term2);
+    NamedFile::open("static/va_to_pa_format.html")
+}
+
     // compiler says "unreachable expression".
     /*Template::render(
         "result",

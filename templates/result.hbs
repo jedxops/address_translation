@@ -1,13 +1,34 @@
-{{#*inline "page"}}
+<!DOCTYPE html>
+    <html lang="en">
+    <!--head//-->
+        <!--meta charset="utf-8"//-->
+        <!--title>Index</title//-->
+        <!--link rel="stylesheet" href="/static/index.css"//-->
+    <!--/head//-->
 
-<section id="result">
-  <textarea readonly rows= "20">
-    Your choice was {{query}}.
-    Question is :
+    <body>
+        <h1></h1>
 
-    {{items}}
-  </textarea>
-</section>
+    {{~> page}}
+ 
+    {{#*inline "page"}}
 
-{{/inline}}
-{{~> (parent)~}}
+    <section id="result">
+      <textarea readonly rows= "20">
+        Your choice was {{query}}.
+        Question is :
+
+        {{items}}
+      </textarea>
+    </section>
+
+    {{/inline}}
+    {{~> (parent)~}}
+    <body>
+<html>
+
+<!--form action="/search" method="post" accept-charset="utf-8">
+      <input id="formBox" type="text" name="term2" placeholder="Type Here">
+      <input type="submit" value="Next">
+    </form>
+

@@ -19,7 +19,8 @@ mod lib_fns;
 fn rocket() -> rocket::Rocket {
     rocket::ignite().attach(Template::fairing()).mount(
         "/",
-        routes![routes::file, routes::index, routes::q_format_0, routes::q_format_1, routes::q_format_2, routes::response, routes::compute],
+        routes![routes::file, routes::index, routes::q_format_0, routes::q_format_1, routes::q_format_2, routes::response, routes::setup, 
+            routes::compare_user_answer_to_actual],
     )
 }
 
