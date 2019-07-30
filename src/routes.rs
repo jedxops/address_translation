@@ -64,7 +64,7 @@ use std::fmt::Write;
 use std::io;
 use std::path::{Path, PathBuf};
 use std::process::exit;
-use std::sync::atomic::{AtomicUsize};
+// use std::sync::atomic::{AtomicUsize};
 
 // rocket imports
 use rocket::request::Form;
@@ -76,7 +76,7 @@ use rocket::http::RawStr;
 // global constant representing the question choice from the first HTML form
 // static QUESTION_CHOICE: AtomicUsize = AtomicUsize::new(999);
 
-static mut global_q_choice:u8 = 0;
+static mut GLOBAL_Q_CHOICE:u8 = 0;
 
 #[derive(Serialize)]
 pub struct TemplateContext {
@@ -105,7 +105,7 @@ pub fn index() -> io::Result<NamedFile> {
 pub fn q_format_0() -> io::Result<NamedFile> {
     // QUESTION_CHOICE = AtomicUsize::new(0);
     unsafe {
-        global_q_choice = 0;
+        GLOBAL_Q_CHOICE = 0;
     }
     NamedFile::open("static/va_to_pa_format.html")
 }
@@ -115,7 +115,7 @@ pub fn q_format_0() -> io::Result<NamedFile> {
 pub fn q_format_1() -> io::Result<NamedFile> {
     // QUESTION_CHOICE = AtomicUsize::new(1);
     unsafe {
-        global_q_choice = 1;
+        GLOBAL_Q_CHOICE = 1;
     }
     NamedFile::open("static/va_to_pa_format.html")
 }
@@ -125,7 +125,7 @@ pub fn q_format_1() -> io::Result<NamedFile> {
 pub fn q_format_2() -> io::Result<NamedFile> {
     // QUESTION_CHOICE = AtomicUsize::new(2);
     unsafe {
-        global_q_choice = 2;
+        GLOBAL_Q_CHOICE = 2;
     }
     NamedFile::open("static/stack_format.html")
 }
@@ -138,133 +138,88 @@ pub fn response(term: &RawStr) -> String {
 #[post("/search", data = "<data>")]
 pub fn compute(data: Form<Request>) -> Template {
 
+    // generate the segmented memory model for the environment
+    // we only need to do this once here.
     let res_tuple = generate_segmented_memory_layout();
-    let func_result = print_layout(res_tuple.0, (res_tuple.0) * 2, res_tuple.1, res_tuple.2);
-    let func_result2 = print_question_va_to_pa(res_tuple.0, 0, false);
-    let func_result = func_result + &func_result2.2;
+    let mut to_print = print_layout(res_tuple.0, (res_tuple.0) * 2, res_tuple.1, res_tuple.2.clone());
+    let va: u32 = calculations::get_rand_va(res_tuple.1, (res_tuple.2).clone(), false);
 
-    unsafe{
-        let question_choice = global_q_choice;
-        println!("format choice is  {:?}", question_choice);
-        let format_choice = &data.term;
-
+    // format of the question (question and answer format specifier).
+    let format_choice: i8 = match (&data.term).trim().parse::<i8>() {
+        Ok(k) => k,
+        Err(_) => {
+            println!("Error. Invalid input. Terminating program.\n");
+            -1
+        }
+    };
+    if format_choice == -1 {
+        calculations::error();
+    }
+     
+    unsafe {
+        let question_choice = GLOBAL_Q_CHOICE;
+        println!("question choice is  {:?}", question_choice);
+        println!("format choice (page 2 form) is  {:?}", format_choice);
         // va to pa !malloc problem
         match question_choice {
             0 => {
-                let res_tuple = generate_segmented_memory_layout();
-                //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
-                let mut func_result = print_layout(
-                    res_tuple.0,
-                    (res_tuple.0) * 2,
-                    res_tuple.1,
-                    res_tuple.2.clone(),
-                );
-                let func_result2 = print_question_va_to_pa(res_tuple.0, 0, false);
-                func_result = func_result + &func_result2.2;
-                func_result = func_result + "Type your answer in hexadecimal format with or without the `0x`";
-                /*return Template::render("result", &TemplateContext {
-                    query: qry.to_string(),
-                    items: func_result,
-                    parent: "index",
-                }) */
-                /*let func_result3 = calculations::show_solution_va_to_pa_hex(
-                    res_tuple.2[0],
-                    0,
-                    1000,
-                    res_tuple.0,
-                    (res_tuple.2[0].base) * 1024 + 1000,
-                    res_tuple.1,
-                    (16, 16),
-                );
-
-                let func_result4 = func_result + &func_result3;*/
-                return Template::render(
+                let func_result = print_question_va_to_pa(va, format_choice, false);  // returns a tuple of form (i8, i8, String)
+                to_print = to_print + &func_result.2;
+                to_print = to_print + &calculations::print_answer_instructions(func_result.1);
+                Template::render(
                     "result",
                     &TemplateContext {
                         query: question_choice.to_string(),
-                        items: func_result,
+                        items: to_print,
                         parent: "index",
                     },
-                );
+                )
             }
             1 => {    // malloc problem
-                format!("Hii lets fix things");
-                let res_tuple = generate_segmented_memory_layout();
-                //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
-                let mut func_result = print_layout(
-                    res_tuple.0,
-                    (res_tuple.0) * 2,
-                    res_tuple.1,
-                    res_tuple.2.clone(),
-                );
-                let func_result2 = print_question_va_to_pa(res_tuple.0, 0, false);
-                func_result = func_result + &func_result2.2;
-                /*return Template::render("result", &TemplateContext {
-                    query: qry.to_string(),
-                    items: func_result,
-                    parent: "index",
-                }) */
-
-                let func_result3 = calculations::show_solution_va_to_pa_hex(
-                    res_tuple.2[0],
-                    0,
-                    1000,
-                    res_tuple.0,
-                    (res_tuple.2[0].base) * 1024 + 1000,
-                    res_tuple.1,
-                    (16, 16),
-                );
-
-                let func_result4 = func_result + &func_result3;
-                return Template::render(
+                let func_result = print_question_va_to_pa(va, format_choice, true);
+                to_print = to_print + &func_result.2;
+                to_print = to_print + &calculations::print_answer_instructions(func_result.1);
+                Template::render(
                     "result",
                     &TemplateContext {
                         query: question_choice.to_string(),
-                        items: func_result4,
+                        items: to_print,
                         parent: "index",
                     },
-                );
-        }
-        2 => {     // stack problem
-                let res_tuple = generate_segmented_memory_layout();
-                //va_to_pa(res_tuple.0,res_tuple.1,res_tuple.2.clone());
-                let mut func_result = print_layout(
-                    res_tuple.0,
-                    (res_tuple.0) * 2,
-                    res_tuple.1,
-                    res_tuple.2.clone(),
-                );
-                let func_result2 = print_question_va_to_pa(res_tuple.0, 0, false);
-                func_result = func_result + &func_result2.2;
-                /*return Template::render("result", &TemplateContext {
-                    query: qry.to_string(),
-                    items: func_result,
-                    parent: "index",
-                }) */
-
-                let func_result3 = calculations::show_solution_va_to_pa_hex(
-                    res_tuple.2[0],
-                    0,
-                    1000,
-                    res_tuple.0,
-                    (res_tuple.2[0].base) * 1024 + 1000,
-                    res_tuple.1,
-                    (16, 16),
-                );
-
-                let func_result4 = func_result + &func_result3;
-                return Template::render(
-                    "result",
-                    &TemplateContext {
-                        query: question_choice.to_string(),
-                        items: func_result4,
-                        parent: "index",
-                    },
-                );
+                )
             }
+            2 => {  // stack problem
+                    // generate percentage;
+                    let mut rng = rand::thread_rng(); // seed the rng
+                    let quarters = [100.0, 25.0, 75.0, 50.0, 0.0];
+                    let rando = rng.gen_range(0, quarters.len());
+                    let percent: f32 = quarters[rando];
+
+                    let func_result = print_question_stack_percentage(percent as u32, format_choice);
+                    to_print = to_print + &func_result.1;
+                    to_print = to_print + &calculations::print_answer_instructions(func_result.0);
+                    Template::render(
+                        "result",
+                        &TemplateContext {
+                            query: question_choice.to_string(),
+                            items: to_print,
+                            parent: "index",
+                        },
+                    )
+                }
             _ => {exit(-1);}
         }
     }
+}
+    // compiler says "unreachable expression".
+    /*Template::render(
+        "result",
+        &TemplateContext {
+            query: "invalid".to_string(),
+            items: "Please reference available commands.".to_string(),
+            parent: "index",
+        },
+    )*/
 
  /*if(qry2.contains("3")){
      return Template::render("result",&TemplateContext {
@@ -284,15 +239,22 @@ pub fn compute(data: Form<Request>) -> Template {
         );
     } */
 
-    Template::render(
-        "result",
-        &TemplateContext {
-            query: "invalid".to_string(),
-            items: "Please reference available commands.".to_string(),
-            parent: "index",
-        },
-    )
-}
+/*return Template::render("result", &TemplateContext {
+                    query: qry.to_string(),
+                    items: func_result,
+                    parent: "index",
+                }) */
+                /*let func_result3 = calculations::show_solution_va_to_pa_hex(
+                    res_tuple.2[0],
+                    0,
+                    1000,
+                    res_tuple.0,
+                    (res_tuple.2[0].base) * 1024 + 1000,
+                    res_tuple.1,
+                    (16, 16),
+                );
+
+                let func_result4 = func_result + &func_result3;*/
 
 /*  let mut reset = true;
     while reset {
@@ -967,7 +929,7 @@ fn choose_format(question_flag: u8) -> (i8, String) {
             }
         }
     }
-    (choice as i8, to_print)
+    (choice, to_print)
 }
 
 // function useful for clearing the output buffer

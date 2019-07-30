@@ -9,7 +9,6 @@ use crate::lib_fns;
 use rand::Rng;
 use std::fmt::Write as OtherWrite;
 use std::io;
-use std::io::prelude::*;
 use std::io::Write;
 use std::process::exit; // need flush() method.
 
@@ -529,24 +528,43 @@ pub fn test_va_pa_calculation_v1() {
     assert_eq!(132096, calculate_answer(heap_seg, 32768, 1024));
 }
 
+pub fn print_answer_instructions(aformat: i8) -> String {
+    let mut to_print = String::new();
+    match aformat {
+        16 => { writeln!(&mut to_print,"Type your answer in hexadecimal format with or without the '0x'").unwrap();
+        }
+        2 => {
+            writeln!(&mut to_print,"Type your answer in binary format with or without leading zeros then press enter and ctrl+d").unwrap();
+        }
+        10 => {
+            writeln!(&mut to_print,"Type your answer in decimal format (base 10, no decimal points) then press enter and ctrl+d").unwrap();
+        }
+        _ => {
+            writeln!(
+                &mut to_print,
+                "Error. Unexpected format specifier. Fatal error. Terminating program"
+            )
+            .unwrap();
+            // for terminal error output
+            println!("Error. Unexpected format specifier. Fatal error. Terminating program");
+            exit(-1)
+        }
+    }
+    to_print
+}
+
 // compares actual answer to user answer after printing the question
-pub fn compare_answer(aformat: i8, pa: u32) -> String {
-    // let mut to_print = String::new();
-    let mut input = String::new();
+pub fn compare_answer(input: String, aformat: i8, pa: u32) -> String {
+    let mut answer = input;
     let mut to_print = String::new();
     match aformat {
         16 => {
-            // the read_to_string writes the input data to its argument, not the return value.
-            input = match io::stdin().read_to_string(&mut input) {
-                Ok(_usize_bytes) => input.to_string().trim().to_string(),
-                Err(_) => "".to_string(),
-            };
             writeln!(&mut to_print).unwrap();
-            input = input.replace("x", ""); // replace all the characters that could possibly be taken as hex prefixes (like 0, x) with empty string
-            input = input.replace("X", "");
-            if lib_fns::are_all_numeric(&input, 16) {
-                match lib_fns::bn_to_b10(&input.replace("0x", "").to_string(), 16) {
-                    // use my library function to convert input to base 10 (so we can measure it!)
+            answer = answer.replace("x", ""); // replace all the characters that could possibly be taken as hex prefixes (like 0, x) with empty string
+            answer = answer.replace("X", "");
+            if lib_fns::are_all_numeric(&answer, 16) {
+                match lib_fns::bn_to_b10(&answer.replace("0x", "").to_string(), 16) {
+                    // use my library function to convert answer to base 10 (so we can measure it!)
                     Some(k) => {
                         if k as u32 == pa {
                             writeln!(&mut to_print, "Good.").unwrap();
@@ -565,7 +583,7 @@ pub fn compare_answer(aformat: i8, pa: u32) -> String {
                         writeln!(
                             &mut to_print,
                             "your answer: {} bytes\nactual: {:#X} bytes",
-                            input, pa
+                            answer, pa
                         )
                         .unwrap();
                     }
@@ -575,23 +593,19 @@ pub fn compare_answer(aformat: i8, pa: u32) -> String {
                 writeln!(
                     &mut to_print,
                     "your answer: {} bytes\nactual: {:#X} bytes",
-                    input, pa
+                    answer, pa
                 )
                 .unwrap();
             }
         }
         2 => {
             writeln!(&mut to_print,"Type your answer in binary format with or without leading zeros then press enter and ctrl+d").unwrap();
-            input = match io::stdin().read_to_string(&mut input) {
-                Ok(_usize_bytes) => input.to_string().trim().to_string(),
-                Err(_) => "".to_string(),
-            };
             writeln!(&mut to_print).unwrap();
-            input = input.replace("x", "");
-            input = input.replace("X", ""); // replace all the characters that could possibly be taken as hex prefixes (like 0, x) with empty string
-            if lib_fns::are_all_numeric(&input, 2) {
+            answer = answer.replace("x", "");
+            answer = answer.replace("X", ""); // replace all the characters that could possibly be taken as hex prefixes (like 0, x) with empty string
+            if lib_fns::are_all_numeric(&answer, 2) {
                 // the second flag specifies the base which we define as `numeric`
-                match lib_fns::bn_to_b10(&input.trim().to_string(), 2) {
+                match lib_fns::bn_to_b10(&answer.trim().to_string(), 2) {
                     Some(k) => {
                         if k as u32 == pa {
                             writeln!(&mut to_print, "Good.").unwrap();
@@ -610,7 +624,7 @@ pub fn compare_answer(aformat: i8, pa: u32) -> String {
                         writeln!(
                             &mut to_print,
                             "your answer: {} bytes\nactual: {:b} bytes",
-                            input, pa
+                            answer, pa
                         )
                         .unwrap();
                     }
@@ -620,23 +634,17 @@ pub fn compare_answer(aformat: i8, pa: u32) -> String {
                 writeln!(
                     &mut to_print,
                     "your answer: {} bytes\nactual: {:b} bytes",
-                    input, pa
+                    answer, pa
                 )
                 .unwrap();
             }
         }
         10 => {
             writeln!(&mut to_print,"Type your answer in decimal format (base 10, no decimal points) then press enter and ctrl+d").unwrap();
-            // the read_to_string writes the input data to its argument, not the return value.
-            input = match io::stdin().read_to_string(&mut input) {
-                Ok(_usize_bytes) => input.to_string().trim().to_string(),
-                Err(_) => "".to_string(),
-            };
-            writeln!(&mut to_print).unwrap();
-            input = input.replace("x", "");
-            input = input.replace("X", "");
-            if lib_fns::are_all_numeric(&input, 10) {
-                match lib_fns::bn_to_b10(&input.trim().to_string(), 10) {
+            answer = answer.replace("x", "");
+            answer = answer.replace("X", "");
+            if lib_fns::are_all_numeric(&answer, 10) {
+                match lib_fns::bn_to_b10(&answer.trim().to_string(), 10) {
                     Some(k) => {
                         if k as u32 == pa {
                             writeln!(&mut to_print, "Good.").unwrap();
@@ -655,7 +663,7 @@ pub fn compare_answer(aformat: i8, pa: u32) -> String {
                         writeln!(
                             &mut to_print,
                             "your answer: {} bytes\nactual: {} bytes",
-                            input, pa
+                            answer, pa
                         )
                         .unwrap();
                     }
@@ -665,7 +673,7 @@ pub fn compare_answer(aformat: i8, pa: u32) -> String {
                 writeln!(
                     &mut to_print,
                     "your answer: {} bytes\nactual: {} bytes",
-                    input, pa
+                    answer, pa
                 )
                 .unwrap();
             }
