@@ -122,10 +122,6 @@ pub fn index() -> io::Result<NamedFile> {
 // user's first entry = 0
 #[get("/first?question_format=0", rank=2)]
 pub fn q_format_0() -> io::Result<NamedFile> {
-    // QUESTION_CHOICE = AtomicUsize::new(0);
-    /*{
-        GLOBAL_Q_CHOICE = 0;
-    }*/
     let mut question_choice = Q_CHOICE.lock().unwrap();
     *question_choice = Choice0;
     NamedFile::open("static/va_to_pa_format.html")
@@ -134,10 +130,6 @@ pub fn q_format_0() -> io::Result<NamedFile> {
 // user's first entry = 1
 #[get("/first?question_format=1", rank=3)]
 pub fn q_format_1() -> io::Result<NamedFile> {
-    // QUESTION_CHOICE = AtomicUsize::new(1);
-    /*{
-        GLOBAL_Q_CHOICE = 1;
-    }*/
     let mut question_choice = Q_CHOICE.lock().unwrap();
     *question_choice = Choice1;
     NamedFile::open("static/va_to_pa_format.html")
@@ -146,10 +138,6 @@ pub fn q_format_1() -> io::Result<NamedFile> {
 // user's first entry = 2
 #[get("/first?question_format=2", rank=4)]
 pub fn q_format_2() -> io::Result<NamedFile> {
-    // QUESTION_CHOICE = AtomicUsize::new(2);
-    /*{
-        GLOBAL_Q_CHOICE = 2;
-    }*/
     let mut question_choice = Q_CHOICE.lock().unwrap();
     *question_choice = Choice2;
     NamedFile::open("static/stack_format.html")
@@ -193,7 +181,7 @@ pub fn setup(data: Form<Request>) -> Template {
     // va to pa !malloc problem
     match *question_choice {
         Choice0 => {
-            // fetch a random va 
+            // fetch a random va
             let va: u32 = calculations::get_rand_va(power_of2, segments.clone(), false);
             // calculate offset:
             let ss: u32 = va >> (power_of2 - 2);
@@ -205,7 +193,7 @@ pub fn setup(data: Form<Request>) -> Template {
                 // we only want to mask the bits up to the ss
                 bit_mask += 2u32.pow(i); // turning on bits in the mask value
             }
-            let offset: u32 = va & bit_mask; // the expression on the left = va but with the 2 highest order bits set to 0 which is the same as the offset 
+            let offset: u32 = va & bit_mask; // the expression on the left = va but with the 2 highest order bits set to 0 which is the same as the offset
 
             // get the strings to print to the web page.
             let func_result = print_question_va_to_pa(va, format_choice, false);  // returns a tuple of form (i8, i8, String)
@@ -246,7 +234,7 @@ pub fn setup(data: Form<Request>) -> Template {
             )
         }
         Choice1 => {    // malloc problem
-            // fetch a random va 
+            // fetch a random va
             let va: u32 = calculations::get_rand_va(power_of2, segments.clone(), true);
             // calculate offset:
             let ss: u32 = va >> (power_of2 - 2);
@@ -258,7 +246,7 @@ pub fn setup(data: Form<Request>) -> Template {
                 // we only want to mask the bits up to the ss
                 bit_mask += 2u32.pow(i); // turning on bits in the mask value
             }
-            let offset: u32 = va & bit_mask; // the expression on the left = va but with the 2 highest order bits set to 0 which is the same as the offset 
+            let offset: u32 = va & bit_mask; // the expression on the left = va but with the 2 highest order bits set to 0 which is the same as the offset
 
             // get the strings to print to the web page.
             let func_result = print_question_va_to_pa(va, format_choice, true);  // returns a tuple of form (i8, i8, String)
@@ -331,7 +319,6 @@ pub fn setup(data: Form<Request>) -> Template {
                 )
         }
 
-
         _ => {exit(-1);}
     }
 }
@@ -341,12 +328,6 @@ pub fn solution() -> io::Result<NamedFile>{
     NamedFile::open("static/solution.html")
 }
 
-
-/*#[get("/search/<term2>", rank=2)]
-pub fn compare_user_answer_to_actual(term2: &RawStr) -> io::Result<NamedFile> {
-    format!("You typed in {}", term2);
-    NamedFile::open("static/va_to_pa_format.html")
-}*/
 
 // function for fetching the format specifiers given a question/answer format user choice
 pub fn fetch_format_specifiers(format_choice: i8) -> (i8, i8) {
@@ -365,118 +346,6 @@ pub fn fetch_format_specifiers(format_choice: i8) -> (i8, i8) {
     (qformat, aformat)
 }
 
-    // compiler says "unreachable expression".
-    /*Template::render(
-        "result",
-        &TemplateContext {
-            query: "invalid".to_string(),
-            items: "Please reference available commands.".to_string(),
-            parent: "index",
-        },
-    )*/
-
- /*if(qry2.contains("3")){
-     return Template::render("result",&TemplateContext {
-    query: qry2.to_string(),
-    items : "new query".to_string(),
-    parent: "index",
-}) ;
-} */
-    /*if format_choice == 2 {
-        return Template::render(
-            "result",
-            &TemplateContext {
-                query: "second option".to_string(),
-                items: "new query".to_string(),
-                parent: "index",
-            },
-        );
-    } */
-
-/*return Template::render("result", &TemplateContext {
-                    query: qry.to_string(),
-                    items: func_result,
-                    parent: "index",
-                }) */
-                /*let func_result3 = calculations::show_solution_va_to_pa_hex(
-                    res_tuple.2[0],
-                    0,
-                    1000,
-                    res_tuple.0,
-                    (res_tuple.2[0].base) * 1024 + 1000,
-                    res_tuple.1,
-                    (16, 16),
-                );
-
-                let func_result4 = func_result + &func_result3;*/
-
-/*  let mut reset = true;
-    while reset {
-        let x: (u32, u32, Vec<calculations::Segment>) = generate_segmented_memory_layout();
-        clear_screen();
-        loop {
-            // clear_screen();
-            let mut input_string = String::new();
-            println!("OPTION\t\tPROBLEM TYPE\n");
-            println!(
-                "0\u{29}\t\tTranslate Random Virtual Address to a corresponding Physical Address"
-            );
-            println!("1\u{29}\t\tTranslate Random Virtual Address Returned by Malloc() to a corresponding Physical Address");
-            println!(
-                "2\u{29}\t\tCalculate Specified Portion through the Stack as a Virtual Address"
-            );
-            println!("8\u{29}\t\tGenerate fresh segmented memory model");
-            println!("9\u{29}\t\tGenerate Random Problem");
-            println!("10\u{29}\t\tExit");
-
-            match io::stdin().read_line(&mut input_string) {
-                Ok(_) => {} // this function returns a result type
-                Err(_) => {
-                    continue;
-                }
-            }
-            let y: i8 = match input_string.trim().parse::<i8>() {
-                Ok(k) => k,
-                Err(_) => {
-                    println!("Error. Invalid input [not an integer in the specified range]. Please try again.\n");
-                    -1
-                }
-            };
-            if y == -1 {
-                continue;
-            } else {
-                match y {
-                    0 => {
-                        atqs[0](x.0, x.1, x.2.clone());
-                    }
-                    1 => {
-                        atqs[1](x.0, x.1, x.2.clone());
-                    }
-                    2 => {
-                        atqs[2](x.0, x.1, x.2.clone());
-                    }
-                    8 => {
-                        reset = true;
-                        clear_screen();
-                        println!("Generated.");
-                        break;
-                    }
-                    9 => {
-                        let mut rng = rand::thread_rng(); // seed the rng
-                        let rando: usize = rng.gen_range(0, atqs.len());
-                        atqs[rando](x.0, x.1, x.2.clone());
-                    }
-                    10 => {
-                        return;
-                    }
-                    _ => {
-                        continue;
-                    }
-                }
-            }
-        }
-    }
-}*/
 
 // this function calculates the bounds of the address space and generates a segmented memory
 // model for the code heap and stack sections.
