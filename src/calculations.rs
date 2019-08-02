@@ -43,7 +43,7 @@ pub fn show_solution_stack_va(
     aformate: i8,
 ) -> String {
     let mut to_print = String::new();
-    writeln!(&mut to_print,"--Note that the stack base and size are parameters in Physical Memory --not Virtual Memory.").unwrap();
+    writeln!(&mut to_print,"\n--Note that the stack base and size are parameters in Physical Memory --not Virtual Memory.").unwrap();
     writeln!(&mut to_print,"The problem prompts a translation from PA to VA --the address corresponding to the specified portion through the stack as a virtual address").unwrap();
     writeln!(&mut to_print,"Therefore, calculating the percent of the stack size and subtracting it from the stack base yields an incorrect translation.\n").unwrap();
     writeln!(
@@ -170,7 +170,7 @@ pub fn show_solution_stack_va(
 }
 
 // shows the `student` the steps to solving the VA to PA problem
-pub fn show_solution_va_to_pa_hex(
+pub fn show_solution_va_to_pa(
     seg: Segment,
     ss: u32,
     offset: u32,

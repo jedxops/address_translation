@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <!--head//-->
+        <!--meta charset="utf-8"//-->
+        <!--title>Index</title//-->
+        <!--link rel="stylesheet" href="/static/index.css"//-->
+        <!--Your choice was {{query}}.-->
+        <!--Question is :-->
+
+    <!--/head//-->
+
+    <body>
+        <h1></h1>
+
+    {{~> page}}
+ 
+    {{#*inline "page"}}
+
+    <section id="solution">
+      <textarea readonly rows= "20">
+        {{items.question_solution}}
+      </textarea>
+    </section>
+
+    {{/inline}}
+    {{~> (parent)~}}
+    <body>
+<html>
+
+<!--form action="/search" method="post" accept-charset="utf-8">
+      <input id="formBox" type="text" name="term2" placeholder="Type Here">
+      <input type="submit" value="Next">
+    </form>
+

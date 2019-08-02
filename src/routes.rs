@@ -64,6 +64,8 @@ use std::fmt::Write;
 use std::io;
 use std::path::{Path, PathBuf};
 use std::process::exit;
+use lazy_static::*;
+use std::sync::Mutex;
 // use std::sync::atomic::{AtomicUsize};
 
 // rocket imports
@@ -74,14 +76,31 @@ use rocket::http::RawStr;
 // use rocket::response::Redirect;
 
 // global constant representing the question choice from the first HTML form
-// static QUESTION_CHOICE: AtomicUsize = AtomicUsize::new(999);
+lazy_static! {
+    static ref Q_CHOICE: Mutex<QuestionChoice> = Mutex::new(ChoiceInit);  // setting the choice equal to some initial form (not 0, 1, 2 yet).
+}
 
-static mut GLOBAL_Q_CHOICE:u8 = 0;
+// enumeration type for the question choice global
+#[derive(Debug, Clone, Copy)]
+enum QuestionChoice {
+    ChoiceInit,     // empty choice (choice has not been made yet).
+    Choice0,        // va_to_pa no malloc question
+    Choice1,        // va_to_pa malloc question
+    Choice2,        // stack portion question
+}
+use QuestionChoice::*;
+
+#[derive(Debug, Serialize, Deserialize)]
+struct QuestionSolutionInfo {
+    question_prompt: String,
+    question_solution: String,
+
+}
 
 #[derive(Serialize)]
 pub struct TemplateContext {
     query: String,
-    items: String,
+    items: QuestionSolutionInfo,
     parent: &'static str,
 }
 
@@ -104,9 +123,11 @@ pub fn index() -> io::Result<NamedFile> {
 #[get("/first?question_format=0", rank=2)]
 pub fn q_format_0() -> io::Result<NamedFile> {
     // QUESTION_CHOICE = AtomicUsize::new(0);
-    unsafe {
+    /*{
         GLOBAL_Q_CHOICE = 0;
-    }
+    }*/
+    let mut question_choice = Q_CHOICE.lock().unwrap();
+    *question_choice = Choice0;
     NamedFile::open("static/va_to_pa_format.html")
 }
 
@@ -114,9 +135,11 @@ pub fn q_format_0() -> io::Result<NamedFile> {
 #[get("/first?question_format=1", rank=3)]
 pub fn q_format_1() -> io::Result<NamedFile> {
     // QUESTION_CHOICE = AtomicUsize::new(1);
-    unsafe {
+    /*{
         GLOBAL_Q_CHOICE = 1;
-    }
+    }*/
+    let mut question_choice = Q_CHOICE.lock().unwrap();
+    *question_choice = Choice1;
     NamedFile::open("static/va_to_pa_format.html")
 }
 
@@ -124,9 +147,11 @@ pub fn q_format_1() -> io::Result<NamedFile> {
 #[get("/first?question_format=2", rank=4)]
 pub fn q_format_2() -> io::Result<NamedFile> {
     // QUESTION_CHOICE = AtomicUsize::new(2);
-    unsafe {
+    /*{
         GLOBAL_Q_CHOICE = 2;
-    }
+    }*/
+    let mut question_choice = Q_CHOICE.lock().unwrap();
+    *question_choice = Choice2;
     NamedFile::open("static/stack_format.html")
 }
 
@@ -137,12 +162,16 @@ pub fn response(term: &RawStr) -> String {
 
 #[post("/search", data = "<data>", rank=1)]
 pub fn setup(data: Form<Request>) -> Template {
+    // (vas, power_of2, segments)
 
     // generate the segmented memory model for the environment
     // we only need to do this once here.
     let res_tuple = generate_segmented_memory_layout();
-    let mut to_print = print_layout(res_tuple.0, (res_tuple.0) * 2, res_tuple.1, res_tuple.2.clone());
-    let va: u32 = calculations::get_rand_va(res_tuple.1, (res_tuple.2).clone(), false);
+    let vas = res_tuple.0;
+    let power_of2 = res_tuple.1;
+    let segments = res_tuple.2;   // name the tuple elements some relevant names.
+    let mut to_print = print_layout(vas, vas * 2, power_of2, segments.clone());
+    let mut to_print2 = "Default".to_string();
 
     // format of the question (question and answer format specifier).
     let format_choice: i8 = match (&data.term).trim().parse::<i8>() {
@@ -155,67 +184,185 @@ pub fn setup(data: Form<Request>) -> Template {
     if format_choice == -1 {
         calculations::error();
     }
-     
-    unsafe {
-        let question_choice = GLOBAL_Q_CHOICE;
-        println!("question choice is  {:?}", question_choice);
-        println!("format choice (page 2 form) is  {:?}", format_choice);
-        // va to pa !malloc problem
-        match question_choice {
-            0 => {
-                let func_result = print_question_va_to_pa(va, format_choice, false);  // returns a tuple of form (i8, i8, String)
-                to_print = to_print + &func_result.2;
-                to_print = to_print + &calculations::print_answer_instructions(func_result.1);
-                Template::render(
-                    "result",
-                    &TemplateContext {
-                        query: question_choice.to_string(),
-                        items: to_print,
-                        parent: "index",
-                    },
-                )
-            }
-            1 => {    // malloc problem
-                let func_result = print_question_va_to_pa(va, format_choice, true);
-                to_print = to_print + &func_result.2;
-                to_print = to_print + &calculations::print_answer_instructions(func_result.1);
-                Template::render(
-                    "result",
-                    &TemplateContext {
-                        query: question_choice.to_string(),
-                        items: to_print,
-                        parent: "index",
-                    },
-                )
-            }
-            2 => {  // stack problem
-                    // generate percentage;
-                    let mut rng = rand::thread_rng(); // seed the rng
-                    let quarters = [100.0, 25.0, 75.0, 50.0, 0.0];
-                    let rando = rng.gen_range(0, quarters.len());
-                    let percent: f32 = quarters[rando];
 
-                    let func_result = print_question_stack_percentage(percent as u32, format_choice);
-                    to_print = to_print + &func_result.1;
-                    to_print = to_print + &calculations::print_answer_instructions(func_result.0);
-                    Template::render(
-                        "result",
-                        &TemplateContext {
-                            query: question_choice.to_string(),
-                            items: to_print,
-                            parent: "index",
-                        },
-                    )
+    let question_choice = Q_CHOICE.lock().unwrap();
+    println!("question choice is  {:?}", *question_choice);
+    println!("format choice (page 2 form) is  {:?}", format_choice);
+    let format_specifiers = fetch_format_specifiers(format_choice);
+
+    // va to pa !malloc problem
+    match *question_choice {
+        Choice0 => {
+            // fetch a random va 
+            let va: u32 = calculations::get_rand_va(power_of2, segments.clone(), false);
+            // calculate offset:
+            let ss: u32 = va >> (power_of2 - 2);
+            // MSS = 2^number of bits in the offset = number of total bits - 2 (because SS = 2 bits)
+            let mss: u32 = 2u32.pow(power_of2 - 2); // MSS = 2^(number of bits in the offset)
+            // calculate offset
+            let mut bit_mask: u32 = 0;
+            for i in 0..power_of2 - 2 {
+                // we only want to mask the bits up to the ss
+                bit_mask += 2u32.pow(i); // turning on bits in the mask value
+            }
+            let offset: u32 = va & bit_mask; // the expression on the left = va but with the 2 highest order bits set to 0 which is the same as the offset 
+
+            // get the strings to print to the web page.
+            let func_result = print_question_va_to_pa(va, format_choice, false);  // returns a tuple of form (i8, i8, String)
+            to_print = to_print + &func_result.2;
+            to_print = to_print + &calculations::print_answer_instructions(func_result.1);
+            match ss {
+                3 => {
+                    // stack ss
+                    // perform the math necessary to solve the given question
+                    // the physical address (answer to the question).
+                    let pa_ans = calculations::calculate_answer(segments[2], mss, offset);
+                    to_print2 = calculations::show_solution_va_to_pa(segments[2], ss, offset, va, pa_ans, power_of2, format_specifiers);
                 }
-            _ => {exit(-1);}
+                0 | 1 => {
+                    // code, heap
+                    // perform the math necessary to solve the given question
+                    // the physical address (answer to the question).
+                    let pa_ans = calculations::calculate_answer(segments[ss as usize], mss, offset);
+                    to_print2 = calculations::show_solution_va_to_pa(segments[ss as usize], ss, offset, va, pa_ans, power_of2, format_specifiers);
+                }
+                _ => {
+                    // if so then print error message and exit. --BUG
+                    println!("Error. Segment selector doesnt represent any of the implemented segments. It equals {}", ss);
+                    println!("Exiting program.");
+                    exit(-1);
+                }
+            }
+            Template::render(
+                "result",
+                &TemplateContext {
+                    query: "0".to_string(),
+                    items: QuestionSolutionInfo {
+                            question_prompt: to_print,
+                            question_solution: to_print2,
+                          },
+                    parent: "index",
+                },
+            )
         }
+        Choice1 => {    // malloc problem
+            // fetch a random va 
+            let va: u32 = calculations::get_rand_va(power_of2, segments.clone(), true);
+            // calculate offset:
+            let ss: u32 = va >> (power_of2 - 2);
+            // MSS = 2^number of bits in the offset = number of total bits - 2 (because SS = 2 bits)
+            let mss: u32 = 2u32.pow(power_of2 - 2); // MSS = 2^(number of bits in the offset)
+            // calculate offset
+            let mut bit_mask: u32 = 0;
+            for i in 0..power_of2 - 2 {
+                // we only want to mask the bits up to the ss
+                bit_mask += 2u32.pow(i); // turning on bits in the mask value
+            }
+            let offset: u32 = va & bit_mask; // the expression on the left = va but with the 2 highest order bits set to 0 which is the same as the offset 
+
+            // get the strings to print to the web page.
+            let func_result = print_question_va_to_pa(va, format_choice, true);  // returns a tuple of form (i8, i8, String)
+            to_print = to_print + &func_result.2;
+            to_print = to_print + &calculations::print_answer_instructions(func_result.1);
+            match ss {
+                3 => {
+                    // stack ss
+                    // perform the math necessary to solve the given question
+                    // the physical address (answer to the question).
+                    let pa_ans = calculations::calculate_answer(segments[2], mss, offset);
+                    to_print2 = calculations::show_solution_va_to_pa(segments[2], ss, offset, va, pa_ans, power_of2, format_specifiers);
+                }
+                0 | 1 => {
+                    // code, heap
+                    // perform the math necessary to solve the given question
+                    // the physical address (answer to the question).
+                    let pa_ans = calculations::calculate_answer(segments[ss as usize], mss, offset);
+                    to_print2 = calculations::show_solution_va_to_pa(segments[ss as usize], ss, offset, va, pa_ans, power_of2, format_specifiers);
+                }
+                _ => {
+                    // if so then print error message and exit. --BUG
+                    println!("Error. Segment selector doesnt represent any of the implemented segments. It equals {}", ss);
+                    println!("Exiting program.");
+                    exit(-1);
+                }
+            }
+
+            Template::render(
+                "result",
+                &TemplateContext {
+                    query: "0".to_string(),
+                    items: QuestionSolutionInfo {
+                        question_prompt: to_print,
+                        question_solution: to_print2,
+                    },
+                    parent: "index",
+                },
+            )
+        }
+        Choice2 => {  // stack problem
+            // generate percentage;
+            let mut rng = rand::thread_rng(); // seed the rng
+            let quarters = [100.0, 25.0, 75.0, 50.0, 0.0];
+            let rando = rng.gen_range(0, quarters.len());
+            let percent: f32 = quarters[rando];
+
+            // get the strings to print to the web page.
+            let func_result = print_question_stack_percentage(percent as u32, format_choice);
+            to_print = to_print + &func_result.1;
+            to_print = to_print + &calculations::print_answer_instructions(func_result.0);
+
+            // MSS = 2^number of bits in the offset = number of total bits - 2 (because SS = 2 bits)
+            let mss: u32 = 2u32.pow(power_of2 - 2); // MSS = 2^(number of bits in the offset)
+            // returns a tuple, the 0th position has the virtual address answer
+            let tuple = calculations::calculate_answer_stack_percentage(segments[2], percent, mss, power_of2);
+            let va_ans = tuple.0;
+            let offset = tuple.1;
+            to_print2 = calculations::show_solution_stack_va(segments[2], offset, va_ans, power_of2, percent, format_specifiers.1);
+            Template::render(
+                    "result",
+                    &TemplateContext {
+                        query: "0".to_string(),
+                        items: QuestionSolutionInfo {
+                            question_prompt: to_print,
+                            question_solution: to_print2,
+                        },
+                        parent: "index",
+                    },
+                )
+        }
+
+
+        _ => {exit(-1);}
     }
 }
 
-#[get("/search/<term2>", rank=2)]
+#[get("/search", rank=2)]
+pub fn solution() -> io::Result<NamedFile>{
+    NamedFile::open("static/solution.html")
+}
+
+
+/*#[get("/search/<term2>", rank=2)]
 pub fn compare_user_answer_to_actual(term2: &RawStr) -> io::Result<NamedFile> {
     format!("You typed in {}", term2);
     NamedFile::open("static/va_to_pa_format.html")
+}*/
+
+// function for fetching the format specifiers given a question/answer format user choice
+pub fn fetch_format_specifiers(format_choice: i8) -> (i8, i8) {
+    let qformat = match format_choice {
+        0 | 1 | 2 => 16,
+        3 | 4 | 5 => 2,
+        6 | 7 | 8 => 10,
+        _ => -1,
+    };
+    let aformat = match format_choice {
+        0 | 3 | 6 => 16,
+        1 | 4 | 7 => 2,
+        2 | 5 | 8 => 10,
+        _ => -1,
+    };
+    (qformat, aformat)
 }
 
     // compiler says "unreachable expression".
@@ -416,14 +563,6 @@ pub fn print_layout(
     )
     .unwrap();
     to_print
-}
-
-pub fn str(segments: Vec<calculations::Segment>) -> (u32, f32) {
-    //let mut v:Vec<String> = vec![];
-    //v.push(segments[0].base.to_string());
-    //v.push(segments[0].size.to_string());
-    //v
-    (segments[0].base, segments[0].size)
 }
 
 // takes a format flag passed from the client and prints the question returning a format specifier (u32 flag).
