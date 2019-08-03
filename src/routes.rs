@@ -225,6 +225,7 @@ pub fn setup(data: Form<Request>) -> Template {
                     exit(-1);
                 }
             }
+            println!("sol: {}", to_print2);
             Template::render(
                 "result",
                 &TemplateContext {
@@ -329,19 +330,15 @@ pub fn setup(data: Form<Request>) -> Template {
 
 #[post("/showsteps", data = "<data>")]
 pub fn solution(data: Form<Request2>) -> Template{
-    println!("in here!");
-    //let return_value = QuestionSolutionInfo{question_prompt: (&data.term).to_string(), question_solution: (&data.term).to_string(),};
-    //println!("sol {}", return_value.question_solution);
-    //println!("q {}", return_value.question_prompt);
-    println!("{:?}",data);
+    // println!("in here!");
+    let return_value = QuestionSolutionInfo{question_prompt: "null".to_string(), question_solution: (&data.solution).to_string(),};
+    // println!("sol {}", return_value.question_solution);
+    // println!("q {}", return_value.question_prompt);
     Template::render(
         "solution",
         &TemplateContext {
             query: "0".to_string(),
-            items: QuestionSolutionInfo{
-                question_prompt: "teat".to_string(),
-                question_solution: "solsdf".to_string(),
-            },
+            items: return_value,
             parent: "index",
         },
     )
