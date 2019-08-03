@@ -90,7 +90,7 @@ enum QuestionChoice {
 }
 use QuestionChoice::*;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize,FromForm)]
 struct QuestionSolutionInfo {
     question_prompt: String,
     question_solution: String,
@@ -104,9 +104,15 @@ pub struct TemplateContext {
     parent: &'static str,
 }
 
-#[derive(FromForm)]
+#[derive(FromForm,Debug)]
 pub struct Request {
     term: String,
+}
+
+#[derive(FromForm,Debug)]
+pub struct Request2 {
+    term: String,
+    term2: String,
 }
 
 #[get("/static/<file..>")]
@@ -323,9 +329,24 @@ pub fn setup(data: Form<Request>) -> Template {
     }
 }
 
-#[get("/search", rank=2)]
-pub fn solution() -> io::Result<NamedFile>{
-    NamedFile::open("static/solution.html")
+#[post("/showsteps", data = "<data>")]
+pub fn solution(data: Form<Request2>) -> Template{
+    println!("in here!");
+    //let return_value = QuestionSolutionInfo{question_prompt: (&data.term).to_string(), question_solution: (&data.term).to_string(),};
+    //println!("sol {}", return_value.question_solution);
+    //println!("q {}", return_value.question_prompt);
+    println!("{:?}",data );
+    Template::render(
+        "solution",
+        &TemplateContext {
+            query: "0".to_string(),
+            items: QuestionSolutionInfo{
+                question_prompt: "teat".to_string(),
+                question_solution: "solsdf".to_string(),
+            },
+            parent: "index",
+        },
+    )
 }
 
 

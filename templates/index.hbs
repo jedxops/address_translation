@@ -12,14 +12,12 @@
 
     {{~> page}}
 
-    <form action="/search" method="post" accept-charset="utf-8">
-      <input id="formBox" type="text" name="term" placeholder="Type Here">
-      <input type="submit" value="Next">
-    </form>
-
     <div>
     <button id="goBack" type="button"><a href="/static/index.html">Go Back</a></button>
-    <button id="showStep" type="button"><a href="/static/solution.html">Show Steps</a></button>
+    <form action="/showsteps" method = "post" >
+        <input id="formBox" type="text" name= "solution"></input>
+        <input type="submit" value="shows teps">
+   </form>
     </div>
   </body>
 </html>

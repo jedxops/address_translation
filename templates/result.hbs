@@ -13,17 +13,16 @@
         <h1></h1>
 
     {{~> page}}
- 
+
     {{#*inline "page"}}
 
     <section id="result">
       <textarea readonly rows= "20">
         {{items.question_prompt}}
       </textarea>
-      <textarea id="solution" style="display:none;">
-        {{items.question_solution}}
-      </textarea>
-        
+      <input id="solution" style="display:none;" value = "{{items.question_solution}}">
+      </input>
+
     </section>
 
     {{/inline}}
@@ -35,4 +34,3 @@
       <input id="formBox" type="text" name="term2" placeholder="Type Here">
       <input type="submit" value="Next">
     </form>
-
