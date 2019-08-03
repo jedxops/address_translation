@@ -108,11 +108,9 @@ pub struct TemplateContext {
 pub struct Request {
     term: String,
 }
-
 #[derive(FromForm,Debug)]
 pub struct Request2 {
-    term: String,
-    term2: String,
+    solution: String,
 }
 
 #[get("/static/<file..>")]
@@ -335,7 +333,7 @@ pub fn solution(data: Form<Request2>) -> Template{
     //let return_value = QuestionSolutionInfo{question_prompt: (&data.term).to_string(), question_solution: (&data.term).to_string(),};
     //println!("sol {}", return_value.question_solution);
     //println!("q {}", return_value.question_prompt);
-    println!("{:?}",data );
+    println!("{:?}",data);
     Template::render(
         "solution",
         &TemplateContext {
