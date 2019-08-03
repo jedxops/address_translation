@@ -15,16 +15,6 @@
     Blandy, J., & Orendorff, J. (2018). Programming Rust: Fast, safe systems development. Sebastopol: OReilly Media.
 */
 
-/*
-#[allow(clippy::type_complexity)]   // I want to preserve the trippy C-like syntax seen here in the
-// array of functions definition
-// array of functions for address translation questions = atqs
-let mut atqs: Vec<fn(u32, u32, Vec<calculations::Segment>) -> (u32, u32, Vec<calculations::Segment>),> = Vec::new();
-atqs.push(va_to_pa);
-atqs.push(va_to_pa_malloc);
-atqs.push(stack_va);
-*/
-
 /*  Definitions:
 vas = size of virtual address space * 1024 bytes (i.e. K)
 va = virtual address
@@ -43,16 +33,13 @@ General flow:
    1) VA to PA problem with malloc call
    2) Stack portion problem
    9) Random problem
-4) if a) --exit program. Else we print the memory layout and the problem
-5) force user to attempt to solve the problem
+4) force user to attempt to solve the problem
     if correct --congratulate!
-6) User communicates:
-    0) if they want to see steps
-    1) if they want to return to the main menu
-    2) if they want to exit
-7) If 0 --show steps and re-print the same menu.
-   If 1 --return to previous menu
-   If 2 --exit program
+5) User communicates:
+    if they want to see steps
+    if they want to return to the main menu (go back)
+6) If 0 --show steps and re-print the same menu.
+   If 1 --return to the menu
 */
 
 // import necessary libraries!
@@ -90,12 +77,14 @@ enum QuestionChoice {
 }
 use QuestionChoice::*;
 
+// struct for inserting templates into HTML files (and hbs files)
 #[derive(Debug, Serialize, Deserialize, FromForm)]
 struct QuestionSolutionInfo {
     question_prompt: String,
     question_solution: String,
 }
 
+// templates to be inserted into HTML/HBS files
 #[derive(Serialize)]
 pub struct TemplateContext {
     query: String,
@@ -103,20 +92,25 @@ pub struct TemplateContext {
     parent: &'static str,
 }
 
+// request from server
 #[derive(FromForm, Debug)]
 pub struct Request {
     term: String,
 }
+
+// data form (user entries)
 #[derive(FromForm, Debug)]
 pub struct Request2 {
-    solution: String,
+    solution: String,  // needs to be named solution
 }
 
+// arbitrary path match
 #[get("/static/<file..>")]
 pub fn file(file: PathBuf) -> Option<NamedFile> {
     NamedFile::open(Path::new("static/").join(file)).ok()
 }
 
+// index page
 #[get("/", rank = 1)]
 pub fn index() -> io::Result<NamedFile> {
     NamedFile::open("static/index.html")
@@ -146,11 +140,12 @@ pub fn q_format_2() -> io::Result<NamedFile> {
     NamedFile::open("static/stack_format.html")
 }
 
-#[get("/search/<term>")]
+/*#[get("/search/<term>")]
 pub fn response(term: &RawStr) -> String {
     format!("You typed in {}.", term)
-}
+}*/
 
+// computes data to be printed and forwards it to oncoming pages.
 #[post("/search", data = "<data>", rank = 1)]
 pub fn setup(data: Form<Request>) -> Template {
     // (vas, power_of2, segments)
@@ -375,15 +370,13 @@ pub fn setup(data: Form<Request>) -> Template {
     }
 }
 
+// shows the solution
 #[post("/showsteps", data = "<data>")]
 pub fn solution(data: Form<Request2>) -> Template {
-    // println!("in here!");
     let return_value = QuestionSolutionInfo {
         question_prompt: "null".to_string(),
         question_solution: (&data.solution).to_string(),
     };
-    // println!("sol {}", return_value.question_solution);
-    // println!("q {}", return_value.question_prompt);
     Template::render(
         "solution",
         &TemplateContext {
