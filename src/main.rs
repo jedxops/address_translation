@@ -13,14 +13,22 @@ use rocket_contrib::templates::Template;
 extern crate serde_derive;
 
 mod calculations;
-mod routes;
 mod lib_fns;
+mod routes;
 
 fn rocket() -> rocket::Rocket {
     rocket::ignite().attach(Template::fairing()).mount(
         "/",
-        routes![routes::file, routes::index, routes::q_format_0, routes::q_format_1, routes::q_format_2, routes::response, routes::setup, 
-            /*routes::compare_user_answer_to_actual*/ routes::solution],
+        routes![
+            routes::file,
+            routes::index,
+            routes::q_format_0,
+            routes::q_format_1,
+            routes::q_format_2,
+            routes::response,
+            routes::setup,
+            /*routes::compare_user_answer_to_actual*/ routes::solution
+        ],
     )
 }
 
