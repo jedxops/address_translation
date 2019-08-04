@@ -373,6 +373,7 @@ pub fn setup(data: Form<Request>) -> Template {
 // shows the solution
 #[post("/showsteps", data = "<data>")]
 pub fn solution(data: Form<Request2>) -> Template {
+    println!("{:?}", data.solution);
     let return_value = QuestionSolutionInfo {
         question_prompt: "null".to_string(),
         question_solution: (&data.solution).to_string(),
