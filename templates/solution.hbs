@@ -14,11 +14,12 @@
     {{#*inline "page"}}
 
     <section id="solution">
-      <pre>
         <textarea readonly rows= "20">
-          {{items.question_solution}}
+          <code>
+            {{prompt}}
+            {{solution}}
+          </code>
         </textarea>
-      </pre>
     </section>
 
     {{/inline}}

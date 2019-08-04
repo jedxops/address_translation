@@ -569,7 +569,7 @@ pub fn print_answer_instructions(aformat: i8) -> String {
 }
 
 // compares actual answer to user answer after printing the question
-pub fn _compare_answer(input: String, aformat: i8, pa: u32) -> String {
+pub fn compare_answer(input: String, aformat: i8, pa: u32) -> String {
     let mut answer = input;
     let mut to_print = String::new();
     match aformat {

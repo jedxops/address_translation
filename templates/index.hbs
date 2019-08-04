@@ -19,20 +19,25 @@
     {{~> page}}
 
     <div>
+
     <button id="goBack" type="button"><a href="/static/index.html">Go Back</a></button>
-    <!---
+
+    <!--form action="/showsteps" method = "post"-->
+
     <form action="/showsteps" method = "post">
+        <input id="formBox" type="text" name= "prompt" style="display:none;" value = "  {{items.question_prompt}}">
+        </input>
+        <input id="formBox" type="text" name= "answer_format" style="display:none;" value = "  {{items.answer_format}}">
+        </input>
         <input id="formBox" type="text" name= "solution" style="display:none;" value = "  {{items.question_solution}}">
-    <form action="/compare_answer" method = "post" 
-        <input id="formBox" type="text" name= "answer"></input
-        <input type="submit" value="compare_answer"
-   </form
-    <form action="/showsteps" method = "post" 
-        <input id="formBox" type="text" name= "solution" style="display:none;" value = "{{items.question_solution}}"></input
-   //--->
-        <input type="submit" value="show steps">
+        </input>
+        <input id="formBox" type="text" name= "answer" style="display:none;" value = "  {{items.question_numerical_answer}}">
+        </input>
+        <input id="formBox" type="text" name= "input" placeholder = "Type your answer here">
+        </input> <!--every starting tag should have a closing tag! //-->
+        <input type="submit" value="Next">
         </input>
    </form>
-    </div>
+   </div>
   </body>
 </html>

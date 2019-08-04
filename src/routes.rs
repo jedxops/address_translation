@@ -56,7 +56,7 @@ use std::sync::Mutex;
 // use std::sync::atomic::{AtomicUsize};
 
 // rocket imports
-use rocket::http::RawStr;
+// use rocket::http::RawStr;
 use rocket::request::Form;
 use rocket::response::NamedFile;
 use rocket_contrib::templates::Template;
@@ -82,6 +82,8 @@ use QuestionChoice::*;
 struct QuestionSolutionInfo {
     question_prompt: String,
     question_solution: String,
+    question_numerical_answer: u64,
+    answer_format: i8,
 }
 
 // templates to be inserted into HTML/HBS files
@@ -89,6 +91,14 @@ struct QuestionSolutionInfo {
 pub struct TemplateContext {
     query: String,
     items: QuestionSolutionInfo,
+    parent: &'static str,
+}
+
+// templates to be inserted into HTML/HBS files (final solution)
+#[derive(Serialize)]
+pub struct TemplateSolutionContext {
+    prompt: String,
+    solution: String,
     parent: &'static str,
 }
 
@@ -101,7 +111,11 @@ pub struct Request {
 // data form (user entries)
 #[derive(FromForm, Debug)]
 pub struct Request2 {
-    solution: String,  // needs to be named solution
+    answer: String,           // calculated actual answer
+    answer_format: String,    // answer format for the question
+    prompt: String,           // question prompt
+    solution: String,         // needs to be named solution
+    input: String,         // needs to be named solution
 }
 
 // arbitrary path match
@@ -158,6 +172,8 @@ pub fn setup(data: Form<Request>) -> Template {
     let segments = res_tuple.2; // name the tuple elements some relevant names.
     let mut to_print = print_layout(vas, vas * 2, power_of2, segments.clone());
     let to_print2;
+    let mut pa_ans: u32 = 0;
+    let va_ans: u32;
 
     // format of the question (question and answer format specifier).
     let format_choice: i8 = match (&data.term).trim().parse::<i8>() {
@@ -202,7 +218,7 @@ pub fn setup(data: Form<Request>) -> Template {
                     // stack ss
                     // perform the math necessary to solve the given question
                     // the physical address (answer to the question).
-                    let pa_ans = calculations::calculate_answer(segments[2], mss, offset);
+                    pa_ans = calculations::calculate_answer(segments[2], mss, offset);
                     to_print2 = calculations::show_solution_va_to_pa(
                         segments[2],
                         ss,
@@ -217,7 +233,7 @@ pub fn setup(data: Form<Request>) -> Template {
                     // code, heap
                     // perform the math necessary to solve the given question
                     // the physical address (answer to the question).
-                    let pa_ans = calculations::calculate_answer(segments[ss as usize], mss, offset);
+                    pa_ans = calculations::calculate_answer(segments[ss as usize], mss, offset);
                     to_print2 = calculations::show_solution_va_to_pa(
                         segments[ss as usize],
                         ss,
@@ -243,6 +259,8 @@ pub fn setup(data: Form<Request>) -> Template {
                     items: QuestionSolutionInfo {
                         question_prompt: to_print,
                         question_solution: to_print2,
+                        question_numerical_answer: pa_ans as u64,
+                        answer_format: func_result.1,
                     },
                     parent: "index",
                 },
@@ -314,6 +332,8 @@ pub fn setup(data: Form<Request>) -> Template {
                     items: QuestionSolutionInfo {
                         question_prompt: to_print,
                         question_solution: to_print2,
+                        question_numerical_answer: pa_ans as u64,
+                        answer_format: func_result.1,
                     },
                     parent: "index",
                 },
@@ -341,7 +361,7 @@ pub fn setup(data: Form<Request>) -> Template {
                 mss,
                 power_of2,
             );
-            let va_ans = tuple.0;
+            va_ans = tuple.0;
             let offset = tuple.1;
             to_print2 = calculations::show_solution_stack_va(
                 segments[2],
@@ -358,6 +378,8 @@ pub fn setup(data: Form<Request>) -> Template {
                     items: QuestionSolutionInfo {
                         question_prompt: to_print,
                         question_solution: to_print2,
+                        question_numerical_answer: va_ans as u64,
+                        answer_format: func_result.0,
                     },
                     parent: "index",
                 },
@@ -372,16 +394,31 @@ pub fn setup(data: Form<Request>) -> Template {
 // shows the solution
 #[post("/showsteps", data = "<data>")]
 pub fn solution(data: Form<Request2>) -> Template {
-    println!("{:?}", data.solution);
-    let return_value = QuestionSolutionInfo {
-        question_prompt: "null".to_string(),
+
+    println!("{}", data.solution);
+    println!("{}", data.answer);
+    println!("{}", data.answer_format);
+    println!("{}", data.prompt);
+    println!("{}", data.input);
+
+    let solution_strings_to_print_on_web_page = QuestionSolutionInfo {
+        question_prompt: (&data.prompt).to_string(),
         question_solution: (&data.solution).to_string(),
+        question_numerical_answer: ((&data.answer).trim()).parse::<u64>().unwrap(),
+        answer_format: ((&data.answer_format).trim()).parse::<i8>().unwrap(),
     };
+    
+    // get the question prompt string
+    let mut to_print = solution_strings_to_print_on_web_page.question_prompt; 
+    to_print = to_print + &calculations::compare_answer((&data.input).to_string(), ((&data.answer_format).trim()).parse::<i8>().unwrap(), 
+      solution_strings_to_print_on_web_page.question_numerical_answer as u32);
+    // get the solution string
+    let to_print2 = solution_strings_to_print_on_web_page.question_solution;
     Template::render(
         "solution",
-        &TemplateContext {
-            query: "0".to_string(),
-            items: return_value,
+        &TemplateSolutionContext {
+            prompt: to_print,
+            solution: to_print2,
             parent: "index",
         },
     )
