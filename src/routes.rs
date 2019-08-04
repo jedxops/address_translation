@@ -344,7 +344,6 @@ pub fn solution(data: Form<Request2>) -> Template{
     )
 }
 
-
 // function for fetching the format specifiers given a question/answer format user choice
 pub fn fetch_format_specifiers(format_choice: i8) -> (i8, i8) {
     let qformat = match format_choice {

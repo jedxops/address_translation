@@ -14,8 +14,12 @@
 
     <div>
     <button id="goBack" type="button"><a href="/static/index.html">Go Back</a></button>
+    <form action="/compare_answer" method = "post" >
+        <input id="formBox" type="text" name= "answer"></input>
+        <input type="submit" value="compare_answer">
+   </form>
     <form action="/showsteps" method = "post" >
-        <input id="formBox" type="text" name= "solution" style="display:none;" value = "  {{items.question_solution}}"></input>
+        <input id="formBox" type="text" name= "solution" style="display:none;" value = "{{items.question_solution}}"></input>
         <input type="submit" value="show steps">
    </form>
     </div>
