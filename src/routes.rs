@@ -363,7 +363,6 @@ pub fn setup(data: Form<Request>) -> Template {
                 },
             )
         }
-
         _ => {
             exit(-1);
         }
