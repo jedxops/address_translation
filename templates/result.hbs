@@ -1,37 +1,21 @@
+<!-- Copyright © 2019 Jeff Austin, Kamakshi Nagar
+// [This program is licensed under the "MIT License"]
+// Please see the file LICENSE in the source
+// distribution of this software for license terms.-->
 <!DOCTYPE html>
     <html lang="en">
-    <!--head//-->
-        <!--meta charset="utf-8"//-->
-        <!--title>Index</title//-->
-        <!--link rel="stylesheet" href="/static/index.css"//-->
-        <!--Your choice was {{query}}.-->
-        <!--Question is :-->
-
-    <!--/head//-->
-
     <body>
         <h1></h1>
-
     {{~> page}}
-
     {{#*inline "page"}}
-
     <section id="result">
       <textarea readonly rows= "20">
         {{items.question_prompt}}
       </textarea>
       <input type="hidden" id=solution value={{items.question_solution}}>
       <!---input id="solution" style="display:none;" value = "  {{items.question_solution}}"-->
-
-
     </section>
-
     {{/inline}}
     {{~> (parent)~}}
     <body>
 <html>
-
-<!--form action="/search" method="post" accept-charset="utf-8">
-      <input id="formBox" type="text" name="term2" placeholder="Type Here">
-      <input type="submit" value="Next">
-    </form>

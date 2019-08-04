@@ -125,7 +125,12 @@ pub fn show_solution_stack_va(
 
     writeln!(&mut to_print, "  {:b}\t--SS bits", 3 << (power_of2 - 2)).unwrap();
     write!(&mut to_print, "+ ").unwrap();
-    writeln!(&mut to_print, "{}", lib_fns::print_leading_zeros(offset * 1024, power_of2)).unwrap();
+    writeln!(
+        &mut to_print,
+        "{}",
+        lib_fns::print_leading_zeros(offset * 1024, power_of2)
+    )
+    .unwrap();
     writeln!(&mut to_print, "{:b}\t--OFFSET", offset * 1024).unwrap();
 
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely. print! doesnt print a line.
@@ -214,7 +219,12 @@ pub fn show_solution_va_to_pa(
     }
     // lib_fns::print_leading_zeros(va, power_of2);
     // print!("{:b} = ", va);
-    writeln!(&mut to_print, "{}", lib_fns::print_readable_binary(va, power_of2)).unwrap(); // I think this function is cool, visit the file to check it out.
+    writeln!(
+        &mut to_print,
+        "{}",
+        lib_fns::print_readable_binary(va, power_of2)
+    )
+    .unwrap(); // I think this function is cool, visit the file to check it out.
     writeln!(&mut to_print).unwrap();
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely, as we are not using the _println_ macro here
 
@@ -531,7 +541,12 @@ pub fn test_va_pa_calculation_v1() {
 pub fn print_answer_instructions(aformat: i8) -> String {
     let mut to_print = String::new();
     match aformat {
-        16 => { writeln!(&mut to_print,"Type your answer in hexadecimal format with or without the '0x'").unwrap();
+        16 => {
+            writeln!(
+                &mut to_print,
+                "Type your answer in hexadecimal format with or without the '0x'"
+            )
+            .unwrap();
         }
         2 => {
             writeln!(&mut to_print,"Type your answer in binary format with or without leading zeros then press enter and ctrl+d").unwrap();
@@ -554,7 +569,7 @@ pub fn print_answer_instructions(aformat: i8) -> String {
 }
 
 // compares actual answer to user answer after printing the question
-pub fn compare_answer(input: String, aformat: i8, pa: u32) -> String {
+pub fn _compare_answer(input: String, aformat: i8, pa: u32) -> String {
     let mut answer = input;
     let mut to_print = String::new();
     match aformat {
@@ -562,8 +577,8 @@ pub fn compare_answer(input: String, aformat: i8, pa: u32) -> String {
             writeln!(&mut to_print).unwrap();
             answer = answer.replace("x", ""); // replace all the characters that could possibly be taken as hex prefixes (like 0, x) with empty string
             answer = answer.replace("X", "");
-            if lib_fns::are_all_numeric(&answer, 16) {
-                match lib_fns::bn_to_b10(&answer.replace("0x", "").to_string(), 16) {
+            if lib_fns::_are_all_numeric(&answer, 16) {
+                match lib_fns::_bn_to_b10(&answer.replace("0x", "").to_string(), 16) {
                     // use my library function to convert answer to base 10 (so we can measure it!)
                     Some(k) => {
                         if k as u32 == pa {
@@ -603,9 +618,9 @@ pub fn compare_answer(input: String, aformat: i8, pa: u32) -> String {
             writeln!(&mut to_print).unwrap();
             answer = answer.replace("x", "");
             answer = answer.replace("X", ""); // replace all the characters that could possibly be taken as hex prefixes (like 0, x) with empty string
-            if lib_fns::are_all_numeric(&answer, 2) {
+            if lib_fns::_are_all_numeric(&answer, 2) {
                 // the second flag specifies the base which we define as `numeric`
-                match lib_fns::bn_to_b10(&answer.trim().to_string(), 2) {
+                match lib_fns::_bn_to_b10(&answer.trim().to_string(), 2) {
                     Some(k) => {
                         if k as u32 == pa {
                             writeln!(&mut to_print, "Good.").unwrap();
@@ -643,8 +658,8 @@ pub fn compare_answer(input: String, aformat: i8, pa: u32) -> String {
             writeln!(&mut to_print,"Type your answer in decimal format (base 10, no decimal points) then press enter and ctrl+d").unwrap();
             answer = answer.replace("x", "");
             answer = answer.replace("X", "");
-            if lib_fns::are_all_numeric(&answer, 10) {
-                match lib_fns::bn_to_b10(&answer.trim().to_string(), 10) {
+            if lib_fns::_are_all_numeric(&answer, 10) {
+                match lib_fns::_bn_to_b10(&answer.trim().to_string(), 10) {
                     Some(k) => {
                         if k as u32 == pa {
                             writeln!(&mut to_print, "Good.").unwrap();

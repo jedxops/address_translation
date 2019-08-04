@@ -25,7 +25,7 @@ use std::io::Write; // need flush() method.
 // this especially becomes a problem as n gets bigger.
 // for example, if n = 10, the maximum amount of digits this can translate is 10.
 // with hex, this number is smaller
-pub fn bn_to_b10(num: &str, n: u32) -> Option<u32> {
+pub fn _bn_to_b10(num: &str, n: u32) -> Option<u32> {
     let mut i: u32 = num.len() as u32;
     let mut sum: u32 = 0;
     for itr in num.chars() {
@@ -45,7 +45,7 @@ pub fn bn_to_b10(num: &str, n: u32) -> Option<u32> {
 }
 
 // returns true if all the characters in the given string turn out to be numeric.
-pub fn are_all_numeric(str: &str, radix: u32) -> bool {
+pub fn _are_all_numeric(str: &str, radix: u32) -> bool {
     for itr in str.chars() {
         // skip over hex characters
         if itr == 'x' || itr == 'X' || itr == '\n' {
