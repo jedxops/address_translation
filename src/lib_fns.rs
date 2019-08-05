@@ -77,7 +77,7 @@ pub fn print_readable_binary(address: u32, size_of_space: u32) -> String {
     let multiple_of_4: u32 = size_of_space / 4; // we want to group the binary into 4 groups
     if size_of_space % 4 != 0 {
         // print the binary digits at the end of the string which dont fit in a group of 4
-        print_leading_zeros(address >> (4 * multiple_of_4), size_of_space % 4);
+        to_print = to_print + &print_leading_zeros(address >> (4 * multiple_of_4), size_of_space % 4);
         write!(&mut to_print, "{:b} ", address >> (4 * multiple_of_4)).unwrap();
     }
     let mut array_of_binaries: Vec<u32> = Vec::new(); // array of binaries to print
@@ -100,7 +100,7 @@ pub fn print_readable_binary(address: u32, size_of_space: u32) -> String {
     // print the binary groups
     let mut i: usize = array_of_binaries.len();
     while i > 0 {
-        print_leading_zeros(array_of_binaries[i - 1], 4); // we dont want to print more than 4 leading zeros
+        to_print = to_print + &print_leading_zeros(array_of_binaries[i - 1], 4); // we dont want to print more than 4 leading zeros
         write!(&mut to_print, "{:b} ", array_of_binaries[i - 1]).unwrap(); // --we are already printing at least one character immediately after this
         i -= 1;
     }

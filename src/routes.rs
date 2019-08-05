@@ -182,7 +182,7 @@ pub fn setup(data: Form<Request>) -> Template {
     let segments = res_tuple.2; // name the tuple elements some relevant names.
     let mut to_print = print_layout(vas, vas * 2, power_of2, segments.clone());
     let to_print2;
-    let mut pa_ans: u32 = 0;
+    let pa_ans: u32;
     let va_ans: u32;
 
     // format of the question (question and answer format specifier).
@@ -272,7 +272,6 @@ pub fn setup(data: Form<Request>) -> Template {
                     exit(-1);
                 }
             }
-            println!("sol: {}", to_print2);
             Template::render(
                 "result",
                 &TemplateContext {
@@ -312,7 +311,7 @@ pub fn setup(data: Form<Request>) -> Template {
                     // stack ss
                     // perform the math necessary to solve the given question
                     // the physical address (answer to the question).
-                    let pa_ans = calculations::calculate_answer(segments[2], mss, offset);
+                    pa_ans = calculations::calculate_answer(segments[2], mss, offset);
                     to_print2 = calculations::show_solution_va_to_pa(
                         segments[2],
                         ss,
@@ -327,7 +326,7 @@ pub fn setup(data: Form<Request>) -> Template {
                     // code, heap
                     // perform the math necessary to solve the given question
                     // the physical address (answer to the question).
-                    let pa_ans = calculations::calculate_answer(segments[ss as usize], mss, offset);
+                    pa_ans = calculations::calculate_answer(segments[ss as usize], mss, offset);
                     to_print2 = calculations::show_solution_va_to_pa(
                         segments[ss as usize],
                         ss,
