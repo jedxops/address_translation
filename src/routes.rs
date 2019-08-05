@@ -154,10 +154,20 @@ pub fn q_format_2() -> io::Result<NamedFile> {
     NamedFile::open("static/stack_format.html")
 }
 
-/*#[get("/search/<term>")]
-pub fn response(term: &RawStr) -> String {
-    format!("You typed in {}.", term)
-}*/
+// user's first entry = 9 (random problem)
+#[get("/first?question_format=9")]
+pub fn q_format_3() -> io::Result<NamedFile> {
+    let mut question_choice = Q_CHOICE.lock().unwrap();
+    let mut rng = rand::thread_rng(); // seed the r.n.g
+    let rando: u32 = rng.gen_range(0, 3);  // 0, 1, or 2
+    match rando {
+        0 => *question_choice = Zero,
+        1 => *question_choice = One,
+        2 => *question_choice = Two,
+        _ => exit(-1),
+    }
+    NamedFile::open("static/stack_format.html")
+}
 
 // computes data to be printed and forwards it to oncoming pages.
 #[post("/search", data = "<data>", rank = 1)]
@@ -176,7 +186,7 @@ pub fn setup(data: Form<Request>) -> Template {
     let va_ans: u32;
 
     // format of the question (question and answer format specifier).
-    let format_choice: i8 = match (&data.term).trim().parse::<i8>() {
+    let mut format_choice: i8 = match (&data.term).trim().parse::<i8>() {
         Ok(k) => k,
         Err(_) => {
             println!("Error. Invalid input. Terminating program.\n");
@@ -189,6 +199,17 @@ pub fn setup(data: Form<Request>) -> Template {
 
     let question_choice = Q_CHOICE.lock().unwrap();
     println!("question choice is  {:?}", *question_choice);
+
+    if format_choice == 9 {
+        let mut rng = rand::thread_rng(); // seed the r.n.g
+        // the stack virtual address problem has 3 variants while the va_to_pa has 9
+        match *question_choice {
+            Zero | One => format_choice = rng.gen_range(0, 10),   // 0-9 inclusive
+            Two => format_choice = rng.gen_range(0, 3),
+            _ => exit(-1),
+        }
+    }
+
     println!("format choice (page 2 form) is  {:?}", format_choice);
     let format_specifiers = fetch_format_specifiers(format_choice);
 

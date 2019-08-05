@@ -61,6 +61,7 @@ Once rust has been installed, you can build this program/library using the comma
 
     cargo build
     cargo run
+    press ctrl + click on the following link: http://localhost:8000
 
 If you want to run an optimized version then run cargo with: `cargo run --release`. This also works with `cargo build`.
 
@@ -71,7 +72,6 @@ OPTION       PROBLEM TYPE
 0)          Translate Random Virtual Address to a corresponding Physical Address
 1)          Translate Random Virtual Address Returned by Malloc() to a corresponding Physical Address
 2)          Calculate Specified Portion through the Stack as a Virtual Address
-8)          Generate fresh segmented memory model
 9)          Generate Random Problem
 10)         Exit
 1

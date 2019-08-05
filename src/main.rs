@@ -29,8 +29,9 @@ fn rocket() -> rocket::Rocket {
             routes::q_format_0,
             routes::q_format_1,
             routes::q_format_2,
+            routes::q_format_3,
             routes::setup,
-            routes::solution
+            routes::solution,
         ],
     )
 }

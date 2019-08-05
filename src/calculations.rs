@@ -614,10 +614,7 @@ pub fn compare_answer(input: String, aformat: i8, pa: u32) -> String {
             }
         }
         2 => {
-            writeln!(&mut to_print,"Type your answer in binary format with or without leading zeros then press enter and ctrl+d").unwrap();
             writeln!(&mut to_print).unwrap();
-            answer = answer.replace("x", "");
-            answer = answer.replace("X", ""); // replace all the characters that could possibly be taken as hex prefixes (like 0, x) with empty string
             if lib_fns::_are_all_numeric(&answer, 2) {
                 // the second flag specifies the base which we define as `numeric`
                 match lib_fns::_bn_to_b10(&answer.trim().to_string(), 2) {
@@ -628,7 +625,7 @@ pub fn compare_answer(input: String, aformat: i8, pa: u32) -> String {
                             writeln!(&mut to_print, "INCORRECT.\n").unwrap();
                             writeln!(
                                 &mut to_print,
-                                "your answer: {:b} bytes bytes\nactual: {:b} bytes bytes",
+                                "your answer: {:b} bytes\nactual: {:b} bytes",
                                 k, pa
                             )
                             .unwrap();
@@ -655,9 +652,7 @@ pub fn compare_answer(input: String, aformat: i8, pa: u32) -> String {
             }
         }
         10 => {
-            writeln!(&mut to_print,"Type your answer in decimal format (base 10, no decimal points) then press enter and ctrl+d").unwrap();
-            answer = answer.replace("x", "");
-            answer = answer.replace("X", "");
+            writeln!(&mut to_print).unwrap();
             if lib_fns::_are_all_numeric(&answer, 10) {
                 match lib_fns::_bn_to_b10(&answer.trim().to_string(), 10) {
                     Some(k) => {
@@ -703,6 +698,36 @@ pub fn compare_answer(input: String, aformat: i8, pa: u32) -> String {
         }
     }
     to_print
+}
+
+#[test]
+fn comp_ans_hex() {
+    assert_eq!("\nGood.\n", compare_answer("0x4000".to_string(), 16, 16384));
+}
+
+#[test]
+fn comp_ans_hex_ne() {
+    assert_ne!("\nINCORRECT\n\nyour answer: 0xACF bytes\nactual: 0xFFFFF bytes", compare_answer("0xACF".to_string(), 16, 1048575));
+}
+
+#[test]
+fn comp_ans_bin() {
+    assert_eq!("\nGood.\n", compare_answer("00000101010110100000011101010".to_string(), 2, 11223274));
+}
+
+#[test]
+fn comp_ans_bin_ne() {
+    assert_ne!("\nINCORRECT\n\nyour answer: 0000010101011010000001110101 bytes\nactual: 00000101010110100000011101010 bytes", compare_answer("0000010101011010000001110101".to_string(), 2, 11223274));
+}
+
+#[test]
+fn comp_ans_dec() {
+    assert_eq!("\nGood.\n", compare_answer("11223274".to_string(), 10, 11223274));
+}
+
+#[test]
+fn comp_ans_dec_ne() {
+    assert_ne!("\nINCORRECT\n\nyour answer: 21110101 bytes\nactual: 21018010 bytes", compare_answer("21110101".to_string(), 10, 21018010));
 }
 
 // generates a problem prompting for a VA to PA translation

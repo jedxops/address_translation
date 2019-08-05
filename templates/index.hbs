@@ -25,13 +25,13 @@
     <!--form action="/showsteps" method = "post"-->
 
     <form action="/showsteps" method = "post">
-        <input id="formBox" type="text" name= "prompt" style="display:none;" value = "  {{items.question_prompt}}">
+        <input id="formBox" type="hidden" name= "prompt" value = "  {{items.question_prompt}}">
         </input>
-        <input id="formBox" type="text" name= "answer_format" style="display:none;" value = "  {{items.answer_format}}">
+        <input id="formBox" type="hidden" name= "answer_format" value = "  {{items.answer_format}}">
         </input>
-        <input id="formBox" type="text" name= "solution" style="display:none;" value = "  {{items.question_solution}}">
+        <input id="formBox" type="hidden" name= "solution" value = "  {{items.question_solution}}">
         </input>
-        <input id="formBox" type="text" name= "answer" style="display:none;" value = "  {{items.question_numerical_answer}}">
+        <input id="formBox" type="hidden" name= "answer" value = "  {{items.question_numerical_answer}}">
         </input>
         <input id="formBox" type="text" name= "input" placeholder = "Type your answer here">
         </input> <!--every starting tag should have a closing tag! //-->
