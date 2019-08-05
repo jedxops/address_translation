@@ -73,12 +73,14 @@ pub fn show_solution_stack_va(
     println!("Step 3: Calculate the offset");
     println!("Subtract the address of the maximum segment size from the stack base minus the calculated portion of the stack size in K:");
     println!(
-        "({}K - {}K) - {}K = {}K - {}K = {}K",
+        "({}K - {}K) - {}K = {}K - {}K = {}K = {} bytes",
         seg.base,
         seg.size * (percent / 100.0),
         seg.base - 2u32.pow(power_of2 - 2) / 1024,
         seg.base as f32 - seg.size * (percent / 100.0),
         seg.base - 2u32.pow(power_of2 - 2) / 1024,
+        (seg.base as f32 - seg.size * (percent / 100.0) - 
+        (seg.base as f32 - 2u32.pow(power_of2 - 2) as f32 / 1024.0)) as f32,
         offset
     );
     println!("This is the _offset_ portion of the binary number to be constructed for the virtual address.\n");
@@ -92,13 +94,13 @@ pub fn show_solution_stack_va(
 
     println!("  {:b}\t--SS bits", 3 << (power_of2 - 2));
     print!("+ ");
-    lib_fns::print_leading_zeros(offset * 1024, power_of2);
-    println!("{:b}\t--OFFSET", offset * 1024);
+    lib_fns::print_leading_zeros(offset, power_of2);
+    println!("{:b}\t--OFFSET", offset);
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely. print! doesnt print a line.
     print!("--");
     lib_fns::print_hyphens(3 << (power_of2 - 2));
     io::stdout().flush().unwrap();
-    println!("  {:b}", offset * 1024 + (3 << (power_of2 - 2)));
+    println!("  {:b}", offset + (3 << (power_of2 - 2)));
 
     println!(
         "{:horiz$}VA in bytes",
@@ -308,7 +310,7 @@ pub fn calculate_answer_stack_percentage(
     
     (
         (offset * 1024.0 + (3 << (power_of2 - 2)) as f32) as u32,
-        offset as u32,
+        (offset * 1024.0) as u32,
     ) // in bytes
 }
 
