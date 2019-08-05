@@ -13,6 +13,10 @@
 
     Rust textbook:
     Blandy, J., & Orendorff, J. (2018). Programming Rust: Fast, safe systems development. Sebastopol: OReilly Media.
+
+    Rocket Crate examples and project:
+    https://github.com/SergioBenitez/Rocket
+    https://github.com/adi105/WebHelperRocket
 */
 
 /*  Definitions:
@@ -427,10 +431,10 @@ pub fn solution(data: Form<Request2>) -> Template {
         question_numerical_answer: ((&data.answer).trim()).parse::<u64>().unwrap(),
         answer_format: ((&data.answer_format).trim()).parse::<i8>().unwrap(),
     };
-    
+
     // get the question prompt string
-    let mut to_print = solution_strings_to_print_on_web_page.question_prompt; 
-    to_print = to_print + &calculations::compare_answer((&data.input).to_string(), ((&data.answer_format).trim()).parse::<i8>().unwrap(), 
+    let mut to_print = solution_strings_to_print_on_web_page.question_prompt;
+    to_print = to_print + &calculations::compare_answer((&data.input).to_string(), ((&data.answer_format).trim()).parse::<i8>().unwrap(),
       solution_strings_to_print_on_web_page.question_numerical_answer as u32);
     // get the solution string
     let to_print2 = solution_strings_to_print_on_web_page.question_solution;
@@ -439,7 +443,7 @@ pub fn solution(data: Form<Request2>) -> Template {
         &TemplateSolutionContext {
             prompt: to_print,
             solution: to_print2,
-            parent: "index",
+            parent: "solution_parent",
         },
     )
 }
