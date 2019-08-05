@@ -93,12 +93,14 @@ pub fn show_solution_stack_va(
     writeln!(&mut to_print,"Subtract the address of the maximum segment size from the stack base minus the calculated portion of the stack size in K:").unwrap();
     writeln!(
         &mut to_print,
-        "({}K - {}K) - {}K = {}K - {}K = {}K",
+        "({}K - {}K) - {}K = {}K - {}K = {}K = {} bytes",
         seg.base,
         seg.size * (percent / 100.0),
         seg.base - 2u32.pow(power_of2 - 2) / 1024,
         seg.base as f32 - seg.size * (percent / 100.0),
         seg.base - 2u32.pow(power_of2 - 2) / 1024,
+        (seg.base as f32 - seg.size * (percent / 100.0)) -
+        (seg.base as f32 - 2u32.pow(power_of2 as u32 - 2 as u32) as f32 / 1024.0) as f32,
         offset
     )
     .unwrap();
@@ -125,13 +127,13 @@ pub fn show_solution_stack_va(
 
     writeln!(&mut to_print, "  {:b}\t--SS bits", 3 << (power_of2 - 2)).unwrap();
     write!(&mut to_print, "+ ").unwrap();
-    writeln!(
+    write!(
         &mut to_print,
         "{}",
-        lib_fns::print_leading_zeros(offset * 1024, power_of2)
+        lib_fns::print_leading_zeros(offset, power_of2)
     )
     .unwrap();
-    writeln!(&mut to_print, "{:b}\t--OFFSET", offset * 1024).unwrap();
+    writeln!(&mut to_print, "{:b}\t--OFFSET", offset).unwrap();
 
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely. print! doesnt print a line.
 
@@ -146,7 +148,7 @@ pub fn show_solution_stack_va(
     writeln!(
         &mut to_print,
         "  {:b}",
-        offset * 1024 + (3 << (power_of2 - 2))
+        offset + (3 << (power_of2 - 2))
     )
     .unwrap();
 
@@ -287,29 +289,29 @@ pub fn show_solution_va_to_pa(
     .unwrap();
     writeln!(
         &mut to_print,
-        "GN = `grows negative`. If SS = 11 => SS = Stack => GN = 1. Otherwise, GN = 0."
+        "GN = `grows negative`. If SS = 11 => SS = Stack => GN = 1. Otherwise, GN = 0.\n"
     )
     .unwrap();
     writeln!(
         &mut to_print,
-        "MSS = `maximum segment size`. MSS = 2^(number of bits in the offset)"
+        "MSS = `maximum segment size`. MSS = 2^(number of bits in the offset)\n"
     )
     .unwrap();
     writeln!(
         &mut to_print,
-        "Base = the base of the segment, measured in bytes. Value provided in table."
+        "Base = the base of the segment, measured in bytes. Value provided in table.\n"
     )
     .unwrap();
     writeln!(
         &mut to_print,
-        "The offset has already been calculated: offset = {} bytes (base 10)",
+        "The offset has already been calculated: offset = {} bytes (base 10)\n",
         offset
     )
     .unwrap();
 
     writeln!(
         &mut to_print,
-        "There are {} bits in the offset, so the MSS is 2^{} = {} bytes.",
+        "There are {} bits in the offset, so the MSS is 2^{} = {} bytes.\n",
         power_of2 - 2,
         power_of2 - 2,
         2u32.pow(power_of2 - 2)
@@ -318,7 +320,7 @@ pub fn show_solution_va_to_pa(
     if ss == 0 {
         writeln!(
             &mut to_print,
-            "The SS = 00 (base 2) = 0 (base 10) => SS = Code Segment => GN = 0"
+            "The SS = 00 (base 2) = 0 (base 10) => SS = Code Segment => GN = 0\n"
         )
         .unwrap();
         writeln!(
@@ -362,7 +364,7 @@ pub fn show_solution_va_to_pa(
     } else if ss == 1 {
         writeln!(
             &mut to_print,
-            "The SS = 01 (base 2) = 1 (base 10) => SS = Heap Segment => GN = 0"
+            "The SS = 01 (base 2) = 1 (base 10) => SS = Heap Segment => GN = 0\n"
         )
         .unwrap();
         writeln!(
@@ -406,7 +408,7 @@ pub fn show_solution_va_to_pa(
     } else if ss == 3 {
         writeln!(
             &mut to_print,
-            "The SS = 11 (base 2) = 3 (base 10) => SS = Stack Segment => GN = 1"
+            "The SS = 11 (base 2) = 3 (base 10) => SS = Stack Segment => GN = 1\n"
         )
         .unwrap();
         writeln!(
@@ -464,7 +466,7 @@ pub fn show_solution_va_to_pa(
             error();
         }
     }
-    writeln!(&mut to_print,"Check out youtube for shortcuts on converting to and from binary, decimal, and hexadecimal by hand.\n").unwrap();
+    writeln!(&mut to_print,"\nCheck out youtube for shortcuts on converting to and from binary, decimal, and hexadecimal by hand.\n").unwrap();
     to_print
 }
 
@@ -484,7 +486,7 @@ pub fn calculate_answer_stack_percentage(
 
     (
         (offset * 1024.0 + (3 << (power_of2 - 2)) as f32) as u32,
-        offset as u32,
+        (offset * 1024.0) as u32,
     ) // in bytes
 }
 
@@ -549,10 +551,10 @@ pub fn print_answer_instructions(aformat: i8) -> String {
             .unwrap();
         }
         2 => {
-            writeln!(&mut to_print,"Type your answer in binary format with or without leading zeros then press enter and ctrl+d").unwrap();
+            writeln!(&mut to_print,"Type your answer in binary format with or without leading zeros").unwrap();
         }
         10 => {
-            writeln!(&mut to_print,"Type your answer in decimal format (base 10, no decimal points) then press enter and ctrl+d").unwrap();
+            writeln!(&mut to_print,"Type your answer in decimal format (base 10, no decimal points)").unwrap();
         }
         _ => {
             writeln!(
