@@ -23,7 +23,8 @@
     <div>
       <br>
     <form action="/search" method="post" accept-charset="utf-8">
-      <input id="formBox" type="text" name="term" placeholder="Type Here" autofocus="autofocus"/>
+      <input id="formBox" type="text" name="term" placeholder="Type Here" autofocus="autofocus"
+      pattern ="^[0|1|2|9]" title="must contain one number from options" required/>
       <input type="submit" value="Next">
     </form>
   </div>
