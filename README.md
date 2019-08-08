@@ -50,20 +50,29 @@ Post-class)     Maintain and update software periodically.
                 Share project with prospective CS333 students so they can test it and use it to help
                 them with taking their OS course (CS333 at PSU).
 
-## Build and Run
+## Build Prerequisites
 
-First, clone this repository and use `git clone repository_link` on your local machine to clone the repository and work with it.
+In order to build this repository, you must install rust and rust nightly. `rustup` is a great way to do this: https://rustup.rs/
 
-In order to build this repository, you must install rust. `rustup` is a great way to do this: https://rustup.rs/
+Once rust has been downloaded and installed, you can install nightly with the following command
 
-Once rust has been installed, you can build this program/library using the command: `cargo build` and run it with
+    rustup override set nightly-2019-07-09
+
+## Checkout, Build, and Run
+
+First, clone this repository by using `git clone repository_link` on your local machine to clone the repository.
+Click the green `Clone or download` button to copy the repository link to your keyboard.
+
+Once rust has been installed, you can build this program using the command: `cargo build` and run it with
 `cargo run`.
 
     cargo build
-    cargo run
+    cargo run --bin web_app
+    OR
+    cargo run --bin cli
     press ctrl + click on the following link: http://localhost:8000
 
-If you want to run an optimized version then run cargo with: `cargo run --release`. This also works with `cargo build`.
+If you want to run an optimized version then run cargo with: `cargo run bin binary_filename --release`. This also works with `cargo build`.
 
 ## Code Operation
 

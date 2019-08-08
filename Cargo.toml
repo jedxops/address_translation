@@ -9,6 +9,14 @@ version = "0.1.0"
 authors = ["Jeff Austin <jja6@pdx.edu>, Kamakshi Nagar <kamakshi@pdx.edu>"]
 edition = "2018"
 
+[[bin]]
+name = "web_app"
+path = "src/bin/web_app/web_app.rs"
+
+[[bin]]
+name = "cli"
+path = "src/bin/cli/cli.rs"
+
 [dependencies]
 rand = "0.7.0"
 lazy_static = "1.2.0"
