@@ -50,13 +50,21 @@ Post-class)     Maintain and update software periodically.
                 Share project with prospective CS333 students so they can test it and use it to help
                 them with taking their OS course (CS333 at PSU).
 
+## Checkout
+
+First, the user should
+
 ## Build and Run
 
 First, clone this repository and use `git clone repository_link` on your local machine to clone the repository and work with it.
 
 In order to build this repository, you must install rust. `rustup` is a great way to do this: https://rustup.rs/
 
-Once rust has been installed, you can build this program/library using the command: `cargo build` and run it with
+Then you must install nightly
+
+    rustup override set nightly-2019-07-09
+
+Once rust nightly has been installed, you can build this program/library using the command: `cargo build` and run it with
 `cargo run`.
 
     cargo build
