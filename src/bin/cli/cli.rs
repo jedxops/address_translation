@@ -112,7 +112,6 @@ fn main() {
                     8 => {
                         reset = true;
                         clear_screen();
-                        println!("Generated.");
                         break;
                     }
                     9 => {
