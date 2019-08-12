@@ -202,7 +202,7 @@ pub fn setup(data: Form<Request>) -> Template {
     }
 
     let question_choice = Q_CHOICE.lock().unwrap();
-    println!("question choice is  {:?}", *question_choice);
+    // println!("question choice is  {:?}", *question_choice);
 
     if format_choice == 9 {
         let mut rng = rand::thread_rng(); // seed the r.n.g
@@ -214,7 +214,7 @@ pub fn setup(data: Form<Request>) -> Template {
         }
     }
 
-    println!("format choice (page 2 form) is  {:?}", format_choice);
+    // println!("format choice (page 2 form) is  {:?}", format_choice);
     let format_specifiers = fetch_format_specifiers(format_choice);
 
     // va to pa !malloc problem
@@ -419,11 +419,11 @@ pub fn setup(data: Form<Request>) -> Template {
 #[post("/showsteps", data = "<data>")]
 pub fn solution(data: Form<Request2>) -> Template {
 
-    println!("{}", data.solution);
+    /*println!("{}", data.solution);
     println!("{}", data.answer);
     println!("{}", data.answer_format);
     println!("{}", data.prompt);
-    println!("{}", data.input);
+    println!("{}", data.input);*/
 
     let solution_strings_to_print_on_web_page = QuestionSolutionInfo {
         question_prompt: (&data.prompt).to_string(),
