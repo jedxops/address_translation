@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<!-- Copyright © 2019 Jeff Austin, Kamakshi Nagar
+// [This program is licensed under the "MIT License"]
+// Please see the file LICENSE in the source
+// distribution of this software for license terms.-->
+
+  <html lang="en">
+
+  <head>
+    <meta charset="utf-8">
+    <title>Index</title>
+    <link rel="stylesheet" href="/static/index.css">
+  </head>
+
+  <body>
+    <h1>Results</h1>
+
+    {{~> page}}
+
+    <div>
+
+    <button id="goBack" type="button"><a href="/static/index.html">Go Back</a></button>
+
+    <!--form action="/showsteps" method = "post"-->
+
+    <form action="/showsteps" method = "post">
+        <input id="formBox" type="hidden" name= "prompt" value = "  {{items.question_prompt}}">
+        </input>
+        <input id="formBox" type="hidden" name= "answer_format" value = "  {{items.answer_format}}">
+        </input>
+        <input id="formBox" type="hidden" name= "solution" value = "  {{items.question_solution}}">
+        </input>
+        <input id="formBox" type="hidden" name= "answer" value = "  {{items.question_numerical_answer}}">
+        </input>
+        <input id="formBox" type="text" name= "input" placeholder = "Type your answer here" autofocus="autofocus">
+        </input> <!--every starting tag should have a closing tag! //-->
+        <input type="submit" value="Next">
+        </input>
+   </form>
+   </div>
+  </body>
+</html>

@@ -21,8 +21,8 @@ use rand::Rng;
 use std::io;
 //use std::io::prelude::*;
 use std::process::exit;
-pub mod calculations;
-pub mod lib_fns;
+pub mod calculations_cli;
+pub mod lib_fns_cli;
 
 /*  Definitions:
 vas = size of virtual address space * 1024 bytes (i.e. K)
@@ -59,14 +59,14 @@ fn main() {
     #[allow(clippy::type_complexity)]   // I want to preserve the trippy C-like syntax seen here in the
     // array of functions definition
     // array of functions for address translation questions = atqs
-    let mut atqs: Vec<fn(u32, u32, Vec<calculations::Segment>) -> (u32, u32, Vec<calculations::Segment>),> = Vec::new();
+    let mut atqs: Vec<fn(u32, u32, Vec<calculations_cli::Segment>) -> (u32, u32, Vec<calculations_cli::Segment>),> = Vec::new();
 
     atqs.push(va_to_pa);
     atqs.push(va_to_pa_malloc);
     atqs.push(stack_va);
     let mut reset = true;
     while reset {
-        let x: (u32, u32, Vec<calculations::Segment>) = generate_segmented_memory_layout();
+        let x: (u32, u32, Vec<calculations_cli::Segment>) = generate_segmented_memory_layout();
         clear_screen();
         loop {
             // clear_screen();
@@ -112,7 +112,6 @@ fn main() {
                     8 => {
                         reset = true;
                         clear_screen();
-                        println!("Generated.");
                         break;
                     }
                     9 => {
@@ -134,67 +133,67 @@ fn main() {
 
 // this function calculates the bounds of the address space and generates a segmented memory
 // model for the code heap and stack sections.
-pub fn generate_segmented_memory_layout() -> (u32, u32, Vec<calculations::Segment>) {
+pub fn generate_segmented_memory_layout() -> (u32, u32, Vec<calculations_cli::Segment>) {
     // calculate vas
     let vas: u32 =
-        lib_fns::rand_power_of_2(lib_fns::rand_even(14, 65), lib_fns::rand_even(65, 256 + 1));
+        lib_fns_cli::rand_power_of_2(lib_fns_cli::rand_even(14, 65), lib_fns_cli::rand_even(65, 256 + 1));
 
     // calculate the number of bits in the vas
-    let power_of2: u32 = lib_fns::num_bits_reqd(vas * 1024);
+    let power_of2: u32 = lib_fns_cli::num_bits_reqd(vas * 1024);
 
     // initialize segment structs. the stack grows down.
-    let code_segment = calculations::Segment {
-        name: calculations::SegName::Code,
+    let code_segment = calculations_cli::Segment {
+        name: calculations_cli::SegName::Code,
         base: 0,
         size: 0.0,
         grows_negative: 0,
     };
-    let heap_segment = calculations::Segment {
-        name: calculations::SegName::Heap,
+    let heap_segment = calculations_cli::Segment {
+        name: calculations_cli::SegName::Heap,
         base: 0,
         size: 0.0,
         grows_negative: 0,
     };
-    let stack_segment = calculations::Segment {
-        name: calculations::SegName::Stack,
+    let stack_segment = calculations_cli::Segment {
+        name: calculations_cli::SegName::Stack,
         base: 0,
         size: 0.0,
         grows_negative: 1,
     };
 
     // store these newly created segment types in a vector (so we can add more of them later _if_ we want)
-    let mut segments: Vec<calculations::Segment> = Vec::new();
+    let mut segments: Vec<calculations_cli::Segment> = Vec::new();
     segments.push(code_segment);
     segments.push(heap_segment);
     segments.push(stack_segment);
-    segments = calculations::are_conflicting(power_of2, segments.clone());
+    segments = calculations_cli::are_conflicting(power_of2, segments.clone());
     (vas, power_of2, segments)
 }
 
 // prints the generated segmented memory model
 // text taken with permission from Mark Morissey's slides
-pub fn print_layout(vas: u32, pm: u32, power_of2: u32, segments: Vec<calculations::Segment>) {
+pub fn print_layout(vas: u32, pm: u32, power_of2: u32, segments: Vec<calculations_cli::Segment>) {
     println!();
     println!("Assume a {}KB virtual address space and a {}KB physical memory. Virtual addresses are {} bits and segmentation is being used. The segment information is:", vas, pm, power_of2);
     // print ecessary info.
     println!("\t\tSegment Number\tBase\tSize\tGrowsNegative");
     println!(
         "\t\t{}\t00\t{}K\t{}K\t{}",
-        calculations::SEG_NAMES[segments[0].name as usize],
+        calculations_cli::SEG_NAMES[segments[0].name as usize],
         segments[0].base,
         segments[0].size,
         segments[0].grows_negative
     );
     println!(
         "\t\t{}\t01\t{}K\t{}K\t{}",
-        calculations::SEG_NAMES[segments[1].name as usize],
+        calculations_cli::SEG_NAMES[segments[1].name as usize],
         segments[1].base,
         segments[1].size,
         segments[1].grows_negative
     );
     println!(
         "\t\t{}\t11\t{}K\t{}K\t{}",
-        calculations::SEG_NAMES[segments[2].name as usize],
+        calculations_cli::SEG_NAMES[segments[2].name as usize],
         segments[2].base,
         segments[2].size,
         segments[2].grows_negative
@@ -211,7 +210,7 @@ pub fn print_question_stack_percentage(percent: u32, question_format: i8) -> i8 
         _ => -1,
     };
     if aformat == -1 {
-        calculations::error();
+        calculations_cli::error();
     }
     match aformat {
         16 => println!(
@@ -228,7 +227,7 @@ pub fn print_question_stack_percentage(percent: u32, question_format: i8) -> i8 
         ),
         _ => {
             println!("Unexpected error. Exiting");
-            calculations::error();
+            calculations_cli::error();
         }
     }
     aformat
@@ -250,7 +249,7 @@ pub fn print_question_va_to_pa(va: u32, format_flag: i8, malloc: bool) -> (i8, i
         _ => -1,
     };
     if aformat == -1 || qformat == -1 {
-        calculations::error();
+        calculations_cli::error();
     }
     if !malloc {
         match qformat {
@@ -268,7 +267,7 @@ pub fn print_question_va_to_pa(va: u32, format_flag: i8, malloc: bool) -> (i8, i
             ),
             _ => {
                 println!("Unexpected error. Exiting");
-                calculations::error();
+                calculations_cli::error();
             }
         }
     } else {
@@ -281,7 +280,7 @@ pub fn print_question_va_to_pa(va: u32, format_flag: i8, malloc: bool) -> (i8, i
                    , va, aformat),
             _ => {
                   println!("Unexpected error. Exiting");
-                  calculations::error();
+                  calculations_cli::error();
             }
         }
     }
@@ -291,14 +290,14 @@ pub fn print_question_va_to_pa(va: u32, format_flag: i8, malloc: bool) -> (i8, i
 fn va_to_pa(
     vas: u32,
     power_of2: u32,
-    segments: Vec<calculations::Segment>,
-) -> (u32, u32, Vec<calculations::Segment>) {
+    segments: Vec<calculations_cli::Segment>,
+) -> (u32, u32, Vec<calculations_cli::Segment>) {
     let choice: i8 = choose_format(0);
     clear_screen();
     print_layout(vas, vas * 2, power_of2, segments.clone());
 
     // fetch random u32 in between 100 and the VAS (as a power of 2) as the virtual address to be calculated.
-    let va: u32 = calculations::get_rand_va(power_of2, segments.clone(), false);
+    let va: u32 = calculations_cli::get_rand_va(power_of2, segments.clone(), false);
     let format_specifiers = print_question_va_to_pa(va, choice, false);
 
     // calculate offset:
@@ -315,13 +314,13 @@ fn va_to_pa(
     match ss {
         3 => {
             // stack ss
-            pa = calculations::calculate_answer(segments[2], mss, offset);
-            calculations::compare_answer(format_specifiers.1, pa);
+            pa = calculations_cli::calculate_answer(segments[2], mss, offset);
+            calculations_cli::compare_answer(format_specifiers.1, pa);
         }
         0 | 1 => {
             // code, heap
-            pa = calculations::calculate_answer(segments[ss as usize], mss, offset);
-            calculations::compare_answer(format_specifiers.1, pa);
+            pa = calculations_cli::calculate_answer(segments[ss as usize], mss, offset);
+            calculations_cli::compare_answer(format_specifiers.1, pa);
         }
 
         _ => {
@@ -359,7 +358,7 @@ fn va_to_pa(
                     match ss {
                         3 => {
                             // stack ss --show solution
-                            calculations::show_solution_va_to_pa_hex(
+                            calculations_cli::show_solution_va_to_pa_hex(
                                 segments[2],
                                 ss,
                                 offset,
@@ -371,7 +370,7 @@ fn va_to_pa(
                         }
                         0 | 1 => {
                             // code, heap --show solution
-                            calculations::show_solution_va_to_pa_hex(
+                            calculations_cli::show_solution_va_to_pa_hex(
                                 segments[ss as usize],
                                 ss,
                                 offset,
@@ -410,14 +409,14 @@ fn va_to_pa(
 fn va_to_pa_malloc(
     vas: u32,
     power_of2: u32,
-    segments: Vec<calculations::Segment>,
-) -> (u32, u32, Vec<calculations::Segment>) {
+    segments: Vec<calculations_cli::Segment>,
+) -> (u32, u32, Vec<calculations_cli::Segment>) {
     let choice: i8 = choose_format(0);
     clear_screen();
     print_layout(vas, vas * 2, power_of2, segments.clone());
 
     // fetch random u32 in between 100 and the VAS (as a power of 2) as the virtual address to be calculated.
-    let va: u32 = calculations::get_rand_va(power_of2, segments.clone(), true);
+    let va: u32 = calculations_cli::get_rand_va(power_of2, segments.clone(), true);
     let format_specifiers = print_question_va_to_pa(va, choice, true);
 
     // calculate offset:
@@ -431,8 +430,8 @@ fn va_to_pa_malloc(
     }
     let offset: u32 = va & bit_mask; // the expression on the left = va but with the 2 highest order bits set to 0 which is the same as the offset
 
-    pa = calculations::calculate_answer(segments[ss as usize], mss, offset);
-    calculations::compare_answer(format_specifiers.1, pa);
+    pa = calculations_cli::calculate_answer(segments[ss as usize], mss, offset);
+    calculations_cli::compare_answer(format_specifiers.1, pa);
     loop {
         let mut input_string = String::new();
         println!("\nOPTION\t\tPROBLEM TYPE");
@@ -462,7 +461,7 @@ fn va_to_pa_malloc(
                     match ss {
                         3 => {
                             // stack ss
-                            calculations::show_solution_va_to_pa_hex(
+                            calculations_cli::show_solution_va_to_pa_hex(
                                 segments[2],
                                 ss,
                                 offset,
@@ -473,7 +472,7 @@ fn va_to_pa_malloc(
                             );
                         }
                         0 | 1 => {
-                            calculations::show_solution_va_to_pa_hex(
+                            calculations_cli::show_solution_va_to_pa_hex(
                                 segments[ss as usize],
                                 ss,
                                 offset,
@@ -511,8 +510,8 @@ fn va_to_pa_malloc(
 fn stack_va(
     vas: u32,
     power_of2: u32,
-    segments: Vec<calculations::Segment>,
-) -> (u32, u32, Vec<calculations::Segment>) {
+    segments: Vec<calculations_cli::Segment>,
+) -> (u32, u32, Vec<calculations_cli::Segment>) {
     // choose format of the question required answer (hex, dec, binary).
     let choice: i8 = choose_format(1);
     clear_screen();
@@ -528,10 +527,10 @@ fn stack_va(
     // MSS = 2^number of bits in the offset = number of total bits - 2 (because SS = 2 bits)
     let mss: u32 = 2u32.pow(power_of2 - 2); // MSS = 2^(number of bits in the offset)
     let tuple =
-        calculations::calculate_answer_stack_percentage(segments[2], percent, mss, power_of2);
+        calculations_cli::calculate_answer_stack_percentage(segments[2], percent, mss, power_of2);
     let va_ans = tuple.0;
     let offset = tuple.1;
-    calculations::compare_answer(format_specifier, va_ans);
+    calculations_cli::compare_answer(format_specifier, va_ans);
 
     // loop until the user breaks the loop and exits or returns to the previous menu.
     loop {
@@ -559,7 +558,7 @@ fn stack_va(
         } else {
             match y {
                 0 => {
-                    calculations::show_solution_stack_va(
+                    calculations_cli::show_solution_stack_va(
                         segments[2],
                         offset,
                         va_ans,

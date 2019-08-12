@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <body>
+    {{~> page}}
+    {{#*inline "page"}}
+
+    <section id="solution">
+        <textarea readonly rows= "20">
+            {{prompt}}
+            {{solution}}
+        </textarea>
+    </section>
+
+    {{/inline}}
+    {{~> (parent)~}}
+    <body>
+<html>

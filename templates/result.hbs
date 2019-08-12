@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+<!-- Copyright © 2019 Jeff Austin, Kamakshi Nagar
+// [This program is licensed under the "MIT License"]
+// Please see the file LICENSE in the source
+// distribution of this software for license terms.-->
+<!-- citations:
+
+  Rocket Crate examples and project:
+  https://github.com/SergioBenitez/Rocket
+  https://github.com/adi105/WebHelperRocket
+-->
+
+    <html lang="en">
+    <body>
+        <h1></h1>
+    {{~> page}}
+    {{#*inline "page"}}
+    <section id="result">
+      <textarea readonly rows= "20">
+        {{items.question_prompt}}
+      </textarea>
+      <!---input id="solution" style="display:none;" value = "  {{items.question_solution}}"-->
+    </section>
+    {{/inline}}
+    {{~> (parent)~}}
+    <body>
+<html>

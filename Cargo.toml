@@ -9,6 +9,22 @@ version = "0.1.0"
 authors = ["Jeff Austin <jja6@pdx.edu>, Kamakshi Nagar <kamakshi@pdx.edu>"]
 edition = "2018"
 
-[dependencies]
+[[bin]]
+name = "web_app"
+path = "src/bin/web_app/web_app.rs"
 
+[[bin]]
+name = "cli"
+path = "src/bin/cli/cli.rs"
+
+[dependencies]
 rand = "0.7.0"
+lazy_static = "1.2.0"
+rocket = "0.4.2"
+serde = "1.0"
+serde_derive = "1.0"
+
+[dependencies.rocket_contrib]
+version = "0.4.1"
+default-features = false
+features = ["handlebars_templates"]

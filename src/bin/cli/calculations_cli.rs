@@ -5,7 +5,7 @@
 
 // import necessary crates!
 // extern crate rand;
-pub use crate::lib_fns;
+pub use crate::lib_fns_cli;
 use rand::Rng;
 use std::io;
 use std::io::prelude::*;
@@ -94,18 +94,18 @@ pub fn show_solution_stack_va(
 
     println!("  {:b}\t--SS bits", 3 << (power_of2 - 2));
     print!("+ ");
-    lib_fns::print_leading_zeros(offset, power_of2);
+    lib_fns_cli::print_leading_zeros(offset, power_of2);
     println!("{:b}\t--OFFSET", offset);
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely. print! doesnt print a line.
     print!("--");
-    lib_fns::print_hyphens(3 << (power_of2 - 2));
+    lib_fns_cli::print_hyphens(3 << (power_of2 - 2));
     io::stdout().flush().unwrap();
     println!("  {:b}", offset + (3 << (power_of2 - 2)));
 
     println!(
         "{:horiz$}VA in bytes",
         " ",
-        horiz = (lib_fns::num_bits_reqd(3 << (power_of2 - 2)) / 3) as usize
+        horiz = (lib_fns_cli::num_bits_reqd(3 << (power_of2 - 2)) / 3) as usize
     );
 
     match aformate {
@@ -150,9 +150,9 @@ pub fn show_solution_va_to_pa_hex(
             error();
         }
     }
-    // lib_fns::print_leading_zeros(va, power_of2);
+    // lib_fns_cli::print_leading_zeros(va, power_of2);
     // print!("{:b} = ", va);
-    lib_fns::print_readable_binary(va, power_of2); // I think this function is cool, visit the file to check it out.
+    lib_fns_cli::print_readable_binary(va, power_of2); // I think this function is cool, visit the file to check it out.
     println!();
     io::stdout().flush().unwrap(); // ensure our output is flushed entirely, as we are not using the _println_ macro here
 
@@ -176,11 +176,11 @@ pub fn show_solution_va_to_pa_hex(
         println!("{:b} {:b}", ss, offset);
     }
     print!("-- ");
-    lib_fns::print_hyphens(offset);
+    lib_fns_cli::print_hyphens(offset);
     println!(
         "SS {:x_axis$}OFFSET",
         " ",
-        x_axis = ((lib_fns::num_bits_reqd(offset) / 2) / 2) as usize
+        x_axis = ((lib_fns_cli::num_bits_reqd(offset) / 2) / 2) as usize
     );
 
     println!("\nStep 3: Note the value of the Segment Selector and Offset bits:");
@@ -371,8 +371,8 @@ pub fn compare_answer(aformat: i8, pa: u32) {
             println!();
             input = input.replace("x", ""); // replace all the characters that could possibly be taken as hex prefixes (like 0, x) with empty string
             input = input.replace("X", "");
-            if lib_fns::are_all_numeric(&input, 16) {
-                match lib_fns::bn_to_b10(&input.replace("0x", "").to_string(), 16) {
+            if lib_fns_cli::are_all_numeric(&input, 16) {
+                match lib_fns_cli::bn_to_b10(&input.replace("0x", "").to_string(), 16) {
                     // use my library function to convert input to base 10 (so we can measure it!)
                     Some(k) => {
                         if k as u32 == pa {
@@ -402,9 +402,9 @@ pub fn compare_answer(aformat: i8, pa: u32) {
             println!();
             input = input.replace("x", "");
             input = input.replace("X", ""); // replace all the characters that could possibly be taken as hex prefixes (like 0, x) with empty string
-            if lib_fns::are_all_numeric(&input, 2) {
+            if lib_fns_cli::are_all_numeric(&input, 2) {
                 // the second flag specifies the base which we define as `numeric`
-                match lib_fns::bn_to_b10(&input.trim().to_string(), 2) {
+                match lib_fns_cli::bn_to_b10(&input.trim().to_string(), 2) {
                     Some(k) => {
                         if k as u32 == pa {
                             println!("Good.");
@@ -437,8 +437,8 @@ pub fn compare_answer(aformat: i8, pa: u32) {
             println!();
             input = input.replace("x", "");
             input = input.replace("X", "");
-            if lib_fns::are_all_numeric(&input, 10) {
-                match lib_fns::bn_to_b10(&input.trim().to_string(), 10) {
+            if lib_fns_cli::are_all_numeric(&input, 10) {
+                match lib_fns_cli::bn_to_b10(&input.trim().to_string(), 10) {
                     Some(k) => {
                         if k as u32 == pa {
                             println!("Good.");
