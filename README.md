@@ -64,15 +64,19 @@ First, clone this repository by using `git clone repository_link` on your local 
 Click the green `Clone or download` button to copy the repository link to your keyboard.
 
 Once rust has been installed, you can build this program using the command: `cargo build` and run it with
-`cargo run`.
+`cargo run --bin binary_filename`.
 
     cargo build
     cargo run --bin web_app
     OR
     cargo run --bin cli
-    press ctrl + click on the following link: http://localhost:8000
 
-If you want to run an optimized version then run cargo with: `cargo run bin binary_filename --release`. This also works with `cargo build`.
+If you chose to run the web app you will need to: press ctrl + click on the following link that appears after successfuly cargo running: 
+
+    http://localhost:8000
+
+If you want to run an optimized version then run cargo with: `cargo run bin binary_filename --release`. `cargo build --release` builds an
+optimized version of the code.
 
 ## Code Operation
 
@@ -186,7 +190,7 @@ OPTION      PROBLEM TYPE
 Copyright (c) 2019
 Jeff Austin <jja6@pdx.edu> (github user jedxops),
 Kamakshi Nagar <kamakshi@pdx.edu> (nagarkamakshi),
-and Bart Massey <bart@cs.pdx.edu> (BartMassey).
+and Bart Massey <bart@cs.pdx.edu> (BartMassey) (development team advisor).
 
 ## License
 
