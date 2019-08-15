@@ -1,7 +1,10 @@
-Development completed. Actively performing testing operations to find and cure bugs.
-We are aiming to determine the correctness of this program so we feel safe turning
-our _complete_ attention towards the web app, which is the next step.
+Copyright © 2019 Jeff Austin, Kamakshi Nagar
+[This program is licensed under the "MIT License"]
+Please see the file LICENSE in the source
+distribution of this software for license terms.
+
+Development completed. Actively testing to find and cure bugs.
 
 PLEASE SEE THE README.md file for more information on the road map and for details
 that could assist a future potential developer (like how-tos on building, running,
-and testing the code).
+and testing the code, as well as build and checkout pre-requisites).

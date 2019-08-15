@@ -115,10 +115,10 @@ pub struct Request {
 // data form (user entries)
 #[derive(FromForm, Debug)]
 pub struct Request2 {
-    answer: String,           // calculated actual answer
-    answer_format: String,    // answer format for the question
-    prompt: String,           // question prompt
-    solution: String,         // needs to be named solution
+    answer: String,        // calculated actual answer
+    answer_format: String, // answer format for the question
+    prompt: String,        // question prompt
+    solution: String,      // needs to be named solution
     input: String,         // needs to be named solution
 }
 
@@ -163,7 +163,7 @@ pub fn q_format_2() -> io::Result<NamedFile> {
 pub fn q_format_3() -> io::Result<NamedFile> {
     let mut question_choice = Q_CHOICE.lock().unwrap();
     let mut rng = rand::thread_rng(); // seed the r.n.g
-    let rando: u32 = rng.gen_range(0, 3);  // 0, 1, or 2
+    let rando: u32 = rng.gen_range(0, 3); // 0, 1, or 2
     match rando {
         0 => *question_choice = Zero,
         1 => *question_choice = One,
@@ -206,9 +206,9 @@ pub fn setup(data: Form<Request>) -> Template {
 
     if format_choice == 9 {
         let mut rng = rand::thread_rng(); // seed the r.n.g
-        // the stack virtual address problem has 3 variants while the va_to_pa has 9
+                                          // the stack virtual address problem has 3 variants while the va_to_pa has 9
         match *question_choice {
-            Zero | One => format_choice = rng.gen_range(0, 10),   // 0-9 inclusive
+            Zero | One => format_choice = rng.gen_range(0, 10), // 0-9 inclusive
             Two => format_choice = rng.gen_range(0, 3),
             _ => exit(-1),
         }
@@ -283,7 +283,7 @@ pub fn setup(data: Form<Request>) -> Template {
                     items: QuestionSolutionInfo {
                         question_prompt: to_print,
                         question_solution: to_print2,
-                        question_numerical_answer: pa_ans as u64,
+                        question_numerical_answer: u64::from(pa_ans),
                         answer_format: func_result.1,
                     },
                     parent: "index",
@@ -356,7 +356,7 @@ pub fn setup(data: Form<Request>) -> Template {
                     items: QuestionSolutionInfo {
                         question_prompt: to_print,
                         question_solution: to_print2,
-                        question_numerical_answer: pa_ans as u64,
+                        question_numerical_answer: u64::from(pa_ans),
                         answer_format: func_result.1,
                     },
                     parent: "index",
@@ -402,7 +402,7 @@ pub fn setup(data: Form<Request>) -> Template {
                     items: QuestionSolutionInfo {
                         question_prompt: to_print,
                         question_solution: to_print2,
-                        question_numerical_answer: va_ans as u64,
+                        question_numerical_answer: u64::from(va_ans),
                         answer_format: func_result.0,
                     },
                     parent: "index",
@@ -418,7 +418,6 @@ pub fn setup(data: Form<Request>) -> Template {
 // shows the solution
 #[post("/showsteps", data = "<data>")]
 pub fn solution(data: Form<Request2>) -> Template {
-
     /*println!("{}", data.solution);
     println!("{}", data.answer);
     println!("{}", data.answer_format);
@@ -434,8 +433,12 @@ pub fn solution(data: Form<Request2>) -> Template {
 
     // get the question prompt string
     let mut to_print = solution_strings_to_print_on_web_page.question_prompt;
-    to_print = to_print + &calculations::compare_answer((&data.input).to_string(), ((&data.answer_format).trim()).parse::<i8>().unwrap(),
-      solution_strings_to_print_on_web_page.question_numerical_answer as u32);
+    to_print = to_print
+        + &calculations::compare_answer(
+            (&data.input).to_string(),
+            ((&data.answer_format).trim()).parse::<i8>().unwrap(),
+            solution_strings_to_print_on_web_page.question_numerical_answer as u32,
+        );
     // get the solution string
     let to_print2 = solution_strings_to_print_on_web_page.question_solution;
     Template::render(

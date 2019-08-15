@@ -1,25 +1,72 @@
+Copyright © 2019 Jeff Austin, Kamakshi Nagar
+[This program is licensed under the "MIT License"]
+Please see the file LICENSE in the source
+distribution of this software for license terms.
+
 TEST REPORT:
 Results of running `cargo test`
 
-running 27 tests
-test lib_fns::test_16_to_10_v10 ... ok
+running 30 tests
+test calculations_cli::test_stack_percentage_calculation_v1 ... ok
+test calculations_cli::test_va_pa_calculation_v1 ... ok
+test calculations_cli::test_stack_percentage_calculation_v2 ... ok
+test lib_fns_cli::test_16_to_10_v1 ... ok
+test lib_fns_cli::test_16_to_10_v10 ... ok
+test lib_fns_cli::test_16_to_10_v11 ... ok
+test lib_fns_cli::test_16_to_10_v12 ... ok
+test lib_fns_cli::test_16_to_10_v13 ... ok
+test lib_fns_cli::test_16_to_10_v14 ... ok
+test lib_fns_cli::test_16_to_10_v15 ... ok
+test lib_fns_cli::test_16_to_10_v2 ... ok
+test lib_fns_cli::test_16_to_10_v3 ... ok
+test lib_fns_cli::test_16_to_10_v4 ... ok
+test lib_fns_cli::test_16_to_10_v5 ... ok
+test lib_fns_cli::test_16_to_10_v6 ... ok
+test lib_fns_cli::test_16_to_10_v7 ... ok
+test lib_fns_cli::test_16_to_10_v8 ... ok
+test lib_fns_cli::test_16_to_10_v9 ... ok
+test lib_fns_cli::test_allnum_v1 ... ok
+test lib_fns_cli::test_allnum_v2 ... ok
+test lib_fns_cli::test_allnum_v3 ... ok
+test lib_fns_cli::test_allnum_v4 ... ok
+test lib_fns_cli::test_allnum_v5 ... ok
+test lib_fns_cli::test_allnum_v6 ... ok
+test lib_fns_cli::test_bits_reqd_v1 ... ok
+test lib_fns_cli::test_bits_reqd_v2 ... ok
+test lib_fns_cli::test_bits_reqd_v3 ... ok
+test lib_fns_cli::test_bits_reqd_v4 ... ok
+test lib_fns_cli::test_bits_reqd_v5 ... ok
+test lib_fns_cli::test_bits_reqd_v6 ... ok
+
+test result: ok. 30 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
+
+Running target/debug/deps/web_app-f1306af455314f41
+
+running 36 tests
+test calculations::comp_ans_bin ... ok
+test calculations::comp_ans_dec ... ok
+test calculations::comp_ans_dec_ne ... ok
+test calculations::comp_ans_hex ... ok
+test calculations::comp_ans_hex_ne ... ok
+test calculations::test_stack_percentage_calculation_v1 ... ok
+test calculations::test_stack_percentage_calculation_v2 ... ok
+test calculations::test_va_pa_calculation_v1 ... ok
 test lib_fns::test_16_to_10_v1 ... ok
-test lib_fns::test_16_to_10_v12 ... ok
+test lib_fns::test_16_to_10_v10 ... ok
 test lib_fns::test_16_to_10_v11 ... ok
-test lib_fns::test_16_to_10_v14 ... ok
+test lib_fns::test_16_to_10_v12 ... ok
 test lib_fns::test_16_to_10_v13 ... ok
+test lib_fns::test_16_to_10_v14 ... ok
 test lib_fns::test_16_to_10_v15 ... ok
 test lib_fns::test_16_to_10_v2 ... ok
 test lib_fns::test_16_to_10_v3 ... ok
 test lib_fns::test_16_to_10_v4 ... ok
 test lib_fns::test_16_to_10_v5 ... ok
 test lib_fns::test_16_to_10_v6 ... ok
-test lib_fns::test_16_to_10_v7 ... ok
 test lib_fns::test_16_to_10_v8 ... ok
 test lib_fns::test_16_to_10_v9 ... ok
-test lib_fns::test_allnum_v1 ... ok
+test lib_fns::test_16_to_10_v7 ... ok
 test lib_fns::test_allnum_v2 ... ok
-test lib_fns::test_allnum_v3 ... ok
 test lib_fns::test_allnum_v4 ... ok
 test lib_fns::test_allnum_v5 ... ok
 test lib_fns::test_allnum_v6 ... ok
@@ -29,6 +76,8 @@ test lib_fns::test_bits_reqd_v3 ... ok
 test lib_fns::test_bits_reqd_v4 ... ok
 test lib_fns::test_bits_reqd_v5 ... ok
 test lib_fns::test_bits_reqd_v6 ... ok
+test calculations::comp_ans_bin_ne ... ok
+test lib_fns::test_allnum_v1 ... ok
+test lib_fns::test_allnum_v3 ... ok
 
-test result: ok. 27 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out
-
+test result: ok. 36 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out

@@ -56,10 +56,13 @@ fn main() {
        If d --exit program
     */
 
-    #[allow(clippy::type_complexity)]   // I want to preserve the trippy C-like syntax seen here in the
+    #[allow(clippy::type_complexity)]
+    // I want to preserve the trippy C-like syntax seen here in the
     // array of functions definition
     // array of functions for address translation questions = atqs
-    let mut atqs: Vec<fn(u32, u32, Vec<calculations_cli::Segment>) -> (u32, u32, Vec<calculations_cli::Segment>),> = Vec::new();
+    let mut atqs: Vec<
+        fn(u32, u32, Vec<calculations_cli::Segment>) -> (u32, u32, Vec<calculations_cli::Segment>),
+    > = Vec::new();
 
     atqs.push(va_to_pa);
     atqs.push(va_to_pa_malloc);
@@ -135,8 +138,10 @@ fn main() {
 // model for the code heap and stack sections.
 pub fn generate_segmented_memory_layout() -> (u32, u32, Vec<calculations_cli::Segment>) {
     // calculate vas
-    let vas: u32 =
-        lib_fns_cli::rand_power_of_2(lib_fns_cli::rand_even(14, 65), lib_fns_cli::rand_even(65, 256 + 1));
+    let vas: u32 = lib_fns_cli::rand_power_of_2(
+        lib_fns_cli::rand_even(14, 65),
+        lib_fns_cli::rand_even(65, 256 + 1),
+    );
 
     // calculate the number of bits in the vas
     let power_of2: u32 = lib_fns_cli::num_bits_reqd(vas * 1024);

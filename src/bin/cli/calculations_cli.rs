@@ -3,6 +3,18 @@
 // Please see the file LICENSE in the source
 // distribution of this software for license terms.
 
+/*
+    citations:
+    Mark Morrissey --CS333 Operating Systems--Portland State University practice exams:
+    https://web.cecs.pdx.edu/~markem/CS333/exams/Final%202019-01.pdf
+
+    Bart Massey
+    http://web.cecs.pdx.edu/~bart/
+
+    Rust textbook:
+    Blandy, J., & Orendorff, J. (2018). Programming Rust: Fast, safe systems development. Sebastopol: OReilly Media.
+*/
+
 // import necessary crates!
 // extern crate rand;
 pub use crate::lib_fns_cli;
@@ -31,7 +43,7 @@ pub enum SegName {
 }
 
 // array of segment names for printing and comparison purposes.
-pub static SEG_NAMES: [&'static str; 3] = ["Code", "Heap", "Stack"];
+pub static SEG_NAMES: [&str; 3] = ["Code", "Heap", "Stack"];
 
 // shows the `student` how to solve the stack to va problem
 pub fn show_solution_stack_va(
@@ -79,8 +91,9 @@ pub fn show_solution_stack_va(
         seg.base - 2u32.pow(power_of2 - 2) / 1024,
         seg.base as f32 - seg.size * (percent / 100.0),
         seg.base - 2u32.pow(power_of2 - 2) / 1024,
-        (seg.base as f32 - seg.size * (percent / 100.0) - 
-        (seg.base as f32 - 2u32.pow(power_of2 - 2) as f32 / 1024.0)) as f32,
+        (seg.base as f32
+            - seg.size * (percent / 100.0)
+            - (seg.base as f32 - 2u32.pow(power_of2 - 2) as f32 / 1024.0)) as f32,
         offset
     );
     println!("This is the _offset_ portion of the binary number to be constructed for the virtual address.\n");
@@ -307,7 +320,7 @@ pub fn calculate_answer_stack_percentage(
     let midpoint = ((percent / 100.0) * seg.size) as f32; // in K
     let stack_max_seg_addr = seg.base as f32 - mss as f32 / 1024.0; // in K
     let offset = (seg.base as f32 - midpoint) - stack_max_seg_addr; // in K
-    
+
     (
         (offset * 1024.0 + (3 << (power_of2 - 2)) as f32) as u32,
         (offset * 1024.0) as u32,
@@ -322,7 +335,10 @@ pub fn test_stack_percentage_calculation_v1() {
         size: 2.0,
         grows_negative: 1,
     };
-    assert_eq!(114688, calculate_answer_stack_percentage(stak_seg, 0.0, 16384, 17).0);
+    assert_eq!(
+        114688,
+        calculate_answer_stack_percentage(stak_seg, 0.0, 16384, 17).0
+    );
 }
 
 #[test]
@@ -333,7 +349,10 @@ pub fn test_stack_percentage_calculation_v2() {
         size: 0.0,
         grows_negative: 1,
     };
-    assert_eq!(196608, calculate_answer_stack_percentage(stak_seg, 0.0, 16384, 18).0);
+    assert_eq!(
+        196608,
+        calculate_answer_stack_percentage(stak_seg, 0.0, 16384, 18).0
+    );
 }
 
 // this function calculates the answer to the given problem and returns the result
@@ -341,9 +360,10 @@ pub fn test_stack_percentage_calculation_v2() {
 // GN = grows negative. offset = the value of the virtual address shifted left 2 bits.
 // (the value of the va neglecting the final two bits)
 #[allow(clippy::neg_multiply)] // --Massey suggestion to get rid of clippy warning.
-// using (1 * (!1)) does not fix the issue, it results in -2 instead of -1
+                               // using (1 * (!1)) does not fix the issue, it results in -2 instead of -1
 pub fn calculate_answer(seg: Segment, mss: u32, offset: u32) -> u32 {
-    ((-1) * (seg.grows_negative as i32) * (mss as i32) + (seg.base as i32 * 1024) + offset as i32) as u32 // in bytes
+    ((-1) * (seg.grows_negative as i32) * (mss as i32) + (seg.base as i32 * 1024) + offset as i32)
+        as u32 // in bytes
 }
 
 #[test]
@@ -391,7 +411,6 @@ pub fn compare_answer(aformat: i8, pa: u32) {
                 println!("INCORRECT.\n");
                 println!("your answer: {} bytes\nactual: {:#X} bytes", input, pa);
             }
-            return;
         }
         2 => {
             println!("Type your answer in binary format with or without leading zeros then press enter and ctrl+d");
@@ -425,7 +444,6 @@ pub fn compare_answer(aformat: i8, pa: u32) {
                 println!("INCORRECT.\n");
                 println!("your answer: {} bytes\nactual: {:b} bytes", input, pa);
             }
-            return;
         }
         10 => {
             println!("Type your answer in decimal format (base 10, no decimal points) then press enter and ctrl+d");
@@ -456,7 +474,6 @@ pub fn compare_answer(aformat: i8, pa: u32) {
                 println!("INCORRECT.\n");
                 println!("your answer: {} bytes\nactual: {} bytes", input, pa);
             }
-            return;
         }
         _ => {
             println!("Error. Unexpected format specifier. Fatal error. Terminating program");

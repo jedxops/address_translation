@@ -3,6 +3,22 @@
 // Please see the file LICENSE in the source
 // distribution of this software for license terms.
 
+/*
+    citations:
+    Mark Morrissey --CS333 Operating Systems--Portland State University practice exams:
+    https://web.cecs.pdx.edu/~markem/CS333/exams/Final%202019-01.pdf
+
+    Bart Massey
+    http://web.cecs.pdx.edu/~bart/
+
+    Rust textbook:
+    Blandy, J., & Orendorff, J. (2018). Programming Rust: Fast, safe systems development. Sebastopol: OReilly Media.
+
+    Rocket Crate examples and project:
+    https://github.com/SergioBenitez/Rocket
+    https://github.com/adi105/WebHelperRocket
+*/
+
 // import necessary crates!
 // extern crate rand;
 use crate::lib_fns;
@@ -99,8 +115,8 @@ pub fn show_solution_stack_va(
         seg.base - 2u32.pow(power_of2 - 2) / 1024,
         seg.base as f32 - seg.size * (percent / 100.0),
         seg.base - 2u32.pow(power_of2 - 2) / 1024,
-        (seg.base as f32 - seg.size * (percent / 100.0)) -
-        (seg.base as f32 - 2u32.pow(power_of2 as u32 - 2 as u32) as f32 / 1024.0) as f32,
+        (seg.base as f32 - seg.size * (percent / 100.0))
+            - (seg.base as f32 - 2u32.pow(power_of2 as u32 - 2 as u32) as f32 / 1024.0) as f32,
         offset
     )
     .unwrap();
@@ -145,12 +161,7 @@ pub fn show_solution_stack_va(
     )
     .unwrap();
     io::stdout().flush().unwrap();
-    writeln!(
-        &mut to_print,
-        "  {:b}",
-        offset + (3 << (power_of2 - 2))
-    )
-    .unwrap();
+    writeln!(&mut to_print, "  {:b}", offset + (3 << (power_of2 - 2))).unwrap();
 
     writeln!(
         &mut to_print,
@@ -551,10 +562,18 @@ pub fn print_answer_instructions(aformat: i8) -> String {
             .unwrap();
         }
         2 => {
-            writeln!(&mut to_print,"Type your answer in binary format with or without leading zeros").unwrap();
+            writeln!(
+                &mut to_print,
+                "Type your answer in binary format with or without leading zeros"
+            )
+            .unwrap();
         }
         10 => {
-            writeln!(&mut to_print,"Type your answer in decimal format (base 10, no decimal points)").unwrap();
+            writeln!(
+                &mut to_print,
+                "Type your answer in decimal format (base 10, no decimal points)"
+            )
+            .unwrap();
         }
         _ => {
             writeln!(
@@ -709,12 +728,18 @@ fn comp_ans_hex() {
 
 #[test]
 fn comp_ans_hex_ne() {
-    assert_ne!("\nINCORRECT\n\nyour answer: 0xACF bytes\nactual: 0xFFFFF bytes", compare_answer("0xACF".to_string(), 16, 1048575));
+    assert_ne!(
+        "\nINCORRECT\n\nyour answer: 0xACF bytes\nactual: 0xFFFFF bytes",
+        compare_answer("0xACF".to_string(), 16, 1048575)
+    );
 }
 
 #[test]
 fn comp_ans_bin() {
-    assert_eq!("\nGood.\n", compare_answer("00000101010110100000011101010".to_string(), 2, 11223274));
+    assert_eq!(
+        "\nGood.\n",
+        compare_answer("00000101010110100000011101010".to_string(), 2, 11223274)
+    );
 }
 
 #[test]
@@ -724,12 +749,18 @@ fn comp_ans_bin_ne() {
 
 #[test]
 fn comp_ans_dec() {
-    assert_eq!("\nGood.\n", compare_answer("11223274".to_string(), 10, 11223274));
+    assert_eq!(
+        "\nGood.\n",
+        compare_answer("11223274".to_string(), 10, 11223274)
+    );
 }
 
 #[test]
 fn comp_ans_dec_ne() {
-    assert_ne!("\nINCORRECT\n\nyour answer: 21110101 bytes\nactual: 21018010 bytes", compare_answer("21110101".to_string(), 10, 21018010));
+    assert_ne!(
+        "\nINCORRECT\n\nyour answer: 21110101 bytes\nactual: 21018010 bytes",
+        compare_answer("21110101".to_string(), 10, 21018010)
+    );
 }
 
 // generates a problem prompting for a VA to PA translation

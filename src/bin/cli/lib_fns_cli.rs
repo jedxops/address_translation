@@ -3,6 +3,18 @@
 // Please see the file LICENSE in the source
 // distribution of this software for license terms.
 
+/*
+    citations:
+    Mark Morrissey --CS333 Operating Systems--Portland State University practice exams:
+    https://web.cecs.pdx.edu/~markem/CS333/exams/Final%202019-01.pdf
+
+    Bart Massey
+    http://web.cecs.pdx.edu/~bart/
+
+    Rust textbook:
+    Blandy, J., & Orendorff, J. (2018). Programming Rust: Fast, safe systems development. Sebastopol: OReilly Media.
+*/
+
 // import necessary crates
 use std::process::exit;
 extern crate rand;
@@ -187,106 +199,91 @@ pub fn rand_power_of_2(lower: u32, upper: u32) -> u32 {
 //unit test for the bn_to_b10 function version 1 (hex)
 #[test]
 pub fn test_16_to_10_v1() {
-    assert_eq!(
-        Some(0), bn_to_b10("0", 16));
+    assert_eq!(Some(0), bn_to_b10("0", 16));
 }
 
 //unit test for the bn_to_b10 function version 2 (hex)
 #[test]
 pub fn test_16_to_10_v2() {
-    assert_eq!(
-        Some(23295), bn_to_b10("5AFF", 16));
+    assert_eq!(Some(23295), bn_to_b10("5AFF", 16));
 }
 
 //unit test for the bn_to_b10 function version 3 (hex)
 #[test]
 pub fn test_16_to_10_v3() {
-    assert_eq!(
-        Some(23295), bn_to_b10("5aFf", 16));
+    assert_eq!(Some(23295), bn_to_b10("5aFf", 16));
 }
 
 //unit test for the bn_to_b10 function version 4 (hex)
 #[test]
 pub fn test_16_to_10_v4() {
-    assert_eq!(
-        Some(9477896), bn_to_b10("909F08", 16));
+    assert_eq!(Some(9477896), bn_to_b10("909F08", 16));
 }
 
 //unit test for the bn_to_b10 function version 5 (binary)
 #[test]
 pub fn test_16_to_10_v5() {
-    assert_eq!(
-        Some(0), bn_to_b10("0", 2));
+    assert_eq!(Some(0), bn_to_b10("0", 2));
 }
 
 //unit test for the bn_to_b10 function version 6 (binary)
 #[test]
 pub fn test_16_to_10_v6() {
-    assert_eq!(
-        Some(21841), bn_to_b10("101010101010001", 2));
+    assert_eq!(Some(21841), bn_to_b10("101010101010001", 2));
 }
 
 //unit test for the bn_to_b10 function version 7 (binary)
 #[test]
 pub fn test_16_to_10_v7() {
-    assert_eq!(
-        Some(268), bn_to_b10("00000100001100", 2));
+    assert_eq!(Some(268), bn_to_b10("00000100001100", 2));
 }
 
 //unit test for the bn_to_b10 function version 8 (binary)
 #[test]
 pub fn test_16_to_10_v8() {
-    assert_eq!(
-        Some(1), bn_to_b10("00000000000000001", 2));
+    assert_eq!(Some(1), bn_to_b10("00000000000000001", 2));
 }
 
 //unit test for the bn_to_b10 function version 9 (decimal)
 #[test]
 pub fn test_16_to_10_v9() {
-    assert_eq!(
-        Some(0), bn_to_b10("0", 10));
+    assert_eq!(Some(0), bn_to_b10("0", 10));
 }
 
 //unit test for the bn_to_b10 function version 10 (decimal)
 #[test]
 pub fn test_16_to_10_v10() {
-    assert_eq!(
-        Some(2184100), bn_to_b10("2184100", 10));
+    assert_eq!(Some(2184100), bn_to_b10("2184100", 10));
 }
 
 //unit test for the bn_to_b10 function version 11 (decimal)
 #[test]
 pub fn test_16_to_10_v11() {
-    assert_eq!(
-        Some(100001100), bn_to_b10("0100001100", 10));
+    assert_eq!(Some(100001100), bn_to_b10("0100001100", 10));
 }
 
 //unit test for the bn_to_b10 function version 12 (decimal)
 #[test]
 pub fn test_16_to_10_v12() {
-    assert_eq!(
-        Some(1), bn_to_b10("0000000001", 10));
+    assert_eq!(Some(1), bn_to_b10("0000000001", 10));
 }
 
 //unit test for the bn_to_b10 function version 13 (hex)
 #[test]
 pub fn test_16_to_10_v13() {
-    assert_ne!(
-        Some(2184100), bn_to_b10("2184100", 16));
+    assert_ne!(Some(2184100), bn_to_b10("2184100", 16));
 }
 
 //unit test for the bn_to_b10 function version 14 (binary)
 #[test]
 pub fn test_16_to_10_v14() {
-    assert_ne!(
-        Some(100001100), bn_to_b10("0100001100", 2));
+    assert_ne!(Some(100001100), bn_to_b10("0100001100", 2));
 }
 
 //unit test for the bn_to_b10 function version 15 (decimal)
 #[test]
 pub fn test_16_to_10_v15() {
-    assert_ne!(
-        Some(1110), bn_to_b10("1111", 10));
+    assert_ne!(Some(1110), bn_to_b10("1111", 10));
 }
 
 /*---------------------------------------------------------*/
@@ -294,43 +291,37 @@ pub fn test_16_to_10_v15() {
 //unit test for the are_all_numeric function version 1 (hex)
 #[test]
 pub fn test_allnum_v1() {
-    assert_eq!(
-        true, are_all_numeric("aBcDeF", 16));
+    assert_eq!(true, are_all_numeric("aBcDeF", 16));
 }
 
 //unit test for the are_all_numeric function version 2 (binary)
 #[test]
 pub fn test_allnum_v2() {
-    assert_eq!(
-        true, are_all_numeric("1010101", 2));
+    assert_eq!(true, are_all_numeric("1010101", 2));
 }
 
 //unit test for the are_all_numeric function version 3 (decimal)
 #[test]
 pub fn test_allnum_v3() {
-    assert_eq!(
-        true, are_all_numeric("123456666777789", 10));
+    assert_eq!(true, are_all_numeric("123456666777789", 10));
 }
 
 //unit test for the are_all_numeric function version 4 (hex)
 #[test]
 pub fn test_allnum_v4() {
-    assert_eq!(
-        false, are_all_numeric("aBcDeF1h2", 16));
+    assert_eq!(false, are_all_numeric("aBcDeF1h2", 16));
 }
 
 //unit test for the are_all_numeric function version 5 (binary)
 #[test]
 pub fn test_allnum_v5() {
-    assert_eq!(
-        false, are_all_numeric("1010301", 2));
+    assert_eq!(false, are_all_numeric("1010301", 2));
 }
 
 //unit test for the are_all_numeric function version 6 (decimal)
 #[test]
 pub fn test_allnum_v6() {
-    assert_eq!(
-        false, are_all_numeric("12345666d777789", 10));
+    assert_eq!(false, are_all_numeric("12345666d777789", 10));
 }
 
 /*------------------------------------------------------------*/

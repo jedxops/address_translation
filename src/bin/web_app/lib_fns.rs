@@ -3,6 +3,22 @@
 // Please see the file LICENSE in the source
 // distribution of this software for license terms.
 
+/*
+    citations:
+    Mark Morrissey --CS333 Operating Systems--Portland State University practice exams:
+    https://web.cecs.pdx.edu/~markem/CS333/exams/Final%202019-01.pdf
+
+    Bart Massey
+    http://web.cecs.pdx.edu/~bart/
+
+    Rust textbook:
+    Blandy, J., & Orendorff, J. (2018). Programming Rust: Fast, safe systems development. Sebastopol: OReilly Media.
+
+    Rocket Crate examples and project:
+    https://github.com/SergioBenitez/Rocket
+    https://github.com/adi105/WebHelperRocket
+*/
+
 // import necessary crates
 use std::process::exit;
 extern crate rand;
@@ -77,7 +93,8 @@ pub fn print_readable_binary(address: u32, size_of_space: u32) -> String {
     let multiple_of_4: u32 = size_of_space / 4; // we want to group the binary into 4 groups
     if size_of_space % 4 != 0 {
         // print the binary digits at the end of the string which dont fit in a group of 4
-        to_print = to_print + &print_leading_zeros(address >> (4 * multiple_of_4), size_of_space % 4);
+        to_print =
+            to_print + &print_leading_zeros(address >> (4 * multiple_of_4), size_of_space % 4);
         write!(&mut to_print, "{:b} ", address >> (4 * multiple_of_4)).unwrap();
     }
     let mut array_of_binaries: Vec<u32> = Vec::new(); // array of binaries to print
