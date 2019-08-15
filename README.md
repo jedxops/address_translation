@@ -61,7 +61,7 @@ Once rust has been downloaded and installed, you can install nightly with the fo
 ## Checkout, Build, and Run
 
 First, clone this repository by using `git clone repository_link` on your local machine to clone the repository.
-Click the green `Clone or download` button to copy the repository link to your keyboard.
+Click the green `Clone or download` button to copy the repository link to your clipboard.
 
 Once rust has been installed, you can build this program using the command: `cargo build` and run it with
 `cargo run --bin binary_filename`.
@@ -71,11 +71,11 @@ Once rust has been installed, you can build this program using the command: `car
     OR
     cargo run --bin cli
 
-If you chose to run the web app you will need to: press ctrl + click on the following link that appears after successfuly cargo running: 
+If you chose to run the web app you will need to: press ctrl + click on the following link that appears after cargo successfully running: 
 
     http://localhost:8000
 
-If you want to run an optimized version then run cargo with: `cargo run bin binary_filename --release`. `cargo build --release` builds an
+If you want to run an optimized version then run cargo with: `cargo run --bin binary_filename --release`. `cargo build --release` builds an
 optimized version of the code.
 
 ## Code Operation
@@ -88,6 +88,7 @@ OPTION       PROBLEM TYPE
 9)          Generate Random Problem
 10)         Exit
 1
+
 Choose format of desired question
 
 OPTION      PROBLEM TYPE
@@ -111,14 +112,17 @@ Assume a 128KB virtual address space and a 256KB physical memory. Virtual addres
                 Stack     11    245K    55.2K   1
 A call to malloc returns a virtual address of 10110100000000000. What is the physical address (in base 16) of this virtual address?
 Type your answer in hexadecimal format with or without the `0x` then press enter and ctrl+d
+
 0xa4f
 
 INCORRECT.
 
 your answer: 0xA4F bytes
+
 actual: 0x1D000 bytes
 
 OPTION      PROBLEM TYPE
+
 0)          Show steps
 1)          Return to the previous menu
 2)          Exit
@@ -160,16 +164,23 @@ Base = the base of the segment, measured in bytes. Value provided in table.
 The offset has already been calculated: offset = 26624 bytes (base 10)
 There are 16 bits in the offset, so the MSS is 2^16 = 65536 bytes.
 The SS = 01 (base 2) = 1 (base 10) => SS = Heap Segment => GN = 0
+
 PA (in bytes) = (-1)*(GN)*(MSS) + base + offset
 
 => PA = (-1)(0)(2^16) + (90K) + 26624 bytes
+
 => PA = (-1)(0)(65536) + (90 * 1024) + 26624 bytes
+
 => PA = 0 + (92160) + 26624 bytes
+
 => PA = 118784 bytes
+
 => PA = 0x1D000 bytes
+
 Check out youtube for shortcuts on converting to and from binary, decimal, and hexadecimal by hand.
 
 OPTION      PROBLEM TYPE
+
 0)          Show steps
 1)          Return to the previous menu
 2)          Exit
@@ -183,6 +194,7 @@ OPTION      PROBLEM TYPE
 8)          Generate fresh segmented memory model
 9)          Generate Random Problem
 10)         Exit
+
 10
 
 ## Authors

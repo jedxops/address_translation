@@ -382,7 +382,7 @@ pub fn compare_answer(aformat: i8, pa: u32) {
     let mut input = String::new();
     match aformat {
         16 => {
-            println!("Type your answer in hexadecimal format with or without the `0x` then press enter and ctrl+d");
+            println!("Type your answer in hexadecimal format with or without the `0x` then press enter and ctrl+d (ctrl+z on windows)");
             // the read_to_string writes the input data to its argument, not the return value.
             input = match io::stdin().read_to_string(&mut input) {
                 Ok(_usize_bytes) => input.to_string().trim().to_string(),
@@ -413,7 +413,7 @@ pub fn compare_answer(aformat: i8, pa: u32) {
             }
         }
         2 => {
-            println!("Type your answer in binary format with or without leading zeros then press enter and ctrl+d");
+            println!("Type your answer in binary format with or without leading zeros then press enter and ctrl+d (ctrl+z on windows)");
             input = match io::stdin().read_to_string(&mut input) {
                 Ok(_usize_bytes) => input.to_string().trim().to_string(),
                 Err(_) => "".to_string(),
@@ -446,7 +446,7 @@ pub fn compare_answer(aformat: i8, pa: u32) {
             }
         }
         10 => {
-            println!("Type your answer in decimal format (base 10, no decimal points) then press enter and ctrl+d");
+            println!("Type your answer in decimal format (base 10, no decimal points) then press enter and ctrl+d (ctrl+z on windows)");
             // the read_to_string writes the input data to its argument, not the return value.
             input = match io::stdin().read_to_string(&mut input) {
                 Ok(_usize_bytes) => input.to_string().trim().to_string(),
