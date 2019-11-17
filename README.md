@@ -52,19 +52,35 @@ Post-class)     Maintain and update software periodically.
 
 ## Build Prerequisites
 
-In order to build this repository, you must install rust and rust nightly. `rustup` is a great way to do this: https://rustup.rs/
+**Note: this following process is highly Operating System dependent.**
+**Please see the `Troubleshooting` section of this document for additional build information**
 
+In order to build this repository, you must install rust and rust nightly. `rustup` is a great way to do this: https://rustup.rs/
+After going to the rustup site, you will see the following text:
+"You appear to be running *******. If not, display all supported installers."
+--Make sure you click "display all supported installers" should rustup wrongly predict your Operating System type.
+
+**Windows users: setting up rust with rustup's .exe installer can be difficult**
+**Try using a linux subsystem like MobaXterm or Windows Subsystem for Linux if you run into issues**
+    https://mobaxterm.mobatek.net/
+    https://docs.microsoft.com/en-us/windows/wsl/install-win10
+
+**The following commands will not work on Windows cmd (command prompt) --these commands assume a LINUX/UNIX like environment.**
 Once rust has been downloaded and installed, you can install nightly with the following command
 
     rustup override set nightly-2019-07-09
 
 ## Checkout, Build, and Run
 
-First, clone this repository by using `git clone repository_link` on your local machine to clone the repository.
+First, clone this repository by typing `git clone repository_link` while in the desired directory in your terminal to clone the repository.
+    git clone https://github.com/jedxops/address_translation.git
+Tacking on a directory name at the end of that command clones the repository into that directory
+`git clone repository_link directory_name`
+
 Click the green `Clone or download` button to copy the repository link to your clipboard.
 
 Once rust has been installed, you can build this program using the command: `cargo build` and run it with
-`cargo run --bin binary_filename`.
+`cargo run --bin binary_filename`. You must be in the directory where you cloned this repository for this to work.
 
     cargo build
     cargo run --bin web_app
@@ -77,6 +93,24 @@ If you chose to run the web app you will need to: press ctrl + click on the foll
 
 If you want to run an optimized version then run cargo with: `cargo run --bin binary_filename --release`. `cargo build --release` builds an
 optimized version of the code.
+
+## Troubleshooting
+
+Errors may arise after installing rustup and nightly and after trying `cargo build`
+If you are having issues or getting errors with nightly, first try:
+    rustup update && cargo update
+If that does not work, try:
+    rustup default nightly
+
+Some users experience the installer "freezing" in the terminal when installing rustup, or nightly.
+If this happens, users have reported that "pressing the enter key" unfreezes the system.
+
+Refer to the following sources for more information:
+    https://rocket.rs/v0.4/guide/getting-started/
+    https://www.oreilly.com/library/view/rust-programming-by/9781788390637/e07dc768-de29-482e-804b-0274b4bef418.xhtml?afsrc=1
+Some information on nightly for Windows users:
+    https://doc.rust-lang.org/1.2.0/book/nightly-rust.html
+Contact jja6@pdx.edu for further questions.
 
 ## Code Operation
 
