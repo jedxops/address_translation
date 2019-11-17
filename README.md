@@ -109,19 +109,29 @@ optimized version of the code.
 ## Troubleshooting
 
 Errors may arise after installing rustup and nightly and after trying `cargo build`
+
 If you are having issues or getting errors with nightly, first try:
+
     rustup update && cargo update
+
 If that does not work, try:
+
     rustup default nightly
 
 Some users experience the installer "freezing" in the terminal when installing rustup, or nightly.
+
 If this happens, users have reported that "pressing the enter key" unfreezes the system.
 
 Refer to the following sources for more information:
+
     https://rocket.rs/v0.4/guide/getting-started/
+
     https://www.oreilly.com/library/view/rust-programming-by/9781788390637/e07dc768-de29-482e-804b-0274b4bef418.xhtml?afsrc=1
+
 Some information on nightly for Windows users:
+
     https://doc.rust-lang.org/1.2.0/book/nightly-rust.html
+
 Contact jja6@pdx.edu for further questions.
 
 ## Code Operation
