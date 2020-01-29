@@ -60,7 +60,7 @@ In order to build this repository, you must install rust and rust nightly. `rust
 
 After going to the rustup site, you will see the following text:
 
-"You appear to be running *******. If not, display all supported installers."
+"You appear to be running ******. If not, display all supported installers."
 
 --Make sure you click "display all supported installers" should rustup wrongly predict your Operating System type.
 
@@ -80,7 +80,7 @@ Once rust has been downloaded and installed, you can install nightly with the fo
 
 ## Checkout, Build, and Run
 
-First, clone this repository by typing `git clone repository_link` while in the desired directory in your terminal to clone the repository.
+First, clone this repository by typing `git clone repository_link` from an open terminal
 
     git clone https://github.com/jedxops/address_translation.git
 
@@ -131,8 +131,6 @@ Refer to the following sources for more information:
 Some information on nightly for Windows users:
 
     https://doc.rust-lang.org/1.2.0/book/nightly-rust.html
-
-Contact jja6@pdx.edu for further questions.
 
 ## Code Operation
 
